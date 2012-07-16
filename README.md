@@ -32,6 +32,7 @@ those.
     $table = new ObjectTable(PersoonQuery::create(), $columns);
 
 Coo'coo'cool, but, I want to display last and first name in one column.
+TODO: it seems I forgot to implement this
 
        
     // ObjectTable uses BasePeer::TYPE_RAW_COLNAME to identify columns.

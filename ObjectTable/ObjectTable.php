@@ -24,15 +24,17 @@ class ObjectTable
         // Create columns from fieldnames and user specified columns.
         foreach ($this->getFieldnames() as $key => $fieldName) {
             // Default settings.
-            $displayname = str_replace('_', ' ', ucfirst(strtolower($fieldName)));
-            $method      = $this->translateRawColnameToMethod($fieldName);
-            $visible     = true;
-            $order       = $key;
+            $columnArr = array(
+                'displayname' => str_replace('_', ' ', ucfirst(strtolower($fieldName))),
+                'method'      => $this->translateRawColnameToMethod($fieldName),
+                'visible'     => true,
+                'order'       => $key
+            );
 
             // Override settings if user specified this column.
-            foreach ($columns as $key => $array) {
+            foreach ($columns as $array) {
                 if (array_key_exists('colname', $array) && $array['colname'] == $fieldName) {
-                    if (array_key_exists('displayname', $array)) $displayname = $array['displayname'];
+                    if (array_key_exists('displayname', $array)) $columnArr['displayname'] = $array['displayname'];
                     // Check if user specified method exists.
                     if (array_key_exists('method', $array)) {
                         if (! $this->reflector->hasMethod($array['method'])) {
@@ -41,31 +43,21 @@ class ObjectTable
                             );
                         }
 
-                        $method = $array['method'];
+                        $columnArr['method'] = $array['method'];
                     }
-                    if (array_key_exists('visible', $array)) $visible = (boolean) $array['visible'];
-                    $order = $key;
+                    if (array_key_exists('visible', $array)) $columnArr['visible'] = (boolean) $array['visible'];
+                    if (array_key_exists('order', $array)) $columnArr['order'] = $array['order']; 
                 }
-                
-                // Unset all columns that appear in database so that only 
-                // custom columns remain in the $columns array.
-                unset($columns[$key]);
+                // @todo custom columns.
             }
 
-            $columnArr = array(
-                'colname'     => $fieldName,
-                'displayname' => $displayname,
-                'visible'     => $visible,
-                'method'      => $method
-            );
-
-            if (array_key_exists($order, $this->columns)) {
-                $slice = array_slice($order, $this->columns);
-                array_splice($order, $this->columns);
-                $this->columns[$order] = $columnArr;
+            if (array_key_exists($columnArr['order'], $this->columns)) {
+                $slice = array_slice($this->columns, $columnArr['order']);
+                array_splice($this->columns, $columnArr['order']);
+                $this->columns[$columnArr['order']] = $columnArr;
                 array_splice($slice, count($slice), 0, $this->columns);
             } else {
-                $this->columns[$order] = $columnArr;
+                $this->columns[$columnArr['order']] = $columnArr;
             }
         }
     }
