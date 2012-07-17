@@ -32,32 +32,33 @@ class ObjectTable
             );
 
             // Override settings if user specified this column.
-            foreach ($columns as $array) {
+            foreach ($columns as $key => $array) {
                 if (array_key_exists('colname', $array) && $array['colname'] == $fieldName) {
                     if (array_key_exists('displayname', $array)) $columnArr['displayname'] = $array['displayname'];
                     // Check if user specified method exists.
-                    if (array_key_exists('method', $array)) {
-                        if (! $this->reflector->hasMethod($array['method'])) {
-                            throw new Exception('Method '.$array['method'].
-                                ' does not exist for class '.$this->reflector->getName() 
-                            );
-                        }
-
+                    if (array_key_exists('method', $array) && $this->hasMethod($array['method'])) {
                         $columnArr['method'] = $array['method'];
                     }
                     if (array_key_exists('visible', $array)) $columnArr['visible'] = (boolean) $array['visible'];
                     if (array_key_exists('order', $array)) $columnArr['order'] = $array['order']; 
-                }
-                // @todo custom columns.
+
+                    // Keep only the custom column (columns that don't appear 
+                    // in db) in the array. Loop & add these later.
+                    unset($columns[$key]); 
+                } 
             }
 
-            if (array_key_exists($columnArr['order'], $this->columns)) {
-                $slice = array_slice($this->columns, $columnArr['order']);
-                array_splice($this->columns, $columnArr['order']);
-                $this->columns[$columnArr['order']] = $columnArr;
-                array_splice($slice, count($slice), 0, $this->columns);
-            } else {
-                $this->columns[$columnArr['order']] = $columnArr;
+            $this->addColumn($columnArr);
+        }
+        
+        // Add custom columns.
+        foreach ($columns as $columnArr) {
+            if (! array_key_exists(['displayname'], $columnArr) || ! array_key_exists(['method'], $columnArr)) {
+                throw new Exception('Column with insufficient parameters');
+            }
+
+            if ($this->hasMethod($columnArr['method'])) {
+              $this->addColumn($columnArr);
             }
         }
     }
@@ -89,6 +90,62 @@ class ObjectTable
             \BasePeer::TYPE_RAW_COLNAME,
             \BasePeer::TYPE_PHPNAME
         );
+    }
+
+    /**
+     * Proxy for ReflectorClass::hasMethod
+     *
+     * @throws Exception When method is not found.
+     * @return true When method is found.
+     */
+    private function hasMethod($method)
+    {
+        if (! $this->reflector->hasMethod($method)) {
+            throw new Exception('Method '.$method.
+                ' does not exist for class '.$this->reflector->getName() 
+            );
+        }
+
+        return true;
+    }
+
+    /**
+     * Add a column.
+     * 
+     * @param array
+     */
+    public function addColumn(array $columnArr)
+    {
+        if (array_key_exists($columnArr['order'], $this->columns)) {
+            $slice = array_slice($this->columns, $columnArr['order']);
+            array_splice($this->columns, $columnArr['order']);
+            $this->columns[$columnArr['order']] = $columnArr;
+            array_splice($slice, count($slice), 0, $this->columns);
+        } else {
+            $this->columns[] = $columnArr;
+        }
+    }
+
+    /**
+     * Remove a column.
+     *
+     * @param $rawColName  The raw columnname
+     * @param $displayName The displayname
+     */
+    public function removeColumn($rawColname = null, $displayName = null)
+    {
+        if (null === $rawColname && null === $displayName) {
+            throw new Exception('No RAW_COLNAME or displayname specified.');
+        }
+        
+        $name = $rawColname ? 'raw_colname' : 'displayname';
+        $val  = $rawColname ? $rawColname   : $displayName;
+
+        foreach ($this->columns as $key => $columnArr) {
+            if (array_key_exists($name, $columnArr) && $columnArr[$name] === $val) {
+                unset($this->columns[$key]); 
+            }
+        }
     }
 
     /**
