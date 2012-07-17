@@ -12,7 +12,7 @@ class ObjectTable
     /**
      * Constructor.
      */
-    public function __construct(\ModelCriteria $mc, array $columns = array())
+    public function __construct($mc, array $columns = array())
     {
         $this->modelCriteria = $mc;
 
@@ -27,7 +27,7 @@ class ObjectTable
             $columnArr = array(
                 'displayname' => str_replace('_', ' ', ucfirst(strtolower($fieldName))),
                 'method'      => $this->translateRawColnameToMethod($fieldName),
-                'visible'     => true,
+                'visible'     => false,
                 'order'       => $key
             );
 
@@ -53,111 +53,114 @@ class ObjectTable
         
         // Add custom columns.
         foreach ($columns as $columnArr) {
-            if (! array_key_exists(['displayname'], $columnArr) || ! array_key_exists(['method'], $columnArr)) {
+            if (! array_key_exists('displayname', $columnArr) || ! array_key_exists('method', $columnArr)) {
                 throw new Exception('Column with insufficient parameters');
             }
 
-            if ($this->hasMethod($columnArr['method'])) {
-              $this->addColumn($columnArr);
-            }
-        }
-    }
+            if (! array_key_exists('visible', $columnArr)) {
+              $columnArr['visible'] = false;
+              }
 
-    /**
-     * Proxy for modelPeer::getFieldnames.
-     *
-     * @return array
-     */
-    private function getFieldnames()
-    {
-        return $this->objectPeer->getFieldNames(\BasePeer::TYPE_RAW_COLNAME);
-    }
+              if ($this->hasMethod($columnArr['method'])) {
+                $this->addColumn($columnArr);
+              }
+          }
+      }
 
-    /**
-     * Translate raw colname to method.
-     *
-     * @param $rawColname string 
-     * @return string
-     */
-    private function translateRawColnameToMethod($rawColname)
-    {
-        if (array_search($rawColname, $this->getFieldnames()) === false) {
-            throw new Exception('Unknown column'.$rawColname);
-        }
+      /**
+       * Proxy for modelPeer::getFieldnames.
+       *
+       * @return array
+       */
+      private function getFieldnames()
+      {
+          return $this->objectPeer->getFieldNames(\BasePeer::TYPE_RAW_COLNAME);
+      }
 
-        return 'get'.$this->objectPeer->translateFieldName(
-            $rawColname, 
-            \BasePeer::TYPE_RAW_COLNAME,
-            \BasePeer::TYPE_PHPNAME
-        );
-    }
+      /**
+       * Translate raw colname to method.
+       *
+       * @param $rawColname string 
+       * @return string
+       */
+      private function translateRawColnameToMethod($rawColname)
+      {
+          if (array_search($rawColname, $this->getFieldnames()) === false) {
+              throw new Exception('Unknown column'.$rawColname);
+          }
 
-    /**
-     * Proxy for ReflectorClass::hasMethod
-     *
-     * @throws Exception When method is not found.
-     * @return true When method is found.
-     */
-    private function hasMethod($method)
-    {
-        if (! $this->reflector->hasMethod($method)) {
-            throw new Exception('Method '.$method.
-                ' does not exist for class '.$this->reflector->getName() 
-            );
-        }
+          return 'get'.$this->objectPeer->translateFieldName(
+              $rawColname, 
+              \BasePeer::TYPE_RAW_COLNAME,
+              \BasePeer::TYPE_PHPNAME
+          );
+      }
 
-        return true;
-    }
+      /**
+       * Proxy for ReflectorClass::hasMethod
+       *
+       * @throws Exception When method is not found.
+       * @return true When method is found.
+       */
+      private function hasMethod($method)
+      {
+          if (! $this->reflector->hasMethod($method)) {
+              throw new Exception('Method '.$method.
+                  ' does not exist for class '.$this->reflector->getName() 
+              );
+          }
 
-    /**
-     * Add a column.
-     * 
-     * @param array
-     */
-    public function addColumn(array $columnArr)
-    {
-        if (array_key_exists($columnArr['order'], $this->columns)) {
-            $slice = array_slice($this->columns, $columnArr['order']);
-            array_splice($this->columns, $columnArr['order']);
-            $this->columns[$columnArr['order']] = $columnArr;
-            array_splice($slice, count($slice), 0, $this->columns);
-        } else {
-            $this->columns[] = $columnArr;
-        }
-    }
+          return true;
+      }
 
-    /**
-     * Remove a column.
-     *
-     * @param $rawColName  The raw columnname
-     * @param $displayName The displayname
-     */
-    public function removeColumn($rawColname = null, $displayName = null)
-    {
-        if (null === $rawColname && null === $displayName) {
-            throw new Exception('No RAW_COLNAME or displayname specified.');
-        }
-        
-        $name = $rawColname ? 'raw_colname' : 'displayname';
-        $val  = $rawColname ? $rawColname   : $displayName;
+      /**
+       * Add a column.
+       * 
+       * @param array
+       */
+      public function addColumn(array $columnArr)
+      {
+          if (array_key_exists('order', $columnArr) && array_key_exists($columnArr['order'], $this->columns)) {
+              $slice = array_slice($this->columns, $columnArr['order']);
+              array_splice($this->columns, $columnArr['order']);
+              $this->columns[$columnArr['order']] = $columnArr;
+              array_splice($slice, count($slice), 0, $this->columns);
+          } else {
+              $this->columns[] = $columnArr;
+          }
+      }
 
-        foreach ($this->columns as $key => $columnArr) {
-            if (array_key_exists($name, $columnArr) && $columnArr[$name] === $val) {
-                unset($this->columns[$key]); 
-            }
-        }
-    }
+      /**
+       * Remove a column.
+       *
+       * @param $rawColName  The raw columnname
+       * @param $displayName The displayname
+       */
+      public function removeColumn($rawColname = null, $displayName = null)
+      {
+          if (null === $rawColname && null === $displayName) {
+              throw new Exception('No RAW_COLNAME or displayname specified.');
+          }
+          
+          $name = $rawColname ? 'raw_colname' : 'displayname';
+          $val  = $rawColname ? $rawColname   : $displayName;
 
-    /**
-     * Render to html.
+          foreach ($this->columns as $key => $columnArr) {
+              if (array_key_exists($name, $columnArr) && $columnArr[$name] === $val) {
+                  unset($this->columns[$key]); 
+              }
+          }
+      }
+
+      /**
+       * Render to html.
      *
      * @return string
      */
     public function render()
     {
         // Headers
-        $html = '<table></thead><tr>';
-
+        $html = '<table class="table"><thead><tr>';
         foreach ($this->columns as $column) {
           if (! $column['visible']) continue;
 
@@ -172,29 +175,31 @@ class ObjectTable
             $html . '<tr>';
 
             foreach ($this->columns as $column) {
-                $html .= '<td>';
+              if ($column['visible'] == true) {
+                    $html .= '<td>';
 
-                if ($val = $object->$column['method']()) {
-                    // The only thing propel returns that can't be cast to string 
-                    // is a DateTime object.
-                    // @todo Is this true?
-                    // @todo This is configurable, how do I handle this?
-                    if (is_object($val) && get_class($val) === 'DateTime')
-                    {
-                        $html .= $val->format('d/m/Y');
-                    } elseif (is_object($val)) {
-                        throw new Exception('ObjectTable can\'t handle '.get_class($val));
+                    if ($val = $object->$column['method']()) {
+                        // The only thing propel returns that can't be cast to string 
+                        // is a DateTime object.
+                        // @todo Is this true?
+                        // @todo This is configurable, how do I handle this?
+                        if (is_object($val) && get_class($val) === 'DateTime')
+                        {
+                            $html .= $val->format('d/m/Y');
+                        } elseif (is_object($val)) {
+                            throw new Exception('ObjectTable can\'t handle '.get_class($val));
+                        } else {
+                            $html .= $val;
+                        }
                     } else {
-                        $html .= $val;
+                        $html .= '&nbsp;';
                     }
-                } else {
-                    $html .= '&nbsp;';
+
+                    $html .= '</td>';
                 }
 
-                $html .= '</td>';
-            }
-
-            $html .= '</tr>';
+          }
+              $html .= '</tr>';
         }
 
         $html .= '</tbody></table>';
