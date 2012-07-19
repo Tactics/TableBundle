@@ -1,0 +1,25 @@
+{
+  "name": "tactics/table-bundle",
+  "description": "Render html tables based on ModelCriteria",
+  "keywords": ["propel", "orm", "table"],
+  "type": "symfony-bundle",
+  "license": "",
+  "authors": [{
+    "name": "Aaron Muylaert",
+    "email": "aaron@tactics.be"
+  }],
+  "require": {
+    "symfony/symfony": "2.1.*",
+    "propel/propel1": "1.6.*"
+  },
+  "require-dev": {
+    "sensio/framework-extra-bundle": "dev-master",
+    "fzaninotto/faker": "dev-master"
+  },
+  "autoload": {
+    "psr-0": { "Tactics\\TableBundle": "" }
+  },
+  "target-dir": "Tactics/TableBundle",
+  "minimum-stability": "dev"
+}
+
