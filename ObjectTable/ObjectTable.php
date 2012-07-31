@@ -153,6 +153,29 @@ class ObjectTable
       }
 
       /**
+       * @param  boolean $visible Only return visible columns if true.
+       * @return array
+       */
+      public function getColumns($visible = true)
+      {
+          // Only show visible columns
+          if ($visible) {
+              $columns = array();
+
+              foreach ($this->columns as $column)
+              {
+                  if (! $column['visible']) continue;
+
+                  $columns[] = $column;
+              }
+
+              return $columns;
+          } else {
+              return $this->columns();
+          }
+      }
+
+      /**
        * Render to html.
      *
      * @return string

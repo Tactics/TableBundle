@@ -1,2 +1,8 @@
 parameters: 
 services: 
+    tactics.twig.object_table_extension:
+        class: Tactics\TableBundle\Twig\ObjectTableExtension
+        arguments: [@service_container]
+        tags:
+            - { name: twig.extension }
+    
