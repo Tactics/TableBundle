@@ -18,7 +18,7 @@ interface ColumnInterface
 
 
     /**
-     * @return string The celltype of the column.
+     * @return string The type of the column.
      */
-    function getCellType();
+    function getType();
 }

@@ -44,7 +44,7 @@ class Column implements ColumnInterface
     /**
      * {@inheritdoc}
      */
-    public function getCellType()
+    public function getType()
     {
         return 'default';
     }

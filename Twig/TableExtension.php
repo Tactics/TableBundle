@@ -65,7 +65,7 @@ class TableExtension extends \Twig_Extension
     public function renderCell(Column $column, $value)
     {
         return $this->container->get('templating')->render(
-            'TacticsTableBundle::column_cell_'.$column->getCellType().'.html.twig',
+            'TacticsTableBundle::column_cell_'.$column->getType().'.html.twig',
             array('column' => $column, 'value' => $value)
           );
     }
