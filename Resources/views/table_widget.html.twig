@@ -2,14 +2,14 @@
     <thead>
         <tr>
             {% for column in table %}
-                {{ column_header(column.header) }}
+                {{ header(column.header) }}
             {% endfor %}
         </tr>
     </thead>
     <tbody>
         {% for row in table.rows %}
             {% for column in table %}
-                {{ column_cell(column.cell, row[column.name])  }}
+                {{ cell(column, row[column.name])  }}
             {% endfor %}
         {% endfor %}
     </tbody>

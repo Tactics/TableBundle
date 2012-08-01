@@ -33,11 +33,11 @@ class TableExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-          'table_widget' => new \Twig_Function_Method($this, 'renderTableWidget', 
+          'table_widget' => new \Twig_Function_Method($this, 'renderTable', 
           array('is_safe' => array('html'))),
-          'column_cell' => new \Twig_Function_Method($this, 'renderColumnCell', 
+          'cell' => new \Twig_Function_Method($this, 'renderCell', 
           array('is_safe' => array('html'))),
-          'column_header' => new \Twig_Function_Method($this, 'renderColumnHeader', 
+          'header' => new \Twig_Function_Method($this, 'renderHeader', 
           array('is_safe' => array('html')))
         );
     }
@@ -47,7 +47,7 @@ class TableExtension extends \Twig_Extension
      *
      * @param Table The Table instance to render.
      */
-    public function renderTableWidget(Table $table)
+    public function renderTable(Table $table)
     {
         $request = $this->container->get('request');
 
@@ -62,11 +62,11 @@ class TableExtension extends \Twig_Extension
      * 
      * @param ColumnCell The ColumnCell instance to render.
      */
-    public function renderColumnCell(ColumnCell $cell, $value)
+    public function renderCell(Column $column, $value)
     {
         return $this->container->get('templating')->render(
-            'TacticsTableBundle::column_cell_'.$cell->getType().'.html.twig',
-            array('cell' => $cell, 'value' => $value)
+            'TacticsTableBundle::column_cell_'.$column->getCellType().'.html.twig',
+            array('column' => $column, 'value' => $value)
           );
     }
 
@@ -75,7 +75,7 @@ class TableExtension extends \Twig_Extension
      * 
      * @param ColumnHeader The ColumnHeader instance to render.
      */
-    public function renderColumnHeader(ColumnHeader $header)
+    public function renderHeader(ColumnHeader $header)
     {
         return $this->container->get('templating')->render(
             'TacticsTableBundle::column_header_'.$header->getType().'.html.twig',

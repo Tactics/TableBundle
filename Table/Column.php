@@ -7,23 +7,22 @@ class Column implements ColumnInterface
     // @var $header ColumnHeaderInterface
     protected $header;
 
-    // @var $row ColumnCellInterface
-    protected $cell;
-
-    // @var $name String The name of the column.
+    // @var $name string The name of the column.
     protected $name;
+
+    // @var $attributes array The column attributes.
+    protected $attributes;
 
     /**
      * Constructor.
      */
-    public function __construct($name, ColumnHeader $header, ColumnCell $cell, array $attributes = array())
+    public function __construct($name, ColumnHeader $header, array $attributes = array())
     {
-        $this->name   = $name;
-        $this->header = $header;
-        $this->cell   = $cell;
+        $this->name       = $name;
+        $this->header     = $header;
+        $this->attributes = $attributes;
         
         $this->header->setColumn($this);
-        $this->cell->setColumn($this);
     }
 
     /**
@@ -33,19 +32,6 @@ class Column implements ColumnInterface
     {
         return $this->header;
     }
-    
-    public function renderHeader()
-    {
-      return $this->getHeader()->render($name);
-    }
-
-    /**
-     * @return ColumnCellInterface
-     */
-    public function getCell()
-    {
-        return $this->cell;
-    }
 
     /**
      * {@inheritdoc}
@@ -53,5 +39,21 @@ class Column implements ColumnInterface
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCellType()
+    {
+        return 'default';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getValue($value)
+    {
+        return $value; 
     }
 } 
