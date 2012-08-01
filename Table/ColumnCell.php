@@ -11,7 +11,7 @@ class ColumnCell implements ColumnCellInterface
     /**
      * {@inheritdoc}
      */
-    public function render($value)
+    public function getValue($value)
     {
         return $value;
     }
@@ -22,5 +22,13 @@ class ColumnCell implements ColumnCellInterface
     public function setColumn(ColumnInterface $column)
     {
         $this->column = $column;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getType()
+    {
+        return 'default';
     }
 }

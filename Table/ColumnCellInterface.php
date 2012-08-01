@@ -5,13 +5,13 @@ namespace Tactics\TableBundle\Table;
 interface ColumnCellInterface
 {
     /**
-     * Renders the value of the cell.
+     * Returns the value of the cell.
      *
-     * @param String $value The value to render.
+     * @param String $value The value to return.
      * 
      * @return String
      */
-    function render($value);
+    public function getValue($value);
 
     /**
      * Sets the column.
@@ -19,4 +19,11 @@ interface ColumnCellInterface
      * @param ColumnInterface Instance of a ColumnInterface.
      */
     function setColumn(ColumnInterface $column);
+
+    /**
+     * The type is used to determine the twig template location.
+     *
+     * @return String The column type.
+     */
+    function getType();
 }

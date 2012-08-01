@@ -10,6 +10,11 @@ class Table implements \IteratorAggregate
     protected $columns = array();
 
     /**
+     * @var array An array of rows.
+     */
+    protected $rows = array();
+
+    /**
      * Returns an iterator for columns
      *
      * @return \ArrayIterator
@@ -38,33 +43,8 @@ class Table implements \IteratorAggregate
         $this->rows = $rows;
     }
 
-    public function render()
-    {      
-        $html = '<table class="table"><thead><tr>';
-
-        foreach ($this->columns as $column) {
-            $html .= '<th>'.$column->getRenderHeader().'</th>';
-        }
-
-        $html .= '</tr></thead>';
-
-        $html .= '<tbody>';
-
-        foreach ($this->rows as $row)
-        {
-            $html .= '<tr>';
-
-            foreach ($row as $columnName => $value)
-            {
-                $column = $this->columns[$columnName];
-                $html .= '<td>'.$column->getCell()->render($value).'</td>';
-            }
-
-            $html .= '</tr>';
-        }
-
-        $html .= '</tbody></table>';
-
-        return $html;
+    public function getRows()
+    {
+      return $this->rows;
     }
 }

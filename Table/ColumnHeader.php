@@ -19,6 +19,14 @@ class ColumnHeader implements ColumnHeaderInterface
     {
         $this->value = $value;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
     
     /**
      * {@inheritdoc}
@@ -31,8 +39,8 @@ class ColumnHeader implements ColumnHeaderInterface
     /**
      * {@inheritdoc}
      */
-    public function render()
+    public function getType()
     {
-        return $this->value;  
+      return 'default';
     }
 }

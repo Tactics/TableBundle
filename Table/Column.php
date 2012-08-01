@@ -54,12 +54,4 @@ class Column implements ColumnInterface
     {
         return $this->name;
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function render()
-    {
-        
-    }
 } 
