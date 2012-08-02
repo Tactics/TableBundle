@@ -35,10 +35,13 @@ class TableExtension extends \Twig_Extension
         return array(
           'table_widget' => new \Twig_Function_Method($this, 'renderTable', 
           array('is_safe' => array('html'))),
-          'cell' => new \Twig_Function_Method($this, 'renderCell', 
+          'render_cell' => new \Twig_Function_Method($this, 'renderCell', 
           array('is_safe' => array('html'))),
-          'header' => new \Twig_Function_Method($this, 'renderHeader', 
+          'render_header' => new \Twig_Function_Method($this, 'renderHeader', 
+          array('is_safe' => array('html'))),
+          'find_cell_by_column_name' => new \Twig_Function_Method($this, 'findCellByColumnName', 
           array('is_safe' => array('html')))
+
         );
     }
 
@@ -60,13 +63,31 @@ class TableExtension extends \Twig_Extension
     /**
      * Renders a ColumnCell.
      * 
-     * @param ColumnCell The ColumnCell instance to render.
+     * @param Column $column The Column instance to render.
+     * @param array  $row  An array with the row.
      */
-    public function renderCell(Column $column, $value)
-    {
+    public function renderCell(Column $column, $row)
+    {  
+        if (! isset($row[$column->getName()])) {
+            throw new Exception(sprintf('Can\'t find cell with name "%s".', $column->getName()));
+        } 
+
+        $cell = $row[$column->getName()];
+         
+        $attributes = '';
+
+        foreach ($cell['attributes'] as $attribute => $value)
+        {
+            $attributes .= " $attribute=\"$value\"";
+        }
+
         return $this->container->get('templating')->render(
             'TacticsTableBundle::column_cell_'.$column->getType().'.html.twig',
-            array('column' => $column, 'value' => $value)
+            array(
+                'column'     => $column, 
+                'value'      => $cell['value'],
+                'attributes' => $attributes
+            )
           );
     }
 
