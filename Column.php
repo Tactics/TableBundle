@@ -2,6 +2,9 @@
 
 namespace Tactics\TableBundle;
 
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
 class Column implements ColumnInterface
 {
     /**
@@ -24,9 +27,13 @@ class Column implements ColumnInterface
      */
     public function __construct($name, ColumnHeader $header, array $options = array())
     {
-        $this->name    = $name;
-        $this->header  = $header;
-        $this->options = $options;
+        $this->name = $name;
+        $this->header = $header;
+
+        $resolver = new OptionsResolver();
+        $this->setDefaultOptions($resolver);
+                
+        $this->options = $resolver->resolve($options);
         
         $this->header->setColumn($this);
     }
@@ -69,5 +76,15 @@ class Column implements ColumnInterface
     public function getOptions()
     {
         return $this->options;
+    }
+
+    /**
+     * Sets the default options for this table.
+     *
+     * @param OptionsResolverInterface $resolver The resolver for the options.
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setOptional(array('method'));
     }
 } 
