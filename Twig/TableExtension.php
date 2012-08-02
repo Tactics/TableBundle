@@ -33,12 +33,14 @@ class TableExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-          'table_widget' => new \Twig_Function_Method($this, 'renderTable', 
-          array('is_safe' => array('html'))),
-          'cell' => new \Twig_Function_Method($this, 'renderCell', 
-          array('is_safe' => array('html'))),
-          'header' => new \Twig_Function_Method($this, 'renderHeader', 
-          array('is_safe' => array('html')))
+            'table_widget' => new \Twig_Function_Method($this, 'renderTable', 
+            array('is_safe' => array('html'))),
+            'render_cell' => new \Twig_Function_Method($this, 'renderCell', 
+            array('is_safe' => array('html'))),
+            'render_header' => new \Twig_Function_Method($this, 'renderHeader', 
+            array('is_safe' => array('html'))),
+            'render_attributes' => new \Twig_Function_Method($this, 'renderAttributes', 
+            array('is_safe' => array('html')))
         );
     }
 
@@ -60,13 +62,23 @@ class TableExtension extends \Twig_Extension
     /**
      * Renders a ColumnCell.
      * 
-     * @param ColumnCell The ColumnCell instance to render.
+     * @param Column $column The Column instance to render.
+     * @param array  $row  An array with the row.
      */
-    public function renderCell(Column $column, $value)
-    {
+    public function renderCell(Column $column, $row)
+    {  
+        if (! isset($row[$column->getName()])) {
+            throw new Exception(sprintf('Can\'t find cell with name "%s".', $column->getName()));
+        } 
+
+        $cell = $row[$column->getName()];
+
         return $this->container->get('templating')->render(
             'TacticsTableBundle::column_cell_'.$column->getType().'.html.twig',
-            array('column' => $column, 'value' => $value)
+            array(
+                'column'     => $column, 
+                'cell'       => $cell
+            )
           );
     }
 
@@ -77,10 +89,29 @@ class TableExtension extends \Twig_Extension
      */
     public function renderHeader(ColumnHeader $header)
     {
+        $attributes = '';
+
+        foreach ($header->getAttributes() as $attribute => $value) {
+            $attributes .= " $attribute=\"$value\"";    
+        }
+
         return $this->container->get('templating')->render(
             'TacticsTableBundle::column_header_'.$header->getType().'.html.twig',
-            array('header' => $header)
-          );
+            array(
+                'header' => $header
+            )
+        );
+    }
+
+    public function renderAttributes(array $attributes)
+    {
+        $attributeString = '';
+
+        foreach ($attributes as $attribute => $value) {
+            $attributeString .= " $attribute=\"$value\"";    
+        }
+
+        return $attributeString;
     }
 
     /**

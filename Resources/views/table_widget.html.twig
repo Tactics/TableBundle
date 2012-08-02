@@ -2,17 +2,19 @@
     <thead>
         <tr>
             {% for column in table %}
-                {{ header(column.header) }}
+                {{ render_header(column.header) }}
             {% endfor %}
         </tr>
     </thead>
     <tbody>
+
         {% for row in table.rows %}
             <tr>
             {% for column in table %}
-                {{ cell(column, row[column.name])  }}
+                {{ render_cell(column, row)  }}
             {% endfor %}
             </tr>
         {% endfor %}
+        
     </tbody>
 </table>

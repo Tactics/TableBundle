@@ -19,6 +19,10 @@ class Table implements \IteratorAggregate, TableInterface
      */
     protected $rows = array();
 
+    
+    // @var array An array of attributes.
+    protected $attributes = array();
+
     /**
      * @var string The name of the form
      */
@@ -72,7 +76,6 @@ class Table implements \IteratorAggregate, TableInterface
     {
       return $this->rows;
     }
-    
 
     /**
      * Sets the default options for this table.
@@ -158,4 +161,17 @@ class Table implements \IteratorAggregate, TableInterface
         return count($this->columns);
     }
     
+
+    public function setAttributes(array $attributes)
+    {
+        $this->attributes = $attributes;
+
+        return $this;
+    }
+
+    public function getAttributes()
+    {
+        return $this->attributes;
+    }
+
 }
