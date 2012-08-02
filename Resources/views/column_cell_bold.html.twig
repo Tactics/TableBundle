@@ -1,1 +1,8 @@
-<td><strong>{{ column.value(value) }}</strong></td>
+{% extends "TacticsTableBundle::column_cell_default.html.twig" %}
+
+{% block cell_content %}
+    <strong>
+        {{ parent() }}
+    </strong>
+{% endblock %}
+

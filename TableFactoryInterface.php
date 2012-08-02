@@ -42,13 +42,14 @@ interface TableFactoryInterface
      *
      * @param string                    $name    The name of the table
      * @param string|TableTypeInterface $type    The type of the table
+     * @param ColumnHeader              $columnHeader    
      * @param array                    $options The options
      *
      * @return ColumnInterface The column 
      *
      * @throws Exception\TableException if any given option is not applicable to the given type
      */
-    public function createColumn($name, $type = '', array $options = array());
+    public function createColumn($name, $type = '', ColumnHeaderInterface $columnHeader, array $options = array());
 
                 
     /**

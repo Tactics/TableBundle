@@ -1,3 +1,7 @@
-<td{% if cell.attributes is defined %}{{ render_attributes(cell.attributes) }}{% endif %}>
-    {{ column.value(cell.value) }}
-</td>
+{% spaceless %}
+    <td{% if cell.attributes is defined %}{{ render_attributes(cell.attributes) }}{% endif %}>   
+        {% block cell_content %}
+            {{ column.value(cell.value) }}
+        {% endblock %}
+    </td>
+{% endspaceless %}

@@ -68,10 +68,15 @@ class TableExtension extends \Twig_Extension
     public function renderCell(Column $column, $row)
     {  
         if (! isset($row[$column->getName()])) {
-            throw new Exception(sprintf('Can\'t find cell with name "%s".', $column->getName()));
+            // throw new \Exception(sprintf('Can\'t find cell with name "%s".', $column->getName()));
+            
+            $cell = array('value' => '');
         } 
+        else
+        {
+            $cell = $row[$column->getName()];
+        }
 
-        $cell = $row[$column->getName()];
 
         return $this->container->get('templating')->render(
             'TacticsTableBundle::column_cell_'.$column->getType().'.html.twig',
