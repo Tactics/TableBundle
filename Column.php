@@ -56,4 +56,12 @@ class Column implements ColumnInterface
     {
         return $value; 
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
+    }
 } 

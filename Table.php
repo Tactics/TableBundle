@@ -140,7 +140,6 @@ class Table implements \IteratorAggregate, TableInterface
         unset($this->columns[$name]);
     }
     
-    
     /**
      * Returns an iterator to iterate over columns (implements \IteratorAggregate)
      *
@@ -161,7 +160,6 @@ class Table implements \IteratorAggregate, TableInterface
         return count($this->columns);
     }
     
-
     public function setAttributes(array $attributes)
     {
         $this->attributes = $attributes;

@@ -34,9 +34,8 @@ class PropelTableBuilder extends TableBuilder
 
         $this->objectPeer = new $peerName();
         $this->reflector  = new \ReflectionClass($this->modelCriteria->getModelName());
-        
+        $this->dummy      = $this->modelCriteria->find()->getFirst();
     }
-    
     
     /**
      * 
@@ -57,9 +56,20 @@ class PropelTableBuilder extends TableBuilder
     public function create($name, $type = null, array $options = array())
     {
         // guess type based on modelcriteria properties
-        if (null === $type)
-        {
-            // gue
+        if (null === $type) {
+            // Guess the method.
+            $method = $this->reflector->getMethod($this->translateRawColnameToMethod($name));
+
+            $options['method'] = $method->getName();
+            $methodName        = $options['method'];
+            $val               = $this->dummy->$methodName(); 
+
+            if (is_object($val) && get_class($val) === 'DateTime') {
+                $type = 'date_time';
+            }
+            else {
+                $type = 'text';
+            }
         }
 
         return parent::create($name, $type, $options);
@@ -128,7 +138,37 @@ class PropelTableBuilder extends TableBuilder
         }
     }
 
-          
+    /**
+     * {@inheritdoc}
+     */
+    public function getTable()
+    {
+        // todo: create!
+        $table = $this->factory->createTable($this->name, $this->type, array());
+        
+        foreach ($this as $column) {
+            $table->add($column);
+        }
+
+        $rows = array();
+
+        foreach ($this->modelCriteria->find() as $object) {
+            $rowArr = array();
+            foreach ($table as $column) {
+                $attributes = $column->getAttributes(); 
+                $method     = $attributes['method'];
+
+                $rowArr[$column->getName()] = array('value' => $object->$method());
+            }
+
+            $rows[] = $rowArr;
+        }
+
+        $table->setRows($rows);
+        
+        return $table;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -138,6 +178,5 @@ class PropelTableBuilder extends TableBuilder
         
         $resolver->setRequired(array('model_criteria'));
     }
-
 }
 

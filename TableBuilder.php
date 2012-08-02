@@ -28,7 +28,7 @@ class TableBuilder implements \IteratorAggregate, TableBuilderInterface
      *
      * @var TableFactoryInterface
      */
-    private $factory;
+    protected $factory;
     
     
     /**
@@ -36,21 +36,21 @@ class TableBuilder implements \IteratorAggregate, TableBuilderInterface
      * 
      * @var string 
      */
-    private $type;
+    protected $type;
     
     /**
      * The name of the table this builder creates
      * 
      * @var string 
      */
-    private $name;
+    protected $name;
     
     /**
      * List of columns in the TableBuilder
      * 
      * @var array
      */
-    private $columns = array();
+    protected $columns = array();
   
     /**
      * @var array The options for the table builder
