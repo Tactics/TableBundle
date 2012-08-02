@@ -7,7 +7,7 @@ namespace Tactics\TableBundle\Extension\Table;
  *
  * @author Gert Vrebos <gert.vrebos at tactics.be>
  */
-class Table extends \Tactics\TableBundle\Table\Table
+class Table extends \Tactics\TableBundle\Table
 {
 
 }

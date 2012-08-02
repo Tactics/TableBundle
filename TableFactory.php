@@ -9,7 +9,7 @@ namespace Tactics\TableBundle;
 
 use Tactics\TableBundle\Exception\TableException;
 use Tactics\TableBundle\Exception\UnknownTypeException;
-use Tactics\TableBundle\Table\ColumnHeaderInterface;
+use Tactics\TableBundle\ColumnHeaderInterface;
 
 /**
  * Description of TableFactory

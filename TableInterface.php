@@ -2,7 +2,7 @@
 
 namespace Tactics\TableBundle;
 
-use Tactics\TableBundle\Table\ColumnInterface;
+use Tactics\TableBundle\ColumnInterface;
 
 /**
  * Description of TableInterface

@@ -7,7 +7,7 @@
 
 namespace Tactics\TableBundle\Extension\Type;
 
-use Tactics\TableBundle\Table\Column;
+use Tactics\TableBundle\Column;
 
 /**
  * Description of TextColumn

@@ -2,10 +2,10 @@
 
 namespace Tactics\TableBundle\Twig;
 
-use Tactics\TableBundle\Table\Table;
-use Tactics\TableBundle\Table\Column;
-use Tactics\TableBundle\Table\ColumnHeader;
-use Tactics\TableBundle\Table\ColumnCell;
+use Tactics\TableBundle\Table;
+use Tactics\TableBundle\Column;
+use Tactics\TableBundle\ColumnHeader;
+use Tactics\TableBundle\ColumnCell;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

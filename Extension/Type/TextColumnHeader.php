@@ -7,7 +7,7 @@
 
 namespace Tactics\TableBundle\Extension\Type;
 
-use Tactics\TableBundle\Table\ColumnHeader;
+use Tactics\TableBundle\ColumnHeader;
 
 /**
  * Description of TextColumnHeader

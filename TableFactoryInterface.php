@@ -11,9 +11,9 @@
 
 namespace Tactics\TableBundle;
 
-use Tactics\TableBundle\Table\TableInterface;
-use Tactics\TableBundle\Table\ColumnInterface;
-use Tactics\TableBundle\Table\ColumnHeaderInterface;
+use Tactics\TableBundle\TableInterface;
+use Tactics\TableBundle\ColumnInterface;
+use Tactics\TableBundle\ColumnHeaderInterface;
 
 /**
  * @author Gert Vrebos <gert.vrebos at tactics.be>

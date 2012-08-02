@@ -1,6 +1,6 @@
 <?php
 
-namespace Tactics\TableBundle\Table;
+namespace Tactics\TableBundle;
 
 use Tactics\TableBundle\TableInterface;
 

@@ -10,7 +10,7 @@
 
 namespace Tactics\TableBundle;
 
-use Tactics\TableBundle\Table\Table;
+use Tactics\TableBundle\Table;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -204,7 +204,7 @@ class TableBuilder implements \IteratorAggregate, TableBuilderInterface
             ->setDefaults(array(
                 'default_column_type' => 'text',
                 'default_column_header_type' => 'text'
-            ));
+        ));
     }
     
   
