@@ -11,9 +11,7 @@ class ColumnHeader implements ColumnHeaderInterface
     protected $column;
     
     /**
-     * Constructor.
-     *
-     * @param $value String Value inside of the header.
+     * {@inheritdoc}
      */
     public function __construct($value, array $attributes = array())
     {

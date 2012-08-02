@@ -14,7 +14,7 @@ class Column implements ColumnInterface
     protected $attributes;
 
     /**
-     * Constructor.
+     * {@inheritdoc}
      */
     public function __construct($name, ColumnHeader $header, array $attributes = array())
     {

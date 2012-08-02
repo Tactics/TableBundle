@@ -5,6 +5,13 @@ namespace Tactics\TableBundle\Table;
 interface ColumnHeaderInterface 
 {
     /**
+     * Constructor.
+     *
+     * @param $value String Value inside of the header.
+     */
+    public function __construct($value, array $attributes = array());
+    
+    /**
      * Sets the column.
      *
      * @param ColumnInterface A ColumnInterface instance

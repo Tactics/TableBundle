@@ -4,6 +4,12 @@ namespace Tactics\TableBundle\Table;
 
 interface ColumnInterface
 {
+    
+    /**
+     * Constructor.
+     */
+    public function __construct($name, ColumnHeader $header, array $attributes = array());
+    
     /**
      * @return String The name of the column.
      */
