@@ -20,24 +20,26 @@ class Table implements \IteratorAggregate, TableInterface
     protected $rows = array();
 
     
-    // @var array An array of attributes.
+    /**
+     * @var array An array of attributes.
+     */
     protected $attributes = array();
 
     /**
-     * @var string The name of the form
+     * @var string The name of the table.
      */
     protected $name;
     
     /**
-     * @var array The options of this form
+     * @var array The options of the table.
      */
     protected $options = array();
     
     /**
-     * Creates a new form with the given name and options
+     * Creates a new table with the given name and options.
      * 
-     * @param string $name The name of the form
-     * @param array $options Options to configure the form
+     * @param string $name The name of the table.
+     * @param array $options Options to configure the table.
      */
     public function __construct($name, array $options)
     {
@@ -159,7 +161,12 @@ class Table implements \IteratorAggregate, TableInterface
     {
         return count($this->columns);
     }
-    
+
+    /**
+     * @param array $attributes The HTML attributes of the table.
+     *
+     * @return Table $this The Table instance.
+     */
     public function setAttributes(array $attributes)
     {
         $this->attributes = $attributes;
@@ -167,6 +174,9 @@ class Table implements \IteratorAggregate, TableInterface
         return $this;
     }
 
+    /**
+     * @return array The HTML attributes of the table.
+     */
     public function getAttributes()
     {
         return $this->attributes;

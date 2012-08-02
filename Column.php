@@ -4,23 +4,29 @@ namespace Tactics\TableBundle;
 
 class Column implements ColumnInterface
 {
-    // @var $header ColumnHeaderInterface
+    /**
+     * @var $header ColumnHeaderInterface
+     */
     protected $header;
 
-    // @var $name string The name of the column.
+    /**
+     * @var $name string The name of the column.
+     */
     protected $name;
 
-    // @var $attributes array The column attributes.
-    protected $attributes;
+    /*
+     * @var $options array The column options.
+     */
+    protected $options;
 
     /**
      * {@inheritdoc}
      */
-    public function __construct($name, ColumnHeader $header, array $attributes = array())
+    public function __construct($name, ColumnHeader $header, array $options = array())
     {
-        $this->name       = $name;
-        $this->header     = $header;
-        $this->attributes = $attributes;
+        $this->name    = $name;
+        $this->header  = $header;
+        $this->options = $options;
         
         $this->header->setColumn($this);
     }
@@ -60,8 +66,8 @@ class Column implements ColumnInterface
     /**
      * {@inheritdoc}
      */
-    public function getAttributes()
+    public function getOptions()
     {
-        return $this->attributes;
+        return $this->options;
     }
 } 

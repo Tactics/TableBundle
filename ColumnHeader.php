@@ -4,13 +4,19 @@ namespace Tactics\TableBundle;
 
 class ColumnHeader implements ColumnHeaderInterface
 {
-    // @var $value String
+    /**
+     * @var $value String
+     */
     protected $value;
 
-    // @var $column ColumnInterface
+    /**
+     *  @var $column ColumnInterface
+     */
     protected $column;
     
-    // @var $attributes array
+    /*
+     * @var $attributes array
+     */
     protected $attributes;
 
     /**

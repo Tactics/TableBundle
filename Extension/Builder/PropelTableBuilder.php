@@ -155,8 +155,8 @@ class PropelTableBuilder extends TableBuilder
         foreach ($this->modelCriteria->find() as $object) {
             $rowArr = array();
             foreach ($table as $column) {
-                $attributes = $column->getAttributes(); 
-                $method     = $attributes['method'];
+                $options = $column->getOptions(); 
+                $method  = $options['method'];
 
                 $rowArr[$column->getName()] = array('value' => $object->$method());
             }
