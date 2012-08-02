@@ -14,6 +14,9 @@ class Table implements \IteratorAggregate
      */
     protected $rows = array();
 
+    // @var array An array of attributes.
+    protected $attributes = array();
+
     /**
      * Returns an iterator for columns
      *
@@ -46,5 +49,17 @@ class Table implements \IteratorAggregate
     public function getRows()
     {
       return $this->rows;
+    }
+
+    public function setAttributes(array $attributes)
+    {
+        $this->attributes = $attributes;
+
+        return $this;
+    }
+
+    public function getAttributes()
+    {
+        return $this->attributes;
     }
 }

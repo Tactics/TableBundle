@@ -1,1 +1,3 @@
-<td{{attributes|raw}}>{{ column.value(value) }}</td>
+<td{% if cell.attributes is defined %}{{ render_attributes(cell.attributes) }}{% endif %}>
+    {{ column.value(cell.value) }}
+</td>

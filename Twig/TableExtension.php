@@ -33,15 +33,14 @@ class TableExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-          'table_widget' => new \Twig_Function_Method($this, 'renderTable', 
-          array('is_safe' => array('html'))),
-          'render_cell' => new \Twig_Function_Method($this, 'renderCell', 
-          array('is_safe' => array('html'))),
-          'render_header' => new \Twig_Function_Method($this, 'renderHeader', 
-          array('is_safe' => array('html'))),
-          'find_cell_by_column_name' => new \Twig_Function_Method($this, 'findCellByColumnName', 
-          array('is_safe' => array('html')))
-
+            'table_widget' => new \Twig_Function_Method($this, 'renderTable', 
+            array('is_safe' => array('html'))),
+            'render_cell' => new \Twig_Function_Method($this, 'renderCell', 
+            array('is_safe' => array('html'))),
+            'render_header' => new \Twig_Function_Method($this, 'renderHeader', 
+            array('is_safe' => array('html'))),
+            'render_attributes' => new \Twig_Function_Method($this, 'renderAttributes', 
+            array('is_safe' => array('html')))
         );
     }
 
@@ -73,20 +72,12 @@ class TableExtension extends \Twig_Extension
         } 
 
         $cell = $row[$column->getName()];
-         
-        $attributes = '';
-
-        foreach ($cell['attributes'] as $attribute => $value)
-        {
-            $attributes .= " $attribute=\"$value\"";
-        }
 
         return $this->container->get('templating')->render(
             'TacticsTableBundle::column_cell_'.$column->getType().'.html.twig',
             array(
                 'column'     => $column, 
-                'value'      => $cell['value'],
-                'attributes' => $attributes
+                'cell'       => $cell
             )
           );
     }
@@ -98,10 +89,29 @@ class TableExtension extends \Twig_Extension
      */
     public function renderHeader(ColumnHeader $header)
     {
+        $attributes = '';
+
+        foreach ($header->getAttributes() as $attribute => $value) {
+            $attributes .= " $attribute=\"$value\"";    
+        }
+
         return $this->container->get('templating')->render(
             'TacticsTableBundle::column_header_'.$header->getType().'.html.twig',
-            array('header' => $header)
-          );
+            array(
+                'header' => $header
+            )
+        );
+    }
+
+    public function renderAttributes(array $attributes)
+    {
+        $attributeString = '';
+
+        foreach ($attributes as $attribute => $value) {
+            $attributeString .= " $attribute=\"$value\"";    
+        }
+
+        return $attributeString;
     }
 
     /**

@@ -1,1 +1,3 @@
-<th>{{ header.value }}</th>
+<th{% if header.attributes is not empty %}{{ render_attributes(header.attributes) }} {% endif %}>
+    {{ header.value }}
+</th>

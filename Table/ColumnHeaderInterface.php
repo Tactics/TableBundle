@@ -21,5 +21,5 @@ interface ColumnHeaderInterface
     /**
      * @return String The value.
      */
-    public function getValue();
+    function getValue();
 }
