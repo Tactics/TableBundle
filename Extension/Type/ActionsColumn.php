@@ -60,7 +60,7 @@ class ActionsColumn extends Column
      */
     public function setDefaultActionsOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setRequired(array('icon', 'label', 'route'));
+        $resolver->setRequired(array('icon', 'title', 'route'));
         $resolver->setOptional(array('route_param'));
     }
 
