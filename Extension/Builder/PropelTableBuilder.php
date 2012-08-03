@@ -127,23 +127,6 @@ class PropelTableBuilder extends TableBuilder
     }
 
     /**
-     * Add a column.
-     * 
-     * @param array
-     */
-    public function addColumn(array $columnArr)
-    {
-        if (array_key_exists('order', $columnArr) && array_key_exists($columnArr['order'], $this->columns)) {
-            $slice = array_slice($this->columns, $columnArr['order']);
-            array_splice($this->columns, $columnArr['order']);
-            $this->columns[$columnArr['order']] = $columnArr;
-            array_splice($slice, count($slice), 0, $this->columns);
-        } else {
-            $this->columns[] = $columnArr;
-        }
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getTable()
