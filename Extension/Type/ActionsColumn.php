@@ -56,6 +56,8 @@ class ActionsColumn extends Column
     /**
      * Sets the default options for this table.
      *
+     * todo nested resolvers?
+     *
      * @param OptionsResolverInterface $resolver The resolver for the options.
      */
     public function setDefaultActionsOptions(OptionsResolverInterface $resolver)

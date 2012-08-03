@@ -66,10 +66,15 @@ class PropelTableBuilder extends TableBuilder
     public function create($name, $type = null, array $options = array())
     {
         // todo Method should not be an option but a Column Extension.
+        // getMethod throws exception when method is not found.
         if (! isset($options['method'])) {
             $method = $this->reflector->getMethod($this->translateColnameToMethod($name));
-            $options['method'] = $method->getName();
         }
+        else {
+            $method = $this->reflector->getMethod($options['method']);
+        }
+
+        $options['method'] = $method->getName();
       
         // guess type based on modelcriteria properties.
         if (null === $type) {
