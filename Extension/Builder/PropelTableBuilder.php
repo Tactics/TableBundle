@@ -39,13 +39,22 @@ class PropelTableBuilder extends TableBuilder
     }
     
     /**
-     * 
+     * Retrieves all the fieldnames from ModelCriteria and adds them.
+     * Todo: All fields have to be added, fields can be set to visible or 
+     * invisible.
+     *
+     * @param array $exclude Names of fields to exclude.
+     *
+     * @return PropelTableBuilder $this The PropelTableBuilder instance. 
      */ 
     public function addAll(array $exclude = array())
     {
         foreach (array_diff($this->getFieldnames(), $exclude) as $key => $fieldName)
         {
-            $this->add($fieldName);
+            // todo clean this up?
+            $options['column_header_value'] = ucfirst(strtolower(str_replace('_', ' ', substr($fieldName, (strpos($fieldName, '.')+1), strlen($fieldName)))));
+            
+            $this->add($fieldName, null, $options);
         }
         
         return $this;
@@ -57,20 +66,19 @@ class PropelTableBuilder extends TableBuilder
     public function create($name, $type = null, array $options = array())
     {
         // todo Method should not be an option but a Column Extension.
-        if (! isset($options['method']))
-        {
-            $method = $this->reflector->getMethod($this->translateRawColnameToMethod($name));
+        if (! isset($options['method'])) {
+            $method = $this->reflector->getMethod($this->translateColnameToMethod($name));
             $options['method'] = $method->getName();
         }
       
         // guess type based on modelcriteria properties.
         if (null === $type) {
             // Guess the method.
-            // Throws an exception when method not found.
-            $methodName        = $options['method'];
+            // Throws exception when method not found.
+            $methodName = $options['method'];
 
             // todo don't use dummy.
-            $val               = $this->dummy->$methodName(); 
+            $val = $this->dummy->$methodName(); 
 
             if (is_object($val) && get_class($val) === 'DateTime') {
                 $type = 'date_time';
@@ -90,7 +98,7 @@ class PropelTableBuilder extends TableBuilder
      */
     private function getFieldnames()
     {
-        return $this->objectPeer->getFieldNames(\BasePeer::TYPE_RAW_COLNAME);
+        return $this->objectPeer->getFieldNames(\BasePeer::TYPE_COLNAME);
     }
 
     /**
@@ -99,15 +107,15 @@ class PropelTableBuilder extends TableBuilder
      * @param $rawColname string 
      * @return string
      */
-    private function translateRawColnameToMethod($rawColname)
+    private function translateColnameToMethod($colname)
     {
-        if (array_search($rawColname, $this->getFieldnames()) === false) {
-            throw new Exception('Unknown column'.$rawColname);
+        if (array_search($colname, $this->getFieldnames()) === false) {
+            throw new \Exception('Unknown column '.$colname);
         }
 
         return 'get'.$this->objectPeer->translateFieldName(
-            $rawColname, 
-            \BasePeer::TYPE_RAW_COLNAME,
+            $colname, 
+            \BasePeer::TYPE_COLNAME,
             \BasePeer::TYPE_PHPNAME
         );
     }

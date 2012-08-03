@@ -86,6 +86,6 @@ class Column implements ColumnInterface
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         // todo Begone! Extensions.
-        $resolver->setOptional(array('method'));
+        $resolver->setOptional(array('method', 'column_header_value'));
     }
 } 
