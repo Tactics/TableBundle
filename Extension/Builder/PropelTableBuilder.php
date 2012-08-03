@@ -34,6 +34,7 @@ class PropelTableBuilder extends TableBuilder
 
         $this->objectPeer = new $peerName();
         $this->reflector  = new \ReflectionClass($this->modelCriteria->getModelName());
+        // todo clean up.
         $this->dummy      = $this->modelCriteria->find()->getFirst();
     }
     
@@ -55,13 +56,20 @@ class PropelTableBuilder extends TableBuilder
      */     
     public function create($name, $type = null, array $options = array())
     {
-        // guess type based on modelcriteria properties
+        // todo Method should not be an option but a Column Extension.
+        if (! isset($options['method']))
+        {
+            $method = $this->reflector->getMethod($this->translateRawColnameToMethod($name));
+            $options['method'] = $method->getName();
+        }
+      
+        // guess type based on modelcriteria properties.
         if (null === $type) {
             // Guess the method.
-            $method = $this->reflector->getMethod($this->translateRawColnameToMethod($name));
-
-            $options['method'] = $method->getName();
+            // Throws an exception when method not found.
             $methodName        = $options['method'];
+
+            // todo don't use dummy.
             $val               = $this->dummy->$methodName(); 
 
             if (is_object($val) && get_class($val) === 'DateTime') {

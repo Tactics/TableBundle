@@ -1,0 +1,12 @@
+{% spaceless %}
+    <td{% if cell.attributes is defined %}{{ render_attributes(cell.attributes) }}{% endif %}>   
+        {% block cell_content %}
+            {% for action,options in column.actions %}
+                <a href="{{ path(options.route, get_hash(options.route_param, column.value(cell.value))) }}">
+                    <i class="icon-{{ options.icon }}"></i>
+                </a> 
+                &nbsp;
+            {% endfor %}
+        {% endblock %}
+    </td>
+{% endspaceless %}
