@@ -12,7 +12,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 /**
  * Description of PropelTableBuilder
  *
- * @author Gert Vrebos <gert.vrebos at tactics.be>
+ * @author Gert Vrebos    <gert.vrebos at tactics.be>
+ * @author Aaron Muylaert <aaron.muylaert at tactics.be>
  */
 class PropelTableBuilder extends TableBuilder
 {
@@ -123,23 +124,6 @@ class PropelTableBuilder extends TableBuilder
             \BasePeer::TYPE_COLNAME,
             \BasePeer::TYPE_PHPNAME
         );
-    }
-
-    /**
-     * Proxy for ReflectorClass::hasMethod
-     *
-     * @throws Exception When method is not found.
-     * @return true When method is found.
-     */
-    private function hasMethod($method)
-    {
-        if (! $this->reflector->hasMethod($method)) {
-            throw new Exception('Method '.$method.
-                ' does not exist for class '.$this->reflector->getName() 
-            );
-        }
-
-        return true;
     }
 
     /**
