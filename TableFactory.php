@@ -10,14 +10,44 @@ namespace Tactics\TableBundle;
 use Tactics\TableBundle\Exception\TableException;
 use Tactics\TableBundle\Exception\UnknownTypeException;
 use Tactics\TableBundle\ColumnHeaderInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 /**
  * Description of TableFactory
  *
  * @author Gert Vrebos <gert.vrebos at tactics.be>
  */
-class TableFactory implements TableFactoryInterface
+class TableFactory implements TableFactoryInterface, ContainerAwareInterface
 {
+    /**
+     * @var $container ContainerInterface A ContainerInterface instance.
+     */
+    protected $container;
+
+    /**
+     * Constructor
+     *
+     * @param ContainerInterface $container A ContainerInterface instance.
+     */
+    public function __construct(ContainerInterface $container)
+    {
+        $this->setContainer($container);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
+
+    public function getContainer()
+    {
+        return $this->container;
+    }
+
    /**
     * {@inheritdoc
     */ 
@@ -67,7 +97,7 @@ class TableFactory implements TableFactoryInterface
         {
             throw new UnknownTypeException("Column type '" . $type . "' could not be resolved. (Guess was: $columnClass )");
         }
-        
+
         return new $columnClass($name, $columnHeader, $options);
     }
 
@@ -79,14 +109,15 @@ class TableFactory implements TableFactoryInterface
     {
         // todo resolving via dependency injection container
         
-        $columnHeaderClass = "Tactics\\TableBundle\\Extension\\Type\\" . \Symfony\Component\DependencyInjection\Container::camelize($type) . 'ColumnHeader';
+      $columnHeaderClass = "Tactics\\TableBundle\\Extension\\Type\\" . \Symfony\Component\DependencyInjection\Container::camelize($type) . 'ColumnHeader';
         
         if (! class_exists($columnHeaderClass))
         {
             throw new UnknownTypeException("ColumnHeader type '" . $type . "' could not be resolved. (Guess was: $columnHeaderClass )");
         }
         
-        $type = new $columnHeaderClass($name, $options);
+        // todo attributes instead of empty array.
+        $type = new $columnHeaderClass($name, array(), $options);
        
         return $type;
     }

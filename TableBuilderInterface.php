@@ -38,7 +38,7 @@ interface TableBuilderInterface extends \Traversable, \Countable
      *
      * @return TableBuilderInterface The created builder
      */
-    public function create($name, $type = null, array $options = array());
+    public function create($name, $type = null, $headerType = null, array $options = array());
     
     /**
      * Returns a child by name.

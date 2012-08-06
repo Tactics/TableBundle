@@ -2,12 +2,14 @@
 
 namespace Tactics\TableBundle\Extension\Builder;
 
+use \Criteria;
+
 use Tactics\TableBundle\TableBuilder;
 use Tactics\TableBundle\TableFactoryInterface;
+use Tactics\TableBundle\Extension\Type\SortableColumnHeader;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
 
 /**
  * Description of PropelTableBuilder
@@ -53,8 +55,15 @@ class PropelTableBuilder extends TableBuilder
         foreach (array_diff($this->getFieldnames(), $exclude) as $key => $fieldName)
         {
             // todo clean this up?
-            $options['column_header_value'] = ucfirst(strtolower(str_replace('_', ' ', substr($fieldName, (strpos($fieldName, '.')+1), strlen($fieldName)))));
+            $options['header']['value'] = ucfirst(strtolower(str_replace('_', ' ', substr($fieldName, (strpos($fieldName, '.')+1), strlen($fieldName)))));
             
+            // todo ColumnHeader extensions should fix this.
+            $options['header']['type'] = 'sortable';
+
+            $request = $this->getTableFactory()->getContainer()->get('request');
+            $route = $request->attributes->get('_route'); 
+            $options['header']['route'] = $route;
+
             $this->add($fieldName, null, $options);
         }
         
@@ -64,24 +73,24 @@ class PropelTableBuilder extends TableBuilder
     /**
      * @inheritDoc
      */     
-    public function create($name, $type = null, array $options = array())
+    public function create($name, $type = null, $headerType = null, array $options = array())
     {
         // todo Method should not be an option but a Column Extension.
         // getMethod throws exception when method is not found.
-        if (! isset($options['method'])) {
+        if (! isset($options['column']['method'])) {
             $method = $this->reflector->getMethod($this->translateColnameToMethod($name));
         }
         else {
-            $method = $this->reflector->getMethod($options['method']);
+            $method = $this->reflector->getMethod($options['column']['method']);
         }
 
-        $options['method'] = $method->getName();
+        $options['column']['method'] = $method->getName();
       
         // guess type based on modelcriteria properties.
         if (null === $type) {
             // Guess the method.
             // Throws exception when method not found.
-            $methodName = $options['method'];
+            $methodName = $options['column']['method'];
 
             // todo don't use dummy.
             $val = $this->dummy->$methodName(); 
@@ -93,8 +102,8 @@ class PropelTableBuilder extends TableBuilder
                 $type = 'text';
             }
         }
-
-        return parent::create($name, $type, $options);
+        
+        return parent::create($name, $type, $headerType, $options);
     }
 
     /**
@@ -137,13 +146,43 @@ class PropelTableBuilder extends TableBuilder
         foreach ($this as $column) {
             $table->add($column);
         }
+        
+        // todo
+        // All of this is a bit weird since we don't really know we're dealing
+        // with sortable columns, well, I know, but .. 
+        $factory = $this->getTableFactory();
+        $request = $factory->getContainer()->get('request');
+        $orderBy = $request->get('order_by'); 
+
+        // todo
+        // At time of testing, a new table was made each request.
+        // Need to find a way to store table settings into session.
+        if ($orderBy)
+        {
+            $column = $table->offsetGet($orderBy);
+            $header = $column->getHeader();
+
+            switch ($header->getState()) {
+                case SortableColumnHeader::ASC:
+                    $header->setState(SortableColumnHeader::DESC);
+                    $this->modelCriteria->orderBy($orderBy, Criteria::DESC);
+                    break;
+                case SortableColumnHeader::DESC:
+                    $header->setState(SortableColumnHeader::NO_SORT);
+                    break;
+                default:
+                    $header->setState(SortableColumnHeader::ASC);
+                    $this->modelCriteria->orderBy($orderBy, Criteria::ASC);
+                    break;
+            }
+        }
 
         $rows = array();
 
         foreach ($this->modelCriteria->find() as $object) {
             $rowArr = array();
             foreach ($table as $column) {
-                $options = $column->getOptions(); 
+                $options = $column->getOptions();
                 $method  = $options['method'];
 
                 $rowArr[$column->getName()] = array('value' => $object->$method());

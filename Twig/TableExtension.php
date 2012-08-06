@@ -70,8 +70,6 @@ class TableExtension extends \Twig_Extension
     public function renderCell(Column $column, $row)
     {  
         if (! isset($row[$column->getName()])) {
-            // throw new \Exception(sprintf('Can\'t find cell with name "%s".', $column->getName()));
-            
             $cell = array('value' => '');
         } 
         else

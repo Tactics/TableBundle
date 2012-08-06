@@ -8,4 +8,6 @@ services:
         
     tactics.table.factory:
         class: Tactics\TableBundle\TableFactory
+        arguments: [@service_container]
+
 

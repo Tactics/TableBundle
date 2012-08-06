@@ -2,6 +2,9 @@
 
 namespace Tactics\TableBundle;
 
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
 class ColumnHeader implements ColumnHeaderInterface
 {
     /**
@@ -19,13 +22,23 @@ class ColumnHeader implements ColumnHeaderInterface
      */
     protected $attributes;
 
+    /*
+     * @var $attributes array
+     */
+    protected $options;
+
     /**
      * {@inheritdoc}
      */
-    public function __construct($value, array $attributes = array())
+    public function __construct($value, array $attributes = array(), array $options = array())
     {
         $this->value      = $value;
         $this->attributes = $attributes;
+
+        $resolver = new OptionsResolver(); 
+        $this->setDefaultOptions($resolver);
+
+        $this->options = $resolver->resolve($options);
     }
 
     /**
@@ -43,6 +56,11 @@ class ColumnHeader implements ColumnHeaderInterface
     {
         return $this->attributes;
     }
+
+    public function getOptions()
+    {
+        return $this->options;
+    }
     
     /**
      * {@inheritdoc}
@@ -52,11 +70,26 @@ class ColumnHeader implements ColumnHeaderInterface
         $this->column = $column;
     }
 
+    public function getColumn()
+    {
+        return $this->column;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function getType()
     {
         return 'default';
+    }
+
+    /**
+     * Sets the default options for this table.
+     *
+     * @param OptionsResolverInterface $resolver The resolver for the options.
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setOptional(array('route', 'type', 'value'));
     }
 }

@@ -1,0 +1,11 @@
+<th{% if header.attributes is not empty %}{{ render_attributes(header.attributes) }} {% endif %}>
+    <a href="{{ path(header.options['route'], {'order_by': header.column.name} ) }}">
+        {{ header.value }}
+        {# todo fix constants #}
+        {% if header.state == 'ascending'%}
+            &or;
+        {% elseif header.state == 'descending' %}
+            &and;
+        {% endif %}
+    </a>
+</th>

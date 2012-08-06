@@ -9,7 +9,7 @@ interface ColumnHeaderInterface
      *
      * @param $value String Value inside of the header.
      */
-    public function __construct($value, array $attributes = array());
+    function __construct($value, array $attributes = array(), array $options = array());
     
     /**
      * Sets the column.
@@ -29,4 +29,9 @@ interface ColumnHeaderInterface
      * @return String The value.
      */
     function getValue();
+
+    /**
+     * @return array The attributes.
+     */
+    function getAttributes();
 }

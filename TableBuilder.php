@@ -75,7 +75,6 @@ class TableBuilder implements \IteratorAggregate, TableBuilderInterface
         $this->setDefaultOptions($resolver);
         
         $this->options = $resolver->resolve($options);
-        
     }
     
     /**
@@ -95,20 +94,26 @@ class TableBuilder implements \IteratorAggregate, TableBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function create($name, $type = null, array $options = array())
+    public function create($name, $type = null, $headerType = null, array $options = array())
     {
+        // todo replace quick hack to clean up options, this is dirty.
+        $columnOptions = isset($options['column']) ? $options['column'] : array();
+        $headerOptions = isset($options['header']) ? $options['header'] : array();
+
         if (null === $type) {
             $type = $this->options['default_column_type'];
         }
 
-        if (null !== $type) {
-            $headerType = isset($options['header_type']) ? $options['header_type'] : $this->options['default_column_header_type']; 
+        if (null === $headerType) {
+            $headerType = $this->options['default_column_header_type'];
+        }
 
-            $name = isset($options['column_header_value']) ? $options['column_header_value'] : $name;
+        if (null !== $type) {
+            $headerName = isset($options['header']['value']) ? $options['header']['value'] : $name;
+
+            $header = $this->factory->createColumnHeader($headerName, $headerType, $headerOptions);
             
-            $header = $this->factory->createColumnHeader($name, $headerType, $options);
-            
-            return $this->factory->createColumn($name, $type, $header, $options);
+            return $this->factory->createColumn($name, $type, $header, $columnOptions);
         }
 
         //return $this->factory->createBuilderForProperty($name, null, $options, $this);
@@ -140,6 +145,9 @@ class TableBuilder implements \IteratorAggregate, TableBuilderInterface
 
     /**
      * {@inheritdoc}
+     *
+     * todo: de-rocketscience this please, headache.
+     * todo: seriously :p
      */
     public function all()
     {
@@ -147,7 +155,10 @@ class TableBuilder implements \IteratorAggregate, TableBuilderInterface
         
         foreach($this->columns as $name => $config)
         {
-            $columns[$name] = $this->create($name, $config['type'] , $config['options']);
+            $headerType = (isset($config['options']['header']) && isset($config['options']['header']['type'])) ?
+                $config['options']['header']['type'] : null;
+
+            $columns[$name] = $this->create($name, $config['type'], $headerType, $config['options']);
         }
         
         return $columns;
