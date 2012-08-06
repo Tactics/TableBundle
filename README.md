@@ -6,8 +6,8 @@ TODO
 
 In order of importance.
 
-1. ActionsColumn
-2. Sorting
+1. Sorting
+2. Handling joins with PropelTableBuilder
 3. Filter (This is not directly related to TableBundle)
 4. Table types
 5. Column extensions
