@@ -2,20 +2,15 @@
 
 namespace Tactics\TableBundle\ModelCriteriaFilter;
 
-interface ModelCriteriaFilter
-{
-    /**
-     * Constructor.
-     *
-     * @param Request       $request   A Request instance.
-     * @param ModelCriteria $mc        A ModelCriteria instance.
-     * @param string        $namespace The key under which settings will be 
-     * saved.
-     */
-     function __construct($request, $mc, $namespace = null);
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use \ModelCriteria;
 
+interface ModelCriteriaFilterInterface extends ContainerAwareInterface
+{
      /**
       * @param ModelCriteria $mc A ModelCriteria instance.
+      * @param string        $key The key under which settings will be saved.
       */
-     function execute($mc);
+     function execute(ModelCriteria $mc, $key = null);
 }
