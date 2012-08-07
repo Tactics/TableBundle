@@ -23,6 +23,11 @@ class SortableColumnHeader extends ColumnHeader
     protected $state = self::NO_SORT;
 
     /**
+     * @var $state string
+     */
+    protected $route;
+
+    /**
      * {@inheritdoc}
      */
     public function getType()
@@ -54,5 +59,15 @@ class SortableColumnHeader extends ColumnHeader
         }
 
         $this->state = $state;
+    }
+
+    public function getRoute()
+    {
+        return $this->route;
+    }
+
+    public function setRoute($route)
+    {
+        $this->route = $route;
     }
 }

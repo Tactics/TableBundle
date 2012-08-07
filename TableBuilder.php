@@ -80,16 +80,33 @@ class TableBuilder implements \IteratorAggregate, TableBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function add($name, $type = null, array $options = array())
+    public function add($name, $type = null, $headerTypeOrOptions, array $options = array())
     {
+        $headerType = is_string($headerTypeOrOptions) ? $headerTypeOrOptions : null;
+        $options = is_array($headerTypeOrOptions) ? $headerTypeOrOptions : $options;
+      
         $this->columns[$name] = array(
-            'type'    => $type,
-            'options' => $options,
+            'type'        => $type,
+            'header_type' => $headerType,
+            'options'     => $options,
         );
 
         return $this;
     }
 
+    protected function extractNamespacedOptions($options, $ns)
+    {
+        $extracted = array();
+
+        foreach ($options as $key => $value) {
+            if (strpos($key, $ns) !== false) {
+                $arr = explode('/', $key);
+                $extracted[end($arr)] = $value;
+            }
+        }
+
+        return $extracted;
+    }
 
     /**
      * {@inheritdoc}
@@ -97,19 +114,21 @@ class TableBuilder implements \IteratorAggregate, TableBuilderInterface
     public function create($name, $type = null, $headerType = null, array $options = array())
     {
         // todo replace quick hack to clean up options, this is dirty.
-        $columnOptions = isset($options['column']) ? $options['column'] : array();
-        $headerOptions = isset($options['header']) ? $options['header'] : array();
+        $columnOptions = $this->extractNamespacedOptions($options, 'column');
+        $headerOptions = $this->extractNamespacedOptions($options, 'header');
 
+        // Set default types if none specified.
         if (null === $type) {
-            $type = $this->options['default_column_type'];
+            $type = $this->options['column_type'];
         }
 
         if (null === $headerType) {
-            $headerType = $this->options['default_column_header_type'];
+            $headerType = $this->options['header_type'];
         }
 
+
         if (null !== $type) {
-            $headerName = isset($options['header']['value']) ? $options['header']['value'] : $name;
+            $headerName = isset($headerOptions['value']) ? $headerOptions['value'] : $name;
 
             $header = $this->factory->createColumnHeader($headerName, $headerType, $headerOptions);
             
@@ -155,12 +174,12 @@ class TableBuilder implements \IteratorAggregate, TableBuilderInterface
         
         foreach($this->columns as $name => $config)
         {
-            $headerType = (isset($config['options']['header']) && isset($config['options']['header']['type'])) ?
-                $config['options']['header']['type'] : null;
+            $headerType = (isset($config['header_type'])) ?
+                $config['header_type'] : null;
 
             $columns[$name] = $this->create($name, $config['type'], $headerType, $config['options']);
         }
-        
+
         return $columns;
     }
 
@@ -215,11 +234,9 @@ class TableBuilder implements \IteratorAggregate, TableBuilderInterface
     {
         $resolver
             ->setDefaults(array(
-                'default_column_type' => 'text',
-                'default_column_header_type' => 'text'
+                'column_type' => 'text',
+                'header_type' => 'text'
         ));
     }
-    
-  
 }
 

@@ -107,8 +107,6 @@ class TableFactory implements TableFactoryInterface, ContainerAwareInterface
      */
     public function createColumnHeader($name, $type = '', array $options = array())
     {
-        // todo resolving via dependency injection container
-        
       $columnHeaderClass = "Tactics\\TableBundle\\Extension\\Type\\" . \Symfony\Component\DependencyInjection\Container::camelize($type) . 'ColumnHeader';
         
         if (! class_exists($columnHeaderClass))
@@ -118,7 +116,7 @@ class TableFactory implements TableFactoryInterface, ContainerAwareInterface
         
         // todo attributes instead of empty array.
         $type = new $columnHeaderClass($name, array(), $options);
-       
+
         return $type;
     }
     

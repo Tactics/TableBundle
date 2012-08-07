@@ -38,6 +38,7 @@ class ColumnHeader implements ColumnHeaderInterface
         $resolver = new OptionsResolver(); 
         $this->setDefaultOptions($resolver);
 
+        $this->options = $options;
         $this->options = $resolver->resolve($options);
     }
 
@@ -47,6 +48,14 @@ class ColumnHeader implements ColumnHeaderInterface
     public function getValue()
     {
         return $this->value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
     }
 
     /**
@@ -90,6 +99,7 @@ class ColumnHeader implements ColumnHeaderInterface
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setOptional(array('route', 'type', 'value'));
+        // todo lose the resolver, create attributes.
+        $resolver->setOptional(array('route', 'type', 'value', 'sort'));
     }
 }

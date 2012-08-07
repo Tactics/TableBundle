@@ -29,7 +29,7 @@ class ModelCriteriaSorter implements ModelCriteriaFilterInterface
         $key = null === $key ? 'sorter/'.$request->attributes->get('_route') : $key;
 
         $sorts = $session->has($key) ? $session->get($key) : array();
-
+        
         // Retrieve sort from request.
         // Create, update or delete sort from current sorts.
         if ($request->get('asc')) {
@@ -64,7 +64,7 @@ class ModelCriteriaSorter implements ModelCriteriaFilterInterface
 
     private function unsort($name, $sorts)
     {
-        if ($key = $this->findKeyByName($name, $sorts) !== false) {
+        if (($key = $this->findKeyByName($name, $sorts)) !== false) {
             unset($sorts[$key]);
         }
 

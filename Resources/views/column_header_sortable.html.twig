@@ -1,11 +1,17 @@
 <th{% if header.attributes is not empty %}{{ render_attributes(header.attributes) }} {% endif %}>
-    <a href="{{ path(header.options['route'], {'order_by': header.column.name} ) }}">
-        {{ header.value }}
         {# todo fix constants #}
-        {% if header.state == 'ascending'%}
-            &or;
-        {% elseif header.state == 'descending' %}
-            &and;
+        {% if header.options['sort'] is defined and header.options['sort'] == 'ascending'%}
+            <a href="{{ path(header.options['route'], {'desc': header.column.name} ) }}">
+            {{ header.value }} &nbsp; <i class="icon-chevron-up"></i>
+        </a>
+        {% elseif header.options['sort'] is defined and header.options['sort'] == 'descending' %}
+            <a href="{{ path(header.options['route'], {'unsort': header.column.name} ) }}">
+            {{ header.value }} &nbsp; <i class="icon-chevron-down"></i>
+        </a>
+        {% else %}
+            <a href="{{ path(header.options['route'], {'asc': header.column.name} ) }}">
+            {{ header.value }}
+        </a>
         {% endif %}
     </a>
 </th>

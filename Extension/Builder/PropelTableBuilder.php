@@ -52,21 +52,34 @@ class PropelTableBuilder extends TableBuilder
      */ 
     public function addAll(array $exclude = array())
     {
-        foreach (array_diff($this->getFieldnames(), $exclude) as $key => $fieldName)
-        {
+        foreach (array_diff($this->getFieldnames(), $exclude) as $key => $fieldName) {
+            $options = array();
+
             // todo clean this up?
-            $options['header']['value'] = ucfirst(strtolower(str_replace('_', ' ', substr($fieldName, (strpos($fieldName, '.')+1), strlen($fieldName)))));
+            $options['header/value'] = ucfirst(strtolower(str_replace('_', ' ', substr($fieldName, (strpos($fieldName, '.')+1), strlen($fieldName)))));
+
+            // Look for fieldname in order by columns
+            foreach ($this->modelCriteria->getOrderByColumns() as $orderByColumn) {
+                if (strpos($orderByColumn, $fieldName) !== false) {
+                    // Find out which sort is applied
+                    if (strpos($orderByColumn, Criteria::ASC)) {
+                        $options['header/sort'] = SortableColumnHeader::ASC;
+                    } else {
+                        $options['header/sort'] = SortableColumnHeader::DESC; 
+                    }
+
+                    break;
+                }
+            }
             
             // todo ColumnHeader extensions should fix this.
-            $options['header']['type'] = 'sortable';
-
             $request = $this->getTableFactory()->getContainer()->get('request');
             $route = $request->attributes->get('_route'); 
-            $options['header']['route'] = $route;
+            $options['header/route'] = $route;
 
-            $this->add($fieldName, null, $options);
+            $this->add($fieldName, null, 'sortable', $options);
         }
-        
+
         return $this;
     }
     
@@ -77,20 +90,20 @@ class PropelTableBuilder extends TableBuilder
     {
         // todo Method should not be an option but a Column Extension.
         // getMethod throws exception when method is not found.
-        if (! isset($options['column']['method'])) {
+        if (! isset($options['column/method'])) {
             $method = $this->reflector->getMethod($this->translateColnameToMethod($name));
         }
         else {
-            $method = $this->reflector->getMethod($options['column']['method']);
+            $method = $this->reflector->getMethod($options['column/method']);
         }
 
-        $options['column']['method'] = $method->getName();
+        $options['column/method'] = $method->getName();
       
         // guess type based on modelcriteria properties.
         if (null === $type) {
             // Guess the method.
             // Throws exception when method not found.
-            $methodName = $options['column']['method'];
+            $methodName = $options['column/method'];
 
             // todo don't use dummy.
             $val = $this->dummy->$methodName(); 
@@ -142,11 +155,11 @@ class PropelTableBuilder extends TableBuilder
     {
         // todo: create!
         $table = $this->factory->createTable($this->name, $this->type, array());
-        
+
         foreach ($this as $column) {
             $table->add($column);
         }
-        
+
         // todo
         // All of this is a bit weird since we don't really know we're dealing
         // with sortable columns, well, I know, but .. 
