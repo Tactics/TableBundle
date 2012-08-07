@@ -18,7 +18,6 @@ class Table implements \IteratorAggregate, TableInterface
      * @var array An array of rows.
      */
     protected $rows = array();
-
     
     /**
      * @var array An array of attributes.
