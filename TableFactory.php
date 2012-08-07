@@ -12,6 +12,8 @@ use Tactics\TableBundle\Exception\UnknownTypeException;
 use Tactics\TableBundle\ColumnHeaderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Description of TableFactory
@@ -51,8 +53,16 @@ class TableFactory implements TableFactoryInterface, ContainerAwareInterface
    /**
     * {@inheritdoc
     */ 
-    public function createBuilder($name, $type = '', array $options = array())
+    public function createBuilder($type = '', array $options = array())
     {
+        $resolver = new OptionsResolver();
+        $this->setDefaultOptions($resolver);
+
+        $options = $resolver->resolve($options);
+
+        $name = $options['table_class'];
+        unset($options['table_class']);
+
         // todo resolving via dependency injection container
         
         $tableBuilderClass = "Tactics\\TableBundle\\Extension\\Builder\\" . \Symfony\Component\DependencyInjection\Container::camelize($type) . 'TableBuilder';
@@ -118,6 +128,25 @@ class TableFactory implements TableFactoryInterface, ContainerAwareInterface
         $type = new $columnHeaderClass($name, array(), $options);
 
         return $type;
+    }
+
+    /**
+     * Sets the default options for this type.
+     *
+     * @param OptionsResolverInterface $resolver The resolver for the options.
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setRequired(array('model_criteria', 'table_class'));
+
+        $resolver->setOptional(array('header_type', 'column_type'));
+
+        $resolver
+            ->setDefaults(array(
+                'table_class' => 'table',
+        ));
+
+        return $resolver;
     }
     
 }

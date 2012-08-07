@@ -21,7 +21,7 @@ use Tactics\TableBundle\ColumnHeaderInterface;
 interface TableFactoryInterface
 {
     
-    public function createBuilder($name, $type = '', array $options = array());
+    public function createBuilder($type = '', array $options = array());
     
     
     /**
