@@ -30,6 +30,7 @@ class ActionsColumn extends Column
 
         // todo nested resolvers?
         foreach ($this->options['actions'] as $action => $options) {
+
             $this->actions[$action] = $actionsResolver->resolve($options);
         }
     }
@@ -62,6 +63,9 @@ class ActionsColumn extends Column
      */
     public function setDefaultActionsOptions(OptionsResolverInterface $resolver)
     {
+        $resolver->setDefaults(array(
+            'attributes' => array()
+        ));
         $resolver->setRequired(array('icon', 'title', 'route'));
         $resolver->setOptional(array('route_param'));
     }
