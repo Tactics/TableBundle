@@ -106,7 +106,10 @@ class PropelTableBuilder extends TableBuilder
             $methodName = $options['column/method'];
 
             // todo don't use dummy.
-            $val = $this->dummy->$methodName(); 
+            $val = null;
+            if ($this->dummy) {
+                $val = $this->dummy->$methodName(); 
+            }
 
             if (is_object($val) && get_class($val) === 'DateTime') {
                 $type = 'date_time';
