@@ -20,7 +20,7 @@ class ModelCriteriaSorter implements ModelCriteriaFilterInterface
         $this->container = $container;
     }
 
-    public function execute(ModelCriteria $mc, $key = null)
+    public function execute(ModelCriteria $mc, $key = null, $options = array())
     {
         $request = $this->container->get('request');
         $session = $this->container->get('session');
