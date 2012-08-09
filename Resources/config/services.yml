@@ -9,8 +9,3 @@ services:
     tactics.table.factory:
         class: Tactics\TableBundle\TableFactory
         arguments: [@service_container]
-
-    tactics.model_criteria_filter.sorter:
-        class: Tactics\TableBundle\ModelCriteriaFilter\ModelCriteriaSorter
-        arguments: [@service_container]
-
