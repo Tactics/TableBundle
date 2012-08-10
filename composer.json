@@ -1,12 +1,15 @@
 {
   "name": "tactics/table-bundle",
-  "description": "Render html tables based on ModelCriteria",
+  "description": "HTML Table rendering with Propel integration",
   "keywords": ["propel", "orm", "table"],
   "type": "symfony-bundle",
   "license": "",
   "authors": [{
     "name": "Aaron Muylaert",
     "email": "aaron@tactics.be"
+  }, {
+    "name": "Gert Vrebos",
+    "email": "gert@tactics.be"
   }],
   "require": {
     "symfony/symfony": "2.1.*",
@@ -22,4 +25,3 @@
   "target-dir": "Tactics/TableBundle",
   "minimum-stability": "dev"
 }
-
