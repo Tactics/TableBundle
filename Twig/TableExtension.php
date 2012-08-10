@@ -67,16 +67,12 @@ class TableExtension extends \Twig_Extension
      * @param Column $column The Column instance to render.
      * @param array  $row  An array with the row.
      */
-    public function renderCell(Column $column, $row)
+    public function renderCell(Column $column, array $row)
     {  
-        if (! isset($row[$column->getName()])) {
-            $cell = array('value' => '');
-        } 
-        else
-        {
-            $cell = $row[$column->getName()];
-        }
-
+        $cell = $column->getCell($row);
+        
+        $column->executeExtensions($cell, $row);
+        
         return $this->container->get('templating')->render(
             'TacticsTableBundle::column_cell_'.$column->getType().'.html.twig',
             array(
