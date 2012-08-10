@@ -9,8 +9,9 @@ use \ModelCriteria;
 interface ModelCriteriaFilterInterface extends ContainerAwareInterface
 {
      /**
-      * @param ModelCriteria $mc A ModelCriteria instance.
+      * @param ModelCriteria $mc  A ModelCriteria instance.
       * @param string        $key The key under which settings will be saved.
+      * @param array         $options 
       */
-     function execute(ModelCriteria $mc, $key = null);
+     function execute(ModelCriteria $mc, $key = null, $options = array());
 }
