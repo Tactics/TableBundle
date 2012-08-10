@@ -8,7 +8,7 @@ interface ColumnInterface
     /**
      * Constructor.
      */
-    public function __construct($name, ColumnHeader $header, array $attributes = array());
+    public function __construct($name, ColumnHeader $header, array $attributes = array(), $extensions = array());
     
     /**
      * @return String The name of the column.
@@ -16,15 +16,19 @@ interface ColumnInterface
     function getName();
 
     /**
-     * @param mixed $value The value.
+     * @param array $row The current row.
      *
-     * @return mixed $value The formatted value.
+     * @return mixed The cell info of this column in the given row 
      */
-    function getValue($value);
+    function getCell($row);
 
 
     /**
      * @return string The type of the column.
      */
     function getType();
+    
+    function getOption($name);
+    
+    function setOption($name, $value);
 }
