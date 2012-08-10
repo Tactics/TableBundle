@@ -1,0 +1,21 @@
+parameters: 
+services: 
+    tactics.twig.object_table_extension:
+        class: Tactics\TableBundle\Twig\TableExtension
+        arguments: [@service_container]
+        tags:
+            - { name: twig.extension }
+        
+    tactics.table.factory:
+        class: Tactics\TableBundle\TableFactory
+        arguments: [@service_container, [], []]
+
+    tactics.model_criteria_filter.sorter:
+        class: Tactics\TableBundle\ModelCriteriaFilter\ModelCriteriaSorter
+        arguments: [@service_container]
+
+    tactics.table.extension.linkcolumn:
+        class: Tactics\TableBundle\Extension\Type\LinkColumnExtension
+        arguments: [@router]
+        tags:
+            - { name: tactics.table.extension, alias: column }
