@@ -80,7 +80,7 @@ class TableBuilder implements \IteratorAggregate, TableBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function add($name, $type = null, $headerTypeOrOptions, array $options = array())
+    public function add($name, $type = null, $headerTypeOrOptions = null, array $options = array())
     {
         $headerType = is_string($headerTypeOrOptions) ? $headerTypeOrOptions : null;
         $options = is_array($headerTypeOrOptions) ? $headerTypeOrOptions : $options;

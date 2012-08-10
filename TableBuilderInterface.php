@@ -28,7 +28,7 @@ interface TableBuilderInterface extends \Traversable, \Countable
      *
      * @return TableBuilderInterface The builder object.
      */
-    public function add($child, $type = null, $headerTypeOrOptions, array $options = array());
+    public function add($child, $type = null, $headerTypeOrOptions = null, array $options = array());
 
     /**
      * Creates a table builder.
