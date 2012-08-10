@@ -1,0 +1,5 @@
+{% extends "TacticsTableBundle::column_cell_default.html.twig" %}
+
+{% block cell_value %}
+    {{ cell.value | date('d/m/Y') }}
+{% endblock %}
