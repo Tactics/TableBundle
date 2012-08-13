@@ -12,8 +12,8 @@ class DateTimeColumn extends Column
     /**
      * {@inheritdoc}
      */
-    public function getValue($value)
+    public function getType()
     {
-        return $value->format('d/m/Y'); 
-    }
+        return 'datetime';
+    }    
 }

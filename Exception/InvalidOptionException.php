@@ -3,11 +3,11 @@
 namespace Tactics\TableBundle\Exception;
 
 /**
- * Description of UnknownTypeException
+ * Description of InvalidOptionException
  *
  * @author Gert Vrebos <gert.vrebos at tactics.be>
  */
-class UnknownTypeException extends TableException {
+class InvalidOptionException extends TableException {
     
 
 }

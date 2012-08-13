@@ -17,22 +17,33 @@ class Column implements ColumnInterface
      */
     protected $name;
 
-    /*
+    /**
      * @var $options array The column options.
      */
     protected $options;
 
     /**
+     * @var $extensions The type extensions
+     */
+    protected $extensions;
+    
+    /**
      * {@inheritdoc}
      */
-    public function __construct($name, ColumnHeader $header, array $options = array())
+    public function __construct($name, ColumnHeader $header, array $options = array(), $extensions = array())
     {
         $this->name = $name;
         $this->header = $header;
+        $this->extensions = $extensions;
 
         $resolver = new OptionsResolver();
         $this->setDefaultOptions($resolver);
                 
+        foreach($this->extensions as $extension)
+        {
+            $extension->setDefaultOptions($resolver);
+        }
+        
         $this->options = $resolver->resolve($options);
         
         $this->header->setColumn($this);
@@ -65,9 +76,27 @@ class Column implements ColumnInterface
     /**
      * {@inheritdoc}
      */
-    public function getValue($value)
+    public function getCell($row)
     {
-        return $value; 
+        $cell = isset($row[$this->getName()]) ? $row[$this->getName()] : array();
+        
+        if (! is_array($cell))
+        {
+            $cell = array('value' => $cell);
+        }
+        
+        return array_merge(array('value' => null), $cell);
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function executeExtensions(array &$cell, array &$row)
+    {
+        foreach($this->extensions as $extension)
+        {
+            $extension->execute($this, $row, $cell);
+        }        
     }
 
     /**
@@ -76,6 +105,16 @@ class Column implements ColumnInterface
     public function getOptions()
     {
         return $this->options;
+    }
+    
+    public function getOption($name)
+    {
+        return isset($this->options[$name]) ? $this->options[$name] : null;
+    }
+    
+    public function setOption($name, $value)
+    {
+        $this->options[$name] = $value;
     }
 
     /**

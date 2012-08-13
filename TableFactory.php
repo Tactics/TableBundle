@@ -26,15 +26,41 @@ class TableFactory implements TableFactoryInterface, ContainerAwareInterface
      * @var $container ContainerInterface A ContainerInterface instance.
      */
     protected $container;
+    
+    /**
+     * @var $columnExtensions array A list of columnExtensions
+     */
+    protected $columnExtensions;
+    
+    /**
+     * @var $headerExtensions array A list of headerExtensions
+     */
+    protected $headerExtensions;
+    
 
     /**
      * Constructor
      *
      * @param ContainerInterface $container A ContainerInterface instance.
+     * @param array $columnExtensions A list of columnExtensions
+     * @param array $headerExtensions A list of headerExtensions
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $container, array $columnExtensions = array(), $headerExtensions = array())
     {
         $this->setContainer($container);
+        
+        $this->columnExtensions = array();
+        foreach($columnExtensions as $id)
+        {
+            $this->columnExtensions[] = $container->get($id);
+        }
+        
+        $this->headerExtensions = array();
+        foreach($headerExtensions as $id)
+        {
+            $this->headerExtensions[] = $container->get($id);
+        }
+        
     }
 
     /**
@@ -108,7 +134,7 @@ class TableFactory implements TableFactoryInterface, ContainerAwareInterface
             throw new UnknownTypeException("Column type '" . $type . "' could not be resolved. (Guess was: $columnClass )");
         }
 
-        return new $columnClass($name, $columnHeader, $options);
+        return new $columnClass($name, $columnHeader, $options, $this->getColumnExtensionsForType($type));
     }
 
     
@@ -147,6 +173,34 @@ class TableFactory implements TableFactoryInterface, ContainerAwareInterface
         ));
 
         return $resolver;
+    }
+    
+    /**
+     * Returns column extensions for the given type
+     * 
+     * @param string $type
+     * 
+     * @return array[]ColumnTypeExtensionInterface
+     */
+    protected function getColumnExtensionsForType($type)
+    {
+        // todo: extensions per type; take into account type inheritance?  
+        
+        return $this->columnExtensions;
+    }
+    
+    /**
+     * Returns header extensions for the given type
+     * 
+     * @param string $type
+     * 
+     * @return array[]HeaderTypeExtensionInterface
+     */
+    protected function getHeaderExtensionsForType($type)
+    {
+        // todo: extensions per type; take into account type inheritance?  
+        
+        return $this->headerExtensions;
     }
     
 }

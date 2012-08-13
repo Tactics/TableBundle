@@ -21,7 +21,7 @@ class ActionsColumn extends Column
     /**
      * {@inheritdoc}
      */
-    public function __construct($name, ColumnHeader $header, array $options = array())
+    public function __construct($name, ColumnHeader $header, array $options = array(), $extensions = array())
     {
         parent::__construct($name, $header, $options);
 

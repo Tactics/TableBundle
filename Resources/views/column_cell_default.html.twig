@@ -1,7 +1,13 @@
 {% spaceless %}
     <td{% if cell.attributes is defined %}{{ render_attributes(cell.attributes) }}{% endif %}>   
         {% block cell_content %}
-            {{ column.value(cell.value) }}
+            {% if cell.url|default(false) %}
+                <a href="{{ cell.url }}">
+            {% endif %}
+                {% block cell_value %}{{ cell.value | raw }}{% endblock %}
+            {% if cell.url|default(false) %}
+                </a>
+            {% endif %}
         {% endblock %}
     </td>
 {% endspaceless %}
