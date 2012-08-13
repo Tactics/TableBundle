@@ -10,6 +10,7 @@ use \Criteria;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Tactics\TableBundle\Form\Type\ModelCriteriaFilterType;
+use Tactics\myDate\myDate;
 
 /**
  * @author Aaron Muylaert <aaron.muylaert at tactics.be>
@@ -60,9 +61,7 @@ class ModelCriteriaFilter implements ModelCriteriaFilterInterface
                 if ($postedFieldName === '_token') continue;
 
                 // todo Exception classes.
-                if (array_key_exists($postedFieldName, $this->fields) === false) {
-                    throw new \Exception('Unknown field '.$postedFieldName); 
-                } 
+                if (array_key_exists($postedFieldName, $this->fields) === false) continue;
 
                 // Add to fields array.
                 $this->fields[$postedFieldName]['value'] = $value;
@@ -86,11 +85,23 @@ class ModelCriteriaFilter implements ModelCriteriaFilterInterface
         
         // Add filter info to ModelCriteria.
         foreach ($this->fields as $fieldName => $options) {
-            $fieldName = str_replace(':', '.', $fieldName);
+            $fieldName = str_replace('__', '.', $fieldName);
 
-            if ($options['value'] === '') continue;
+            if ($options['value'] === NULL) continue;
+            // Empty strings get posted.
+            if ($options['value'] === '') {
+                $this->options[$fieldName]['value'] = null;
+                continue;
+            }
 
-            $mc->add($fieldName, $options['value'], $options['criteria']);
+            if (($options['type'] === 'datum' || $options['type'] === 'date') && $options['value']) {
+              $dt = \DateTime::createFromFormat('d/m/Y', $options['value']);
+              $options['value'] = $dt->format('Y-m-d');
+
+              $fieldName = rtrim($fieldName, '_van _tot');
+            }
+
+            $mc->addAnd($fieldName, $options['value'], $options['criteria']);
         }
 
         return $mc;
@@ -111,8 +122,20 @@ class ModelCriteriaFilter implements ModelCriteriaFilterInterface
         
         $options = $resolver->resolve($options);
 
-        // We replace '.' to ':' because '.' is not allowed in a post request.
-        $this->fields[str_replace('.', ':', $field)] = $options;
+        // Replace '.' to '__' because '.' is not allowed in a post request.
+        $name = str_replace('.', '__', $field);
+
+        if ($options['type'] === 'date' || $options['type'] === 'datum') {
+            $this->fields[$name.'_van'] = $options; 
+            $this->fields[$name.'_van']['label'] = 'geboortedatum van';
+            $this->fields[$name.'_van']['criteria'] = Criteria::GREATER_EQUAL;
+            $this->fields[$name.'_tot'] = $options; 
+            $this->fields[$name.'_tot']['label'] = 'geboortedatum tot';
+            $this->fields[$name.'_tot']['criteria'] = Criteria::LESS_EQUAL;
+        }
+        else {
+            $this->fields[$name] = $options;
+        }
 
         return $this;
     }
@@ -122,7 +145,7 @@ class ModelCriteriaFilter implements ModelCriteriaFilterInterface
      *
      * @return Form A Form instance.
      */
-    public function getForm()
+    public function getForm() 
     {
         $builder = $this->container->get('form.factory')
             ->createBuilder(new ModelCriteriaFilterType());
@@ -130,15 +153,19 @@ class ModelCriteriaFilter implements ModelCriteriaFilterInterface
         foreach ($this->fields as $fieldName => $options)
         {
             $label = isset($options['label']) ? $options['label'] :
-                $label = ucfirst(strtolower(str_replace('_', ' ', mb_substr($fieldName, strpos($fieldName, ':')+1))));
+                $label = ucfirst(strtolower(str_replace('_', ' ', mb_substr($fieldName, strpos($fieldName, '__')+1))));
+
+            if ($options['type'] === 'date' || $options['type'] === 'datum' && $options['value']) {
+                $options['value'] = \DateTime::createFromFormat('d/m/Y', $options['value']);
+            }
 
             $builder->add($fieldName, $options['type'], array(
               'required' => false,
-              'data' => $options['value'],
+              'data' => ($options['value'] ? $options['value'] : null),
               'label' => $label,
               'render_optional_text' => false 
                
-            )); 
+            ));
         }
 
         return $builder->getForm();
