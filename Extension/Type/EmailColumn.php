@@ -5,10 +5,6 @@ namespace Tactics\TableBundle\Extension\Type;
 use Tactics\TableBundle\Column;
 use Tactics\TableBundle\ColumnHeader;
 
-use Symfony\Component\Validator\Constraints\Email;
-use Symfony\Component\Validator\Constraints\EmailValidator;
-
-
 /**
  * @author Aaron Muylaert <aaron.muylaert at tactics.be>
  */
