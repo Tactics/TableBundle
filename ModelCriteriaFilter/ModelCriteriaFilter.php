@@ -101,6 +101,10 @@ class ModelCriteriaFilter implements ModelCriteriaFilterInterface
               $fieldName = rtrim($fieldName, '_van _tot');
             }
 
+            if ($options['criteria'] === Criteria::LIKE) {
+                $options['value'] = '%'.$options['value'].'%';
+            }
+
             $mc->addAnd($fieldName, $options['value'], $options['criteria']);
         }
 
@@ -125,12 +129,14 @@ class ModelCriteriaFilter implements ModelCriteriaFilterInterface
         // Replace '.' to '__' because '.' is not allowed in a post request.
         $name = str_replace('.', '__', $field);
 
+        $label = $this->getFieldLabel($name);
+
         if ($options['type'] === 'date' || $options['type'] === 'datum') {
             $this->fields[$name.'_van'] = $options; 
-            $this->fields[$name.'_van']['label'] = 'geboortedatum van';
+            $this->fields[$name.'_van']['label'] = $label.' van';
             $this->fields[$name.'_van']['criteria'] = Criteria::GREATER_EQUAL;
             $this->fields[$name.'_tot'] = $options; 
-            $this->fields[$name.'_tot']['label'] = 'geboortedatum tot';
+            $this->fields[$name.'_tot']['label'] = $label.' tot';
             $this->fields[$name.'_tot']['criteria'] = Criteria::LESS_EQUAL;
         }
         else {
@@ -152,9 +158,7 @@ class ModelCriteriaFilter implements ModelCriteriaFilterInterface
 
         foreach ($this->fields as $fieldName => $options)
         {
-            $label = isset($options['label']) ? $options['label'] :
-                $label = ucfirst(strtolower(str_replace('_', ' ', mb_substr($fieldName, strpos($fieldName, '__')+1))));
-
+            $label = isset($options['label']) ? $options['label'] : $this->getFieldLabel($fieldName);
             if ($options['type'] === 'date' || $options['type'] === 'datum' && $options['value']) {
                 $options['value'] = \DateTime::createFromFormat('d/m/Y', $options['value']);
             }
@@ -186,5 +190,15 @@ class ModelCriteriaFilter implements ModelCriteriaFilterInterface
         ));
 
         $resolver->setOptional(array('label'));
+    }
+
+    /**
+     * Transform fieldname to label.
+     *
+     * @return string
+     */
+    private function getFieldLabel($fieldName)
+    {
+      return ucfirst(strtolower(str_replace('_', ' ', mb_substr($fieldName, strpos($fieldName, '__')+1))));
     }
 }
