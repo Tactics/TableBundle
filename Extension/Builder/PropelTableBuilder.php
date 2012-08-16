@@ -76,6 +76,8 @@ class PropelTableBuilder extends TableBuilder
             $request = $this->getTableFactory()->getContainer()->get('request');
             $route = $request->attributes->get('_route'); 
             $options['header/route'] = $route;
+            $options['header/route_params'] = $request->attributes->get('_route_params') ?
+                $request->attributes->get('_route_params') : array();
 
             $this->add($fieldName, null, 'sortable', $options);
         }

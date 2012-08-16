@@ -1,15 +1,14 @@
 <th{% if header.attributes is not empty %}{{ render_attributes(header.attributes) }} {% endif %}>
-        {# todo fix constants #}
         {% if header.options['sort'] is defined and header.options['sort'] == 'ascending'%}
-            <a href="{{ path(header.options['route'], {'desc': header.column.name} ) }}">
+            <a class="a-filter" href="{{ path(header.options['route'], header.options['route_params']|merge({'desc': header.column.name})) }}">
             {{ header.value }} &nbsp; <i class="icon-chevron-up"></i>
         </a>
         {% elseif header.options['sort'] is defined and header.options['sort'] == 'descending' %}
-            <a href="{{ path(header.options['route'], {'unsort': header.column.name} ) }}">
+            <a class="a-filter" href="{{ path(header.options['route'], header.options['route_params']|merge({'desc': header.column.name})) }}">
             {{ header.value }} &nbsp; <i class="icon-chevron-down"></i>
         </a>
         {% else %}
-            <a href="{{ path(header.options['route'], {'asc': header.column.name} ) }}">
+            <a class="a-filter" href="{{ path(header.options['route'], header.options['route_params']|merge({'desc': header.column.name})) }}">
             {{ header.value }}
         </a>
         {% endif %}

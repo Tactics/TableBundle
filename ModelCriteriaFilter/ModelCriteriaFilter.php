@@ -54,7 +54,7 @@ class ModelCriteriaFilter implements ModelCriteriaFilterInterface
         $key = null === $key ? 'filter/'.$request->attributes->get('_route') : $key;
 
         // Update fields and place them in the session.
-        if ($request->getMethod() == 'POST') {
+        if ($request->getMethod() == 'POST' && $filterBy) {
             foreach ($filterBy as $postedFieldName => $value) {
               
                 // todo find out what to do with _token.

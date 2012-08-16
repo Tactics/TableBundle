@@ -42,6 +42,8 @@ class TableExtension extends \Twig_Extension
             'render_attributes' => new \Twig_Function_Method($this, 'renderAttributes', 
             array('is_safe' => array('html'))),
             'get_hash' => new \Twig_Function_Method($this, 'getHash', 
+            array('is_safe' => array('html'))),
+            'table_actions' => new \Twig_Function_Method($this, 'renderActions', 
             array('is_safe' => array('html')))
         );
     }
@@ -117,6 +119,13 @@ class TableExtension extends \Twig_Extension
     public function getHash($key, $value)
     {
         return array($key => $value);
+    }
+
+    public function renderActions()
+    {
+        return $this->container->get('templating')->render(
+            'TacticsTableBundle::table_actions.html.twig'
+        );
     }
 
     /**
