@@ -4,11 +4,11 @@
             {{ header.value }} &nbsp; <i class="icon-chevron-up"></i>
         </a>
         {% elseif header.options['sort'] is defined and header.options['sort'] == 'descending' %}
-            <a class="a-filter" href="{{ path(header.options['route'], header.options['route_params']|merge({'desc': header.column.name})) }}">
+            <a class="a-filter" href="{{ path(header.options['route'], header.options['route_params']|merge({'unsort': header.column.name})) }}">
             {{ header.value }} &nbsp; <i class="icon-chevron-down"></i>
         </a>
         {% else %}
-            <a class="a-filter" href="{{ path(header.options['route'], header.options['route_params']|merge({'desc': header.column.name})) }}">
+            <a class="a-filter" href="{{ path(header.options['route'], header.options['route_params']|merge({'asc': header.column.name})) }}">
             {{ header.value }}
         </a>
         {% endif %}
