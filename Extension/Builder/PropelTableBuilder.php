@@ -20,6 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class PropelTableBuilder extends TableBuilder
 {
     protected $modelCriteria;
+    protected $peerName;
     protected $objectPeer;
     protected $tableMap;
     protected $reflector;
@@ -34,11 +35,11 @@ class PropelTableBuilder extends TableBuilder
         
         $this->modelCriteria = $this->options['model_criteria'];
         
-        $peerName = $this->modelCriteria->getModelPeerName();
+        $this->peerName = $this->modelCriteria->getModelPeerName();
 
         $this->tableMap = $this->modelCriteria->getTableMap();
 
-        $this->objectPeer = new $peerName();
+        $this->objectPeer = new $this->peerName();
         $this->reflector  = new \ReflectionClass($this->modelCriteria->getModelName());
     }
     
@@ -103,37 +104,52 @@ class PropelTableBuilder extends TableBuilder
       
         // guess type based on modelcriteria properties.
         if (null === $type) {
-              $methodName = $options['column/method'];
+            $methodName = $options['column/method'];
 
-              // Retrieve TableMap column by name.
-              $rawColName = $this->objectPeer->translateFieldname(
-                  $name,
-                  \BasePeer::TYPE_COLNAME,
-                  \BasePeer::TYPE_RAW_COLNAME
-              );
+            // Retrieve TableMap column by name.
+            $rawColName = $this->objectPeer->translateFieldname(
+                $name,
+                \BasePeer::TYPE_COLNAME,
+                \BasePeer::TYPE_RAW_COLNAME
+            );
 
-              $column = $this->tableMap->getColumn($rawColName);
+            $column = $this->tableMap->getColumn($rawColName);
 
-              switch ($column->getType()) {
-                  case 'DATE':
-                      $type = 'date_time';
-                      $options['column/show_date'] = true;
-                      $options['column/show_time'] = false;
-                      break;
-                  case 'TIME':
-                      $type = 'date_time';
-                      $options['column/show_date'] = false;
-                      $options['column/show_time'] = true;
-                      break;
-                  case 'TIMESTAMP':
-                      $type = 'date_time';
-                      $options['column/show_date'] = true;
-                      $options['column/show_time'] = true;
-                      break;
-                  default:
-                      $type = 'text';
-                  break; 
-              }
+            switch ($column->getType()) {
+                case 'DATE':
+                    $type = 'date_time';
+                    $options['column/show_date'] = true;
+                    $options['column/show_time'] = false;
+                    break;
+                case 'TIME':
+                    $type = 'date_time';
+                    $options['column/show_date'] = false;
+                    $options['column/show_time'] = true;
+                    break;
+                case 'TIMESTAMP':
+                    $type = 'date_time';
+                    $options['column/show_date'] = true;
+                    $options['column/show_time'] = true;
+                    break;
+                default:
+                    $type = 'text';
+                break; 
+            }
+
+            if (true === $column->isForeignKey()) {
+                $container = $this->getTableFactory()->getContainer(); 
+
+                $foreignTable = $column->getTable();
+
+                $routeResolver = $container->get('tactics.object_route_resolver');
+
+                $options['column/route'] = array(
+                    $routeResolver->retrieveByClass($foreignTable->getClassname()),
+                    array('id' => $name)
+                );
+
+                // todo cell value toString of foreign object.
+            }
         }
         
         return parent::create($name, $type, $headerType, $options);
