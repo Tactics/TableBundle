@@ -6,9 +6,9 @@
 
 {% if (column.options['show_time']) %}
     {% if format is defined %}
-        {% set format = format ~ ' ' ~ 'HH:MM:SS' %}
+        {% set format = format ~ ' ' ~ 'H:i' %}
     {% else %}
-        {% set format = 'HH:MM:SS' %}
+        {% set format = 'H:i' %}
     {% endif %}
 {% endif %}
 
