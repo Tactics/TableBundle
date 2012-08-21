@@ -40,8 +40,6 @@ class PropelTableBuilder extends TableBuilder
 
         $this->objectPeer = new $peerName();
         $this->reflector  = new \ReflectionClass($this->modelCriteria->getModelName());
-        // todo clean up.
-        $this->dummy      = $this->modelCriteria->find()->getFirst();
     }
     
     /**
@@ -103,24 +101,6 @@ class PropelTableBuilder extends TableBuilder
 
         $options['column/method'] = $method->getName();
       
-        // guess type based on modelcriteria properties.
-        /*if (null === $type) {
-            $methodName = $options['column/method'];
-
-            // todo don't use dummy.
-            $val = null;
-            if ($this->dummy) {
-                $val = $this->dummy->$methodName(); 
-            }
-
-            if (is_object($val) && get_class($val) === 'DateTime') {
-                $type = 'date_time';
-            }
-            else {
-                $type = 'text';
-            }
-        }*/
-        
         // guess type based on modelcriteria properties.
         if (null === $type) {
               $methodName = $options['column/method'];
