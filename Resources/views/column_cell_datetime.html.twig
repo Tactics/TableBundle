@@ -1,5 +1,19 @@
 {% extends "TacticsTableBundle::column_cell_default.html.twig" %}
 
+{% if (column.options['show_date']) %}
+    {% set format = 'd/m/Y' %}
+{% endif %}
+
+{% if (column.options['show_time']) %}
+    {% if format is defined %}
+        {% set format = format ~ ' ' ~ 'HH:MM:SS' %}
+    {% else %}
+        {% set format = 'HH:MM:SS' %}
+    {% endif %}
+{% endif %}
+
 {% block cell_value %}
-    {{ cell.value | date('d/m/Y') }}
+    {% if cell.value is not null %}
+        {{ cell.value | date(format) }}
+    {% endif %}
 {% endblock %}
