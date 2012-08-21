@@ -21,6 +21,7 @@ class PropelTableBuilder extends TableBuilder
 {
     protected $modelCriteria;
     protected $objectPeer;
+    protected $tableMap;
     protected $reflector;
     protected $columns = array();
 
@@ -34,6 +35,8 @@ class PropelTableBuilder extends TableBuilder
         $this->modelCriteria = $this->options['model_criteria'];
         
         $peerName = $this->modelCriteria->getModelPeerName();
+
+        $this->tableMap = $this->modelCriteria->getTableMap();
 
         $this->objectPeer = new $peerName();
         $this->reflector  = new \ReflectionClass($this->modelCriteria->getModelName());
@@ -90,7 +93,6 @@ class PropelTableBuilder extends TableBuilder
      */     
     public function create($name, $type = null, $headerType = null, array $options = array())
     {
-        // todo Method should not be an option but a Column Extension.
         // getMethod throws exception when method is not found.
         if (! isset($options['column/method'])) {
             $method = $this->reflector->getMethod($this->translateColnameToMethod($name));
@@ -102,9 +104,7 @@ class PropelTableBuilder extends TableBuilder
         $options['column/method'] = $method->getName();
       
         // guess type based on modelcriteria properties.
-        if (null === $type) {
-            // Guess the method.
-            // Throws exception when method not found.
+        /*if (null === $type) {
             $methodName = $options['column/method'];
 
             // todo don't use dummy.
@@ -119,6 +119,41 @@ class PropelTableBuilder extends TableBuilder
             else {
                 $type = 'text';
             }
+        }*/
+        
+        // guess type based on modelcriteria properties.
+        if (null === $type) {
+              $methodName = $options['column/method'];
+
+              // Retrieve TableMap column by name.
+              $rawColName = $this->objectPeer->translateFieldname(
+                  $name,
+                  \BasePeer::TYPE_COLNAME,
+                  \BasePeer::TYPE_RAW_COLNAME
+              );
+
+              $column = $this->tableMap->getColumn($rawColName);
+
+              switch ($column->getType()) {
+                  case 'DATE':
+                      $type = 'date_time';
+                      $options['column/show_date'] = true;
+                      $options['column/show_time'] = false;
+                      break;
+                  case 'TIME':
+                      $type = 'date_time';
+                      $options['column/show_date'] = false;
+                      $options['column/show_time'] = true;
+                      break;
+                  case 'TIMESTAMP':
+                      $type = 'date_time';
+                      $options['column/show_date'] = true;
+                      $options['column/show_time'] = true;
+                      break;
+                  default:
+                      $type = 'text';
+                  break; 
+              }
         }
         
         return parent::create($name, $type, $headerType, $options);
