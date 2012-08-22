@@ -148,6 +148,10 @@ class PropelTableBuilder extends TableBuilder
                     array('id' => $name)
                 );
                 
+                $options['column/foreign_table'] = $foreignTable
+                
+                $type = 'foreign_key';
+
                 // todo cell value toString of foreign object.
             }
         }
