@@ -139,15 +139,15 @@ class PropelTableBuilder extends TableBuilder
             if (true === $column->isForeignKey()) {
                 $container = $this->getTableFactory()->getContainer(); 
 
-                $foreignTable = $column->getTable();
-
+                $foreignTable = $column->getRelation()->getForeignTable();
+                
                 $routeResolver = $container->get('tactics.object_route_resolver');
 
                 $options['column/route'] = array(
                     $routeResolver->retrieveByClass($foreignTable->getClassname()),
                     array('id' => $name)
                 );
-
+                
                 // todo cell value toString of foreign object.
             }
         }
