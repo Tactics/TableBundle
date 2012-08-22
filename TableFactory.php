@@ -151,7 +151,7 @@ class TableFactory implements TableFactoryInterface, ContainerAwareInterface
         }
         
         // todo attributes instead of empty array.
-        $type = new $columnHeaderClass($name, array(), $options);
+        $type = new $columnHeaderClass($name, $options);
 
         return $type;
     }

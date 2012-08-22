@@ -93,7 +93,7 @@ class TableExtension extends \Twig_Extension
     {
         $attributes = '';
 
-        foreach ($header->getAttributes() as $attribute => $value) {
+        foreach ($header->getOption('attributes') as $attribute => $value) {
             $attributes .= " $attribute=\"$value\"";    
         }
 

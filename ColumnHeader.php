@@ -16,24 +16,18 @@ class ColumnHeader implements ColumnHeaderInterface
      *  @var $column ColumnInterface
      */
     protected $column;
-    
-    /*
-     * @var $attributes array
-     */
-    protected $attributes;
 
     /*
-     * @var $attributes array
+     * @var $options array
      */
     protected $options;
 
     /**
      * {@inheritdoc}
      */
-    public function __construct($value, array $attributes = array(), array $options = array())
+    public function __construct($value, array $options = array())
     {
         $this->value      = $value;
-        $this->attributes = $attributes;
 
         $resolver = new OptionsResolver(); 
         $this->setDefaultOptions($resolver);
@@ -57,18 +51,16 @@ class ColumnHeader implements ColumnHeaderInterface
     {
         $this->value = $value;
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAttributes()
-    {
-        return $this->attributes;
-    }
+    
 
     public function getOptions()
     {
         return $this->options;
+    }
+    
+    public function getOption($name)
+    {
+        return isset($this->options[$name]) ? $this->options[$name] : null;
     }
     
     /**
@@ -79,6 +71,9 @@ class ColumnHeader implements ColumnHeaderInterface
         $this->column = $column;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getColumn()
     {
         return $this->column;
@@ -100,6 +95,9 @@ class ColumnHeader implements ColumnHeaderInterface
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         // todo lose the resolver, create attributes.
-        $resolver->setOptional(array('route', 'type', 'value', 'sort', 'route_params'));
+        $resolver
+          ->setOptional(array('route', 'type', 'value', 'sort', 'route_params'))
+          ->setOptional(array('attributes'))
+          ->setDefaults(array('attributes' => array()));
     }
 }
