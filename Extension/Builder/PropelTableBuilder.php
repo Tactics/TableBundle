@@ -191,10 +191,10 @@ class PropelTableBuilder extends TableBuilder
     /**
      * {@inheritdoc}
      */
-    public function getTable()
+    public function getTable($options = array())
     {
         // todo: create!
-        $table = $this->factory->createTable($this->name, $this->type, array());
+        $table = $this->factory->createTable($this->name, $this->type, $options);
 
         foreach ($this as $column) {
             $table->add($column);

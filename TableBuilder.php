@@ -212,10 +212,9 @@ class TableBuilder implements \IteratorAggregate, TableBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function getTable()
+    public function getTable($options = array())
     {
-        // todo: create!
-        $table = $this->factory->createTable($this->name, $this->type, array());
+        $table = $this->factory->createTable($this->name, $this->type, $options);
         
         foreach ($this as $column)
         {
