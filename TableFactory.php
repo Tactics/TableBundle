@@ -150,7 +150,6 @@ class TableFactory implements TableFactoryInterface, ContainerAwareInterface
             throw new UnknownTypeException("ColumnHeader type '" . $type . "' could not be resolved. (Guess was: $columnHeaderClass )");
         }
         
-        // todo attributes instead of empty array.
         $type = new $columnHeaderClass($name, $options);
 
         return $type;
