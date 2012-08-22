@@ -148,7 +148,7 @@ class PropelTableBuilder extends TableBuilder
                     array('id' => $name)
                 );
                 
-                $options['column/foreign_table'] = $foreignTable
+                $options['column/foreign_table'] = $foreignTable;
                 
                 $type = 'foreign_key';
 
