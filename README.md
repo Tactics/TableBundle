@@ -15,3 +15,35 @@ In order of importance.
 7. Multiselect
 8. Batch actions
 9. Editable
+
+
+Column Types
+------------
+ * TextColumn
+
+ * ActionsColumn
+
+ * DateTimeColumn
+   
+   Parameters:
+    * show_date: boolean
+    * show_time: boolean
+   
+ * EmailColumn
+   
+   Parameters: none
+    
+ * ForeignKeyColumn
+   
+   Parameters: 
+    * foreign_table: TableMap of the foreign table
+
+
+
+Column Extensions
+-----------------
+ * LinkColumnExtension
+
+   Parameters:
+    * route: array("your_route_name", array('id' => PersoonPeer::ID), array('fixed_param' => 'somevalue'))
+ 
