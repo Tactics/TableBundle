@@ -115,27 +115,7 @@ class PropelTableBuilder extends TableBuilder
 
             $column = $this->tableMap->getColumn($rawColName);
 
-            switch ($column->getType()) {
-                case 'DATE':
-                    $type = 'date_time';
-                    $options['column/show_date'] = true;
-                    $options['column/show_time'] = false;
-                    break;
-                case 'TIME':
-                    $type = 'date_time';
-                    $options['column/show_date'] = false;
-                    $options['column/show_time'] = true;
-                    break;
-                case 'TIMESTAMP':
-                    $type = 'date_time';
-                    $options['column/show_date'] = true;
-                    $options['column/show_time'] = true;
-                    break;
-                default:
-                    $type = 'text';
-                break; 
-            }
-
+            // guess by specific properties
             if (true === $column->isForeignKey()) {
                 $container = $this->getTableFactory()->getContainer(); 
 
@@ -151,8 +131,40 @@ class PropelTableBuilder extends TableBuilder
                 $options['column/foreign_table'] = $foreignTable;
                 
                 $type = 'foreign_key';
-
-                // todo cell value toString of foreign object.
+            }            
+            
+            // guess by type
+            if (! $type) {
+                switch ($column->getType()) {
+                    case 'DATE':
+                        $type = 'date_time';
+                        $options['column/show_date'] = true;
+                        $options['column/show_time'] = false;
+                        break;
+                    case 'TIME':
+                        $type = 'date_time';
+                        $options['column/show_date'] = false;
+                        $options['column/show_time'] = true;
+                        break;
+                    case 'TIMESTAMP':
+                        $type = 'date_time';
+                        $options['column/show_date'] = true;
+                        $options['column/show_time'] = true;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            
+            // guess by name
+            if (! $type) {
+                switch ($rawColName) {
+                    case 'EMAIL':
+                        $type = 'email';
+                        break;
+                    default:
+                        break;
+                }                
             }
         }
         
