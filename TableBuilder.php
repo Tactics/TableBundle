@@ -94,6 +94,16 @@ class TableBuilder implements \IteratorAggregate, TableBuilderInterface
         return $this;
     }
 
+    /**
+     * Extracts options from array with a specific namespace prefix and returns
+     * an array with only the options from the matching namespace, namespace removed
+     * 
+     * eg  array('column/type' => 'one') becomes array('type' => 'one')
+     * 
+     * @param array $options
+     * @param string $ns
+     * @return array with options in namespace, namespace in key removed
+     */
     protected function extractNamespacedOptions($options, $ns)
     {
         $extracted = array();
