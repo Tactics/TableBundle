@@ -23,11 +23,17 @@ class ForeignKeyColumn extends Column
 
         if ($cell['value'])
         {
-          $peerClassName = $this->getOption('foreign_table')->getPeerClassname();
-          $object = $peerClassName::retrieveByPK($cell['value']);
+            $peerClassName = $this->getOption('foreign_table')->getPeerClassname();
+            $object = $peerClassName::retrieveByPK($cell['value']);
 
-          // convert to string ( call __toString() )
-          $cell['value'] = sprintf('%s', $object);
+            if ($this->getOption('foreign_method')) {
+                $cell['value'] = call_user_func(array($object, $this->getOption('foreign_method')));
+            }
+            else {
+                // convert to string ( call __toString() )
+                $cell['value'] = sprintf('%s', $object);
+            }
+          
         }
         
         return $cell;
@@ -43,5 +49,6 @@ class ForeignKeyColumn extends Column
         parent::setDefaultOptions($resolver);
         
         $resolver->setRequired(array('foreign_table'));
+        $resolver->setOptional(array('foreign_method'));
     }    
 }
