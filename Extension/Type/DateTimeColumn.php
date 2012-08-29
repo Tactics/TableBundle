@@ -26,6 +26,7 @@ class DateTimeColumn extends Column
     {
         parent::setDefaultOptions($resolver);
 
-        $resolver->setRequired(array('show_date', 'show_time'));
+        $resolver->setOptional(array('show_date', 'show_time'));
+        $resolver->setDefaults(array('show_date' => true, 'show_time' => true));
     }
 }
