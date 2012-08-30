@@ -163,6 +163,12 @@ class PropelTableBuilder extends TableBuilder
             if (! $type && ($rawColName == 'EMAIL')) {
                 $type = 'email';
             }
+            
+            // guess array type
+            if (! $type && ($column->getType() == 'ARRAY')) {
+                $type = 'array';
+            }
+            
         }
         
         return parent::create($name, $type, $headerType, $options);
