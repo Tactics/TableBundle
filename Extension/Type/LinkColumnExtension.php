@@ -15,32 +15,32 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  * @author Gert Vrebos <gert.vrebos at tactics.be>
  */
 class LinkColumnExtension extends AbstractColumnTypeExtension {
-    
+
     private $router;
-    
-    
+
+
     public function __construct($router) {
         $this->router = $router;
     }
-    
+
     public function execute(ColumnInterface $column, array &$row, array &$cell) {
         $route = $column->getOption('route');
-        
+
         if (! $route)
         {
             return;
         }
-        
+
         if (! is_array($route) || !  $route[0])
         {
             throw new InvalidOptionException('"route" option form LinkColumnExtension should be an array with up to 3 elements: route name (string), list of dynamic route parameters (array), list of static route parameters (array).');
         }
-        
+
         // dynamic route parameters, to be replace by row values
         $route[1] = (isset($route[1]) && is_array($route[1])) ? $route[1]: array();
         // static route parameters
         $route[2] = (isset($route[2]) && is_array($route[2])) ? $route[2]: array();
-        
+
         // resolve all route parameters
         foreach($route[1] as &$param)
         {
@@ -51,15 +51,16 @@ class LinkColumnExtension extends AbstractColumnTypeExtension {
             }
             else
             {
+                die($param);
                 // cannot resolve all route parameters in row
                 // no url will be generated.  This is ok as not all rows
                 // need to contain a value for each column
                 return;
             }
         }
-        
+
         $routeParameters = array_merge($route[1], $route[2]);
-        
+
         $url = $this->router->generate($route[0], $routeParameters);
         $cell['url'] = $url;
     }
@@ -75,4 +76,3 @@ class LinkColumnExtension extends AbstractColumnTypeExtension {
     }
 
 }
-

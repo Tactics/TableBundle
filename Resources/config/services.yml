@@ -19,3 +19,9 @@ services:
         arguments: [@router]
         tags:
             - { name: tactics.table.extension, alias: column }
+
+    tactics.table.extension.functioncolumn:
+        class: Tactics\TableBundle\Extension\Type\FunctionColumnExtension
+        arguments: [@service_container]
+        tags:
+            - { name: tactics.table.extension, alias: column }

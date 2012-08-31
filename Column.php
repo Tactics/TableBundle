@@ -26,7 +26,7 @@ class Column implements ColumnInterface
      * @var $extensions The type extensions
      */
     protected $extensions;
-    
+
     /**
      * {@inheritdoc}
      */
@@ -38,19 +38,19 @@ class Column implements ColumnInterface
 
         $resolver = new OptionsResolver();
         $this->setDefaultOptions($resolver);
-                
+
         foreach($this->extensions as $extension)
         {
             $extension->setDefaultOptions($resolver);
         }
-        
+
         $this->options = $resolver->resolve($options);
-        
+
         $this->header->setColumn($this);
     }
 
     /**
-     * @return ColumnHeader 
+     * @return ColumnHeader
      */
     public function getHeader()
     {
@@ -79,15 +79,15 @@ class Column implements ColumnInterface
     public function getCell($row)
     {
         $cell = isset($row[$this->getName()]) ? $row[$this->getName()] : array();
-        
+
         if (! is_array($cell))
         {
             $cell = array('value' => $cell);
         }
-        
+
         return array_merge(array('value' => null), $cell);
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -96,7 +96,7 @@ class Column implements ColumnInterface
         foreach($this->extensions as $extension)
         {
             $extension->execute($this, $row, $cell);
-        }        
+        }
     }
 
     /**
@@ -106,12 +106,12 @@ class Column implements ColumnInterface
     {
         return $this->options;
     }
-    
+
     public function getOption($name)
     {
         return isset($this->options[$name]) ? $this->options[$name] : null;
     }
-    
+
     public function setOption($name, $value)
     {
         $this->options[$name] = $value;
@@ -124,6 +124,7 @@ class Column implements ColumnInterface
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setOptional(array('method'));
+        // todo: put this stuff somewhere propelTableBuilder related
+        $resolver->setOptional(array('method', 'default_value'));
     }
-} 
+}

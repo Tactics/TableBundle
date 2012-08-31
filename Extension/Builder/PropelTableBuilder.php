@@ -28,13 +28,13 @@ class PropelTableBuilder extends TableBuilder
 
     /**
      * @inheritDoc
-     */    
+     */
     public function __construct($name, $type = '', TableFactoryInterface $factory, array $options = array())
     {
         parent::__construct($name, $type, $factory, $options);
-        
+
         $this->modelCriteria = $this->options['model_criteria'];
-        
+
         $this->peerName = $this->modelCriteria->getModelPeerName();
 
         $this->tableMap = $this->modelCriteria->getTableMap();
@@ -42,16 +42,16 @@ class PropelTableBuilder extends TableBuilder
         $this->objectPeer = new $this->peerName();
         $this->reflector  = new \ReflectionClass($this->modelCriteria->getModelName());
     }
-    
+
     /**
      * Retrieves all the fieldnames from ModelCriteria and adds them.
-     * Todo: All fields have to be added, fields can be set to visible or 
+     * Todo: All fields have to be added, fields can be set to visible or
      * invisible.
      *
      * @param array $exclude Names of fields to exclude.
      *
-     * @return PropelTableBuilder $this The PropelTableBuilder instance. 
-     */ 
+     * @return PropelTableBuilder $this The PropelTableBuilder instance.
+     */
     public function addAll(array $exclude = array())
     {
         foreach (array_diff($this->getFieldnames(), $exclude) as $key => $fieldName) {
@@ -60,13 +60,13 @@ class PropelTableBuilder extends TableBuilder
 
         return $this;
     }
-    
+
     /**
      * @inheritDoc
-     */     
+     */
     public function create($name, $type = null, $headerType = null, array $options = array())
     {
-        // do guess work if name is a db field name        
+        // do guess work if name is a db field name
         if (false !== array_search($name, $this->getFieldnames()))
         {
             // Default header type: sortable
@@ -74,7 +74,7 @@ class PropelTableBuilder extends TableBuilder
             {
                 $headerType = 'sortable';
             }
-            
+
             // Guess column header value (title)
             if (! isset($options['header/value'])) {
                 $options['header/value'] = ucfirst(strtolower(str_replace('_', ' ', substr($name, (strpos($name, '.')+1), strlen($name)))));
@@ -88,7 +88,7 @@ class PropelTableBuilder extends TableBuilder
                         if (strpos($orderByColumn, Criteria::ASC)) {
                             $options['header/sort'] = SortableColumnHeader::ASC;
                         } else {
-                            $options['header/sort'] = SortableColumnHeader::DESC; 
+                            $options['header/sort'] = SortableColumnHeader::DESC;
                         }
 
                         break;
@@ -98,10 +98,10 @@ class PropelTableBuilder extends TableBuilder
 
             // todo ColumnHeader extensions should fix this.
             $request = $this->getTableFactory()->getContainer()->get('request');
-            $route = $request->attributes->get('_route'); 
+            $route = $request->attributes->get('_route');
             $options['header/route'] = $route;
             $options['header/route_params'] = $request->attributes->get('_route_params') ?
-            $request->attributes->get('_route_params') : array();        
+            $request->attributes->get('_route_params') : array();
 
 
             // getMethod throws exception when method is not found.
@@ -128,7 +128,7 @@ class PropelTableBuilder extends TableBuilder
                 $foreignTable = $column->getRelation()->getForeignTable();
 
                 if (! isset($options['column/route'])) {
-                    $container = $this->getTableFactory()->getContainer(); 
+                    $container = $this->getTableFactory()->getContainer();
                     $routeResolver = $container->get('tactics.object_route_resolver');
 
                     $options['column/route'] = array(
@@ -139,7 +139,7 @@ class PropelTableBuilder extends TableBuilder
 
                 if (! isset($options['column/foreign_table'])) {
                     $options['column/foreign_table'] = $foreignTable;
-                }            
+                }
             }
 
             // guess datetime type
@@ -163,14 +163,14 @@ class PropelTableBuilder extends TableBuilder
             if (! $type && ($rawColName == 'EMAIL')) {
                 $type = 'email';
             }
-            
+
             // guess array type
             if (! $type && ($column->getType() == 'ARRAY')) {
                 $type = 'array';
             }
-            
+
         }
-        
+
         return parent::create($name, $type, $headerType, $options);
     }
 
@@ -187,7 +187,7 @@ class PropelTableBuilder extends TableBuilder
     /**
      * Translate raw colname to method.
      *
-     * @param $rawColname string 
+     * @param $rawColname string
      * @return string
      */
     private function translateColnameToMethod($colname)
@@ -197,7 +197,7 @@ class PropelTableBuilder extends TableBuilder
         }
 
         return 'get'.$this->objectPeer->translateFieldName(
-            $colname, 
+            $colname,
             \BasePeer::TYPE_COLNAME,
             \BasePeer::TYPE_PHPNAME
         );
@@ -217,10 +217,10 @@ class PropelTableBuilder extends TableBuilder
 
         // todo
         // All of this is a bit weird since we don't really know we're dealing
-        // with sortable columns, well, I know, but .. 
+        // with sortable columns, well, I know, but ..
         $factory = $this->getTableFactory();
         $request = $factory->getContainer()->get('request');
-        $orderBy = $request->get('order_by'); 
+        $orderBy = $request->get('order_by');
 
         // todo
         // At time of testing, a new table was made each request.
@@ -251,22 +251,28 @@ class PropelTableBuilder extends TableBuilder
             $rowArr = array();
             foreach ($table as $column) {
                 $options = $column->getOptions();
-                
-                if (! isset($options['method']))
-                {
-                    print_r($column->getName());
-                    exit();
-                }
-                $method  = $options['method'];
 
-                $rowArr[$column->getName()] = array('value' => $object->$method());
+                // get value from object if method defined
+                if (! isset($options['method'])) {
+                    $rowArr[$column->getName()] = array('value' => null);
+                }
+                else {
+                    $method  = $options['method'];
+                    $rowArr[$column->getName()] = array('value' => $object->$method());
+                }
+
+                // default value
+                if (($rowArr[$column->getName()]['value'] === null) &&  isset($options['default_value'])) {
+                    $rowArr[$column->getName()]['value'] = $options['default_value'];
+                }
+
             }
 
             $rows[] = $rowArr;
         }
 
         $table->setRows($rows);
-        
+
         return $table;
     }
 
@@ -276,8 +282,7 @@ class PropelTableBuilder extends TableBuilder
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         parent::setDefaultOptions($resolver);
-        
+
         $resolver->setRequired(array('model_criteria'));
     }
 }
-
