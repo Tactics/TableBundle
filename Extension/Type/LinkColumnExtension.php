@@ -26,7 +26,9 @@ class LinkColumnExtension extends AbstractColumnTypeExtension {
     public function execute(ColumnInterface $column, array &$row, array &$cell) {
         $route = $column->getOption('route');
 
-        if (! $route)
+        // Todo: Not sure if this is the correct place to check for empty 
+        // value.
+        if (! $route || ! $cell['value'])
         {
             return;
         }
