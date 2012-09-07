@@ -163,13 +163,24 @@ class ModelCriteriaFilter implements ModelCriteriaFilterInterface
                 $options['value'] = \DateTime::createFromFormat('d/m/Y', $options['value']);
             }
 
+            if (isset($options['type']) && $options['type'] === 'choice') {
+               $builder->add($fieldName, $options['type'], array(
+              'required' => false,
+              'data' => ($options['value'] ? $options['value'] : null),
+              'choices' => $options['choices'],
+              'label' => $label,
+              'render_optional_text' => false 
+              ));
+            }
+            
+            else {
             $builder->add($fieldName, $options['type'], array(
               'required' => false,
               'data' => ($options['value'] ? $options['value'] : null),
               'label' => $label,
               'render_optional_text' => false 
-               
             ));
+            }
         }
 
         return $builder->getForm();
@@ -186,7 +197,8 @@ class ModelCriteriaFilter implements ModelCriteriaFilterInterface
             ->setDefaults(array(
                 'criteria' => Criteria::LIKE,
                 'type'     => 'text',
-                'value'    => null
+                'value'    => null,
+                'choices'  => null
         ));
 
         $resolver->setOptional(array('label'));
