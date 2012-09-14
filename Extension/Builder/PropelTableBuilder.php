@@ -169,6 +169,11 @@ class PropelTableBuilder extends TableBuilder
                 $type = 'array';
             }
 
+            // guess boolean type
+            if (! $type && ($column->getType() == 'BOOLEAN')) {
+                $type = 'boolean';
+            }
+
         }
 
         return parent::create($name, $type, $headerType, $options);
