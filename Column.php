@@ -85,7 +85,7 @@ class Column implements ColumnInterface
             $cell = array('value' => $cell);
         }
 
-        return array_merge(array('value' => null), $cell);
+        return array_merge(array('value' => null), $cell, $this->getOptions());
     }
 
     /**

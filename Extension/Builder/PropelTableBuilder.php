@@ -179,7 +179,6 @@ class PropelTableBuilder extends TableBuilder
             if (! $type && ($column->getType() == 'BOOLEAN')) {
                 $type = 'boolean';
             }
-
         }
 
         return parent::create($name, $type, $headerType, $options);
