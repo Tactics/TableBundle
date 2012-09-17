@@ -138,7 +138,7 @@ class TableBuilder implements \IteratorAggregate, TableBuilderInterface
 
 
         if (null !== $type) {
-            $headerName = isset($headerOptions['value']) ? $headerOptions['value'] : $name;
+            $headerName = isset($headerOptions['value']) ? $headerOptions['value'] : ucfirst($name);
 
             $header = $this->factory->createColumnHeader($headerName, $headerType, $headerOptions);
             

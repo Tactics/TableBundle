@@ -30,9 +30,26 @@ class ActionsColumn extends Column
 
         // todo nested resolvers?
         foreach ($this->options['actions'] as $action => $options) {
-
             $this->actions[$action] = $actionsResolver->resolve($options);
         }
+        
+        // todo with css parser
+        // $css = new HTML_CSS();
+        // $css->parseString($this->getHeader()->getOption('attributes'));
+        // $css->setStyle('width', (count($this->actions) * 25) . 'px');
+        // $this->getHeader()->setOption('attributes', $css->toInline());
+        
+        
+        $headerAttributes = $this->getHeader()->getOption('attributes');
+        $headerAttributes = $headerAttributes ? $headerAttributes : array();
+        $headerAttributes['style'] = (isset($headerAttributes['style']) ? $headerAttributes['style'] : '') . sprintf('; width: %upx;', count($this->actions) * 25);
+        $headerAttributes['style'] .= 'text-align: center;';
+        $this->getHeader()->setOption('attributes', $headerAttributes);
+        
+        $attributes = $this->getOption('attributes');
+        $attributes = $attributes ? $attributes : array();
+        $attributes['style'] = (isset($attributes['style']) ? $attributes['style'] : '') . '; text-align: center;';
+        $this->setOption('attributes', $attributes);
     }
 
     /**
@@ -64,7 +81,7 @@ class ActionsColumn extends Column
     public function setDefaultActionsOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'attributes' => array()
+            'attributes' => array('style' => 'text-align: center;')
         ));
         $resolver->setRequired(array('icon', 'title', 'route'));
         $resolver->setOptional(array('route_param'));

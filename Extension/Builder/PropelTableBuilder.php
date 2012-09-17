@@ -140,6 +140,12 @@ class PropelTableBuilder extends TableBuilder
                 if (! isset($options['column/foreign_table'])) {
                     $options['column/foreign_table'] = $foreignTable;
                 }
+                
+                // fix header title by removing "id" suffix
+                if ((substr($name, -3) == '_ID') && strlen($name) > 3)
+                {
+                     $options['header/value'] = substr($options['header/value'], 0, -2);
+                }
             }
 
             // guess datetime type
@@ -169,6 +175,10 @@ class PropelTableBuilder extends TableBuilder
                 $type = 'array';
             }
 
+            // guess boolean type
+            if (! $type && ($column->getType() == 'BOOLEAN')) {
+                $type = 'boolean';
+            }
         }
 
         return parent::create($name, $type, $headerType, $options);
