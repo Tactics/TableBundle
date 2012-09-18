@@ -5,8 +5,10 @@ namespace Tactics\TableBundle\Extension\Type;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use Tactics\TableBundle\Exception\TableException;
 use Tactics\TableBundle\Column;
 use Tactics\TableBundle\ColumnHeader;
+use Tactics\TableBundle\Extension\Type\LinkColumnExtension;
 
 /**
  * @author Aaron Muylaert <aaron.muylaert at tactics.be>
@@ -52,6 +54,39 @@ class ActionsColumn extends Column
         $this->setOption('attributes', $attributes);
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getCell($row)
+    {
+        $cell = parent::getCell($row);
+        
+        // todo nested resolvers?
+        foreach ($this->options['actions'] as $action => &$options) {
+            $cell['actions'][$action] = array();
+            
+            // BC
+            if (isset($options['route_param'])) {
+                $cell['actions'][$action]['route_name'] = $options['route'];
+                $cell['actions'][$action]['route_params'] = array($options['route_param'] => $cell['value']);
+            }
+            else if (is_array($options['route'])) {
+                $cell['actions'][$action]['route_name'] = $options['route'][0];
+                $cell['actions'][$action]['route_params'] = LinkColumnExtension::resolveRouteParameters($options['route'], $row);
+                if (! $cell['actions'][$action]['route_params'])
+                {
+                    throw new TableException(sprintf('Could resolve action route "%s"', $options['route'][0]));
+                }
+            }
+            else
+            {
+                throw new TableException('Invalid route configuration for action.');
+            }
+        }
+        
+        return $cell;
+    }    
+    
     /**
      * @return array The actions.
      */

@@ -38,6 +38,10 @@ Column Types
    Parameters: 
     * foreign_table: TableMap of the foreign table
 
+ * ActionsColumn
+
+   Parameters:
+    * actions: array('action_name' => array('icon' => 'icon.png', 'title' => 'Edit', 'route' => (see LinkColumnExtension route))
 
 
 Column Extensions

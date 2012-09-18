@@ -2,7 +2,7 @@
 
 {% block cell_content %}
     {% for action,options in column.actions %}
-        <a href="{{ path(options.route, get_hash(options.route_param, cell.value)) }}" title="{{ options.title }}" {{ render_attributes(options.attributes) }}>
+        <a href="{{ path(cell.actions[action].route_name, cell.actions[action].route_params) }}" title="{{ options.title }}" {{ render_attributes(options.attributes) }}>
             <i class="icon-{{ options.icon }}"></i>
         </a> 
         &nbsp;
