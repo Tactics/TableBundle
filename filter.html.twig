@@ -1,0 +1,17 @@
+    <div class="widget">
+        <div class="widget-header">
+            <h3>Filter</h3>
+        </div>
+        <div class="widget-content">
+            <form data-target="results" class="form-horizontal form-filter" action="{{path(action_path)}}" method="post" {{ form_enctype(form) }} novalidate="1">
+                <div class="row">
+                    {% for row in form %}
+                        <div class="span5">
+                            {{ form_row(row) }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <input type="submit" class="btn btn-primary" value="Filter" />
+           </form>
+        </div>
+    </div>
