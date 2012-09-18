@@ -97,11 +97,23 @@ class PropelTableBuilder extends TableBuilder
             }
 
             // todo ColumnHeader extensions should fix this.
-            $request = $this->getTableFactory()->getContainer()->get('request');
-            $route = $request->attributes->get('_route');
-            $options['header/route'] = $route;
-            $options['header/route_params'] = $request->attributes->get('_route_params') ?
-            $request->attributes->get('_route_params') : array();
+            // todo , this is temp fix for _internal problem when using table in render subrequests
+            // @see https://github.com/Tactics/TableBundle/issues/10
+            $router = $this->getTableFactory()->getContainer()->get("router");
+            $route = $router->match($this->getTableFactory()->getContainer()->get('request')->getPathInfo());
+            
+            $routeParams = $route;
+            unset($routeParams['_controller']);
+            unset($routeParams['_route']);
+            
+            $options['header/route'] = $route['_route'];
+            $options['header/route_params'] = $routeParams;
+            
+            // OLD WAY, does not work for sub requests: always returns '_internal'
+            // $request = $this->getTableFactory()->getContainer()->get('request');
+            // $route = $request->attributes->get('_route');
+            // $options['header/route'] = $route;
+            // $options['header/route_params'] = $request->attributes->get('_route_params') ? $request->attributes->get('_route_params') : array();
 
 
             // getMethod throws exception when method is not found.
