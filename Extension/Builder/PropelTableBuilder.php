@@ -275,7 +275,6 @@ class PropelTableBuilder extends TableBuilder
                 if (($rowArr[$column->getName()]['value'] === null) &&  isset($options['default_value'])) {
                     $rowArr[$column->getName()]['value'] = $options['default_value'];
                 }
-
             }
 
             $rows[] = $rowArr;

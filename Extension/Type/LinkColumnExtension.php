@@ -53,7 +53,6 @@ class LinkColumnExtension extends AbstractColumnTypeExtension {
             }
             else
             {
-                die($param);
                 // cannot resolve all route parameters in row
                 // no url will be generated.  This is ok as not all rows
                 // need to contain a value for each column
