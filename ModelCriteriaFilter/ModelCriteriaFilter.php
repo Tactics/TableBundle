@@ -168,7 +168,7 @@ class ModelCriteriaFilter implements ModelCriteriaFilterInterface
               'required' => false,
               'data' => ($options['value'] ? $options['value'] : null),
               'choices' => $options['choices'],
-              'label' => $label,
+              'label' => ucfirst(trim($label)),
               'render_optional_text' => false 
               ));
             }
@@ -177,7 +177,7 @@ class ModelCriteriaFilter implements ModelCriteriaFilterInterface
             $builder->add($fieldName, $options['type'], array(
               'required' => false,
               'data' => ($options['value'] ? $options['value'] : null),
-              'label' => $label,
+              'label' => ucfirst(trim($label)),
               'render_optional_text' => false 
             ));
             }
