@@ -4,7 +4,7 @@
             {% if cell.url|default(false) %}
                 <a href="{{ cell.url }}">
             {% endif %}
-                {% block cell_value %}{{ cell.value }}{% endblock %}
+                {% block cell_value %}{% if column.options.raw %}{{ cell.value|raw }}{% else %}{{ cell.value }}{% endif %}{% endblock %}
             {% if cell.url|default(false) %}
                 </a>
             {% endif %}
