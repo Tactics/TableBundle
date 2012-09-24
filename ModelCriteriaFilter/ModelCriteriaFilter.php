@@ -26,6 +26,11 @@ class ModelCriteriaFilter implements ModelCriteriaFilterInterface
      * @var $fields array The filtered fields.
      */
     protected $fields = array();
+    
+    /**
+     * @var $values array The filter values
+     */
+    protected $values = array();
 
     /**
      * {@inheritdoc}
@@ -52,7 +57,7 @@ class ModelCriteriaFilter implements ModelCriteriaFilterInterface
         $filterBy = $request->get('filter_by');
 
         $key = null === $key ? 'filter/'.$request->attributes->get('_route') : $key;
-
+        
         // Update fields and place them in the session.
         if ($request->getMethod() == 'POST' && $filterBy) {
             foreach ($filterBy as $postedFieldName => $value) {
@@ -64,16 +69,17 @@ class ModelCriteriaFilter implements ModelCriteriaFilterInterface
                 if (array_key_exists($postedFieldName, $this->fields) === false) continue;
 
                 // Add to fields array.
-                $this->fields[$postedFieldName]['value'] = $value;
-
-                // Set fields array in session.
-                $session->set($key, $this->fields);
+                $this->values[$postedFieldName] = $value;
             }
+            
+            // Store current filter values in session
+            $session->set($key, $this->values);
+        }
         // User doesn't post, check if filter_by for this route exits in 
         // session.
-        } elseif ($session->has($key)) {
+        else if ($session->has($key)) {
             // Retrieve and validate fields
-            $this->fields = $session->get($key);
+            $this->values = $session->get($key);
 
             $resolver = new OptionsResolver();
             $this->setDefaultOptions($resolver);
@@ -84,30 +90,35 @@ class ModelCriteriaFilter implements ModelCriteriaFilterInterface
         }
         
         // Add filter info to ModelCriteria.
-        foreach ($this->fields as $fieldName => $options) {
-            $fieldName = str_replace('__', '.', $fieldName);
-
-            if ($options['value'] === NULL) continue;
+        foreach ($this->fields as $postedFieldName => $options) {
+            $fieldName = str_replace('__', '.', $postedFieldName);
+            
+            $value = isset($this->values[$postedFieldName]) ? $this->values[$postedFieldName] : null;
+            
+            if ($value === NULL) {
+                continue;
+            }
+                        
             // Empty strings get posted.
-            if ($options['value'] === '') {
-                $this->options[$fieldName]['value'] = null;
+            if ($value === '') {
+                $this->values[$fieldName] = null;
                 continue;
             }
 
-            if (($options['type'] === 'datum' || $options['type'] === 'date') && $options['value']) {
-              $dt = \DateTime::createFromFormat('d/m/Y', $options['value']);
-              $options['value'] = $dt->format('Y-m-d');
+            if (($options['type'] === 'datum' || $options['type'] === 'date') && $value) {
+              $dt = \DateTime::createFromFormat('d/m/Y', $value);
+              $value = $dt->format('Y-m-d');
 
               $fieldName = rtrim($fieldName, '_van _tot');
             }
 
             if ($options['criteria'] === Criteria::LIKE) {
-                $options['value'] = '%'.$options['value'].'%';
+                $value = '%'.$value.'%';
             }
 
-            $mc->addAnd($fieldName, $options['value'], $options['criteria']);
+            $mc->addAnd($fieldName, $value, $options['criteria']);
         }
-
+        
         return $mc;
     }
 
@@ -158,28 +169,29 @@ class ModelCriteriaFilter implements ModelCriteriaFilterInterface
 
         foreach ($this->fields as $fieldName => $options)
         {
+            $value = isset($this->values[$fieldName]) ? $this->values[$fieldName] : null;
+            
             $label = isset($options['label']) ? $options['label'] : $this->getFieldLabel($fieldName);
-            if ($options['type'] === 'date' || $options['type'] === 'datum' && $options['value']) {
-                $options['value'] = \DateTime::createFromFormat('d/m/Y', $options['value']);
+            if ($options['type'] === 'date' || $options['type'] === 'datum' && $value) {
+                $value = \DateTime::createFromFormat('d/m/Y', $value);
             }
 
             if (isset($options['type']) && $options['type'] === 'choice') {
-               $builder->add($fieldName, $options['type'], array(
-              'required' => false,
-              'data' => ($options['value'] ? $options['value'] : null),
-              'choices' => $options['choices'],
-              'label' => ucfirst(trim($label)),
-              'render_optional_text' => false 
-              ));
+                $builder->add($fieldName, $options['type'], array(
+                  'required' => false,
+                  'data' => $value,
+                  'choices' => $options['choices'],
+                  'label' => ucfirst(trim($label)),
+                  'render_optional_text' => false 
+                  ));
             }
-            
             else {
-            $builder->add($fieldName, $options['type'], array(
-              'required' => false,
-              'data' => ($options['value'] ? $options['value'] : null),
-              'label' => ucfirst(trim($label)),
-              'render_optional_text' => false 
-            ));
+                $builder->add($fieldName, $options['type'], array(
+                  'required' => false,
+                  'data' => $value,
+                  'label' => ucfirst(trim($label)),
+                  'render_optional_text' => false 
+                ));
             }
         }
 
