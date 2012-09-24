@@ -121,12 +121,12 @@ class ActionsColumn extends Column
                 $cell['actions'][$action]['route_params'] = LinkColumnExtension::resolveRouteParameters($options['route'], $row);
                 if (! $cell['actions'][$action]['route_params'])
                 {
-                    throw new TableException(sprintf('Could resolve action route "%s"', $options['route'][0]));
+                    throw new TableException(sprintf('Could resolve route "%s" in actionsColumn', $options['route'][0]));
                 }
             }
             else
             {
-                throw new TableException('Invalid route configuration for action.');
+                throw new TableException('Invalid route configuration for action in actionsColumn.');
             }
         }
         
