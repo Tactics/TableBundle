@@ -270,7 +270,7 @@ class PropelTableBuilder extends TableBuilder
         $rows = array();
 
         foreach ($this->modelCriteria->find() as $object) {
-            $rowArr = array();
+            $rowArr = array('_object' => $object);
             foreach ($table as $column) {
                 $options = $column->getOptions();
 

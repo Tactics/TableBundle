@@ -16,11 +16,6 @@ use Tactics\TableBundle\Extension\Type\LinkColumnExtension;
 class ActionsColumn extends Column
 {
     /**
-     * @var $actions array The actions displayed in this column.
-     */
-    protected $actions = array();
-
-    /**
      * {@inheritdoc}
      */
     public function __construct($name, ColumnHeader $header, array $options = array(), $extensions = array())
@@ -31,8 +26,8 @@ class ActionsColumn extends Column
         $this->setDefaultActionsOptions($actionsResolver);
 
         // todo nested resolvers?
-        foreach ($this->options['actions'] as $action => $options) {
-            $this->actions[$action] = $actionsResolver->resolve($options);
+        foreach ($this->options['actions'] as $action => &$options) {
+            $options = $actionsResolver->resolve($options);
         }
         
         // todo with css parser
@@ -44,7 +39,7 @@ class ActionsColumn extends Column
         
         $headerAttributes = $this->getHeader()->getOption('attributes');
         $headerAttributes = $headerAttributes ? $headerAttributes : array();
-        $headerAttributes['style'] = (isset($headerAttributes['style']) ? $headerAttributes['style'] : '') . sprintf('; width: %upx;', count($this->actions) * 25);
+        $headerAttributes['style'] = (isset($headerAttributes['style']) ? $headerAttributes['style'] : '') . sprintf('; width: %upx;', count($this->options['actions']) * 25);
         $headerAttributes['style'] .= 'text-align: center;';
         $this->getHeader()->setOption('attributes', $headerAttributes);
         
@@ -62,8 +57,59 @@ class ActionsColumn extends Column
         $cell = parent::getCell($row);
         
         // todo nested resolvers?
-        foreach ($this->options['actions'] as $action => &$options) {
-            $cell['actions'][$action] = array();
+        foreach ($this->options['actions'] as $action => $options) {
+            $cell['actions'][$action] = $options;
+            
+            switch($action)
+            {
+                case 'delete':
+                    // check isDeletable()
+                    if (
+                        (! isset($cell['actions'][$action]['disabled']) || ! $cell['actions'][$action]['disabled'])
+                        && isset($row['_object']) && method_exists($row['_object'], 'isDeletable')) {
+                        
+                        if (! $row['_object']->isDeletable()) {
+                            $cell['actions'][$action]['disabled'] = true;
+                            $className = strtolower(join('', array_slice(explode('\\', get_class($row['_object'])), -1)));
+                            $cell['actions'][$action]['title'] = 'This ' . $className . ' cannot be deleted.';
+                        }
+                    }
+                    
+                    // default icon
+                    if (! isset($cell['actions'][$action]['icon']))
+                    {
+                        $cell['actions'][$action]['icon'] = 'trash';
+                    }                        
+                    
+                    break;
+                    
+                case 'show':
+                    // default icon
+                    if (! isset($cell['actions'][$action]['icon']))
+                    {
+                        $cell['actions'][$action]['icon'] = 'search';
+                    }
+                    
+                    break;
+                    
+            }
+            
+            // Default action title
+            if (! isset($cell['actions'][$action]['title']))
+            {
+                $cell['actions'][$action]['title'] = ucfirst($action);
+            }
+            
+            // Default action icon
+            if (! isset($cell['actions'][$action]['icon']))
+            {
+                $cell['actions'][$action]['icon'] = $action;
+            }
+            
+            if (isset($cell['actions'][$action]['disabled']) && $cell['actions'][$action]['disabled'])
+            {
+                $cell['actions'][$action]['attributes']['class'] = trim($cell['actions'][$action]['attributes']['class'] . ' ' . 'disabled');
+            }
             
             // BC
             if (isset($options['route_param'])) {
@@ -92,7 +138,7 @@ class ActionsColumn extends Column
      */
     public function getActions() 
     {
-        return $this->actions;
+        return $this->options['actions'];
     }
 
     /**
@@ -115,11 +161,14 @@ class ActionsColumn extends Column
      */
     public function setDefaultActionsOptions(OptionsResolverInterface $resolver)
     {
+        $resolver->setRequired(array('route'));
+        
+        $resolver->setOptional(array('route_param', 'disabled', 'attributes', 'icon', 'title'));
+        
         $resolver->setDefaults(array(
-            'attributes' => array('style' => 'text-align: center;')
+            'attributes' => array('style' => 'text-align: center;', 'class' => ''),
+            'disabled' => false            
         ));
-        $resolver->setRequired(array('icon', 'title', 'route'));
-        $resolver->setOptional(array('route_param'));
     }
 
     /**

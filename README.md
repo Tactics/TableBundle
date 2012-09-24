@@ -6,11 +6,11 @@ TODO
 
 In order of importance.
 
-1. Sorting
+1. [DONE] Sorting
 2. Handling joins with PropelTableBuilder
-3. Filter (This is not directly related to TableBundle)
-4. Table types
-5. Column extensions
+3. [DONE] Filter (This is not directly related to TableBundle)
+4. [DONE] Table types
+5. [DONE] Column extensions
 6. Hiding and showing columns
 7. Multiselect
 8. Batch actions
@@ -19,35 +19,47 @@ In order of importance.
 
 Column Types
 ------------
- * TextColumn
+#####TextColumn
 
- * ActionsColumn
 
- * DateTimeColumn
+#####DateTimeColumn
    
-   Parameters:
-    * show_date: boolean
-    * show_time: boolean
+Parameters:
+
+  * show_date: boolean
+  * show_time: boolean
    
- * EmailColumn
+#####EmailColumn
    
    Parameters: none
     
- * ForeignKeyColumn
+#####ForeignKeyColumn
    
    Parameters: 
-    * foreign_table: TableMap of the foreign table
 
- * ActionsColumn
+  * foreign_table: TableMap of the foreign table
+
+#####ActionsColumn
 
    Parameters:
-    * actions: array('action_name' => array('icon' => 'icon.png', 'title' => 'Edit', 'route' => (see LinkColumnExtension route))
+
+  * actions:
+ 
+ActionColumns example:
+
+        array('action_name' => array(
+            'icon' => 'icon.png', // default: same as 'action_name'
+            'title' => 'Edit',    // default: ucfirst('action_name')
+            'route' => ...,       // see LinkColumnExtension route
+            'disabled' => true    // default: false
+        ), 'next_action' => array(...);
 
 
 Column Extensions
 -----------------
- * LinkColumnExtension
+#####LinkColumnExtension
 
    Parameters:
-    * route: array("your_route_name", array('id' => PersoonPeer::ID), array('fixed_param' => 'somevalue'))
+
+  * route: array("your_route_name", array('id' => PersoonPeer::ID), array('fixed_param' => 'somevalue'))
  
