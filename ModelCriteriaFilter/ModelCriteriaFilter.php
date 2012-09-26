@@ -144,10 +144,10 @@ class ModelCriteriaFilter implements ModelCriteriaFilterInterface
 
         if ($options['type'] === 'date' || $options['type'] === 'datum') {
             $this->fields[$name.'_van'] = $options; 
-            $this->fields[$name.'_van']['label'] = $label.' van';
+            $this->fields[$name.'_van']['label'] = $label .' from';
             $this->fields[$name.'_van']['criteria'] = Criteria::GREATER_EQUAL;
             $this->fields[$name.'_tot'] = $options; 
-            $this->fields[$name.'_tot']['label'] = $label.' tot';
+            $this->fields[$name.'_tot']['label'] = $label .' to';
             $this->fields[$name.'_tot']['criteria'] = Criteria::LESS_EQUAL;
         }
         else {
