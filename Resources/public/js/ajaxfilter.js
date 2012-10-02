@@ -1,8 +1,10 @@
 jQuery(function($) {
-    $('.form-filter').live('submit', function() {
+    $('.form-filter')
+    // Submit filter using ajax
+    .live('submit', function() {
         var form = $(this);
         var target = '#'+form.attr('data-target');
-        
+
         $(target).closest('.widget').addClass('ajax-loading');
 
         $.ajax({
@@ -20,5 +22,12 @@ jQuery(function($) {
         });
 
         return false;
-    });
+    })
+    // Form submit button clears all filter values and submits form
+    .live('reset', function() {
+        var form = $(this);            
+        form.find(':text, select, :radio').val('');
+        form.submit();
+        return false;
+    })
 });
