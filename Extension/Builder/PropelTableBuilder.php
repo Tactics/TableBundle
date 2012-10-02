@@ -154,9 +154,9 @@ class PropelTableBuilder extends TableBuilder
                 }
                 
                 // fix header title by removing "id" suffix
-                if ((substr($name, -3) == '_ID') && strlen($name) > 3)
+                if ((substr($options['header/value'], -3) == ' id') && strlen($options['header/value']) > 3)
                 {
-                     $options['header/value'] = substr($options['header/value'], 0, -2);
+                    $options['header/value'] = substr($options['header/value'], 0, -2);
                 }
             }
 
