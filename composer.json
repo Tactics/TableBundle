@@ -12,12 +12,9 @@
     "email": "gert@tactics.be"
   }],
   "require": {
-    "symfony/symfony": "2.1.*",
-    "propel/propel1": "1.6.*"
-  },
-  "require-dev": {
-    "sensio/framework-extra-bundle": "dev-master",
-    "fzaninotto/faker": "dev-master"
+    "propel/propel1": "1.6.*",
+    "symfony/options-resolver": "2.1.*"
+
   },
   "autoload": {
     "psr-0": { "Tactics\\TableBundle": "" }
