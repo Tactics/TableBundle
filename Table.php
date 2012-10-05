@@ -115,7 +115,7 @@ class Table implements \IteratorAggregate, TableInterface
      */
     public function offsetExists($name)
     {
-        return isset($this->children[$name]);
+        return isset($this->columns[$name]);
     }
 
     /**
@@ -164,5 +164,13 @@ class Table implements \IteratorAggregate, TableInterface
     public function count()
     {
         return count($this->columns);
+    }
+
+    /**
+     * @return array Array with columns
+     */
+    public function getColumns()
+    {
+        return $this->columns;
     }
 }
