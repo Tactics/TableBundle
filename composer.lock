@@ -1,5 +1,5 @@
 {
-    "hash": "8f2f33097e602f9e7e4c59093b0f4e45",
+    "hash": "5deb75aa1d3c67d12f83c2a448f3ea6f",
     "packages": [
         {
             "name": "phing/phing",
@@ -106,11 +106,61 @@
                 "Active Record",
                 "mapping"
             ]
+        },
+        {
+            "name": "symfony/options-resolver",
+            "version": "2.1.x-dev",
+            "target-dir": "Symfony/Component/OptionsResolver",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/OptionsResolver",
+                "reference": "1ee199a5be56f5d40306838a75b9cff05896e660"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/symfony/OptionsResolver/zipball/1ee199a5be56f5d40306838a75b9cff05896e660",
+                "reference": "1ee199a5be56f5d40306838a75b9cff05896e660",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "time": "1349363877",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.1-dev"
+                }
+            },
+            "installation-source": "source",
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\OptionsResolver": ""
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony OptionsResolver Component",
+            "homepage": "http://symfony.com",
+            "keywords": [
+                "configuration",
+                "config",
+                "options"
+            ]
         }
     ],
-    "packages-dev": [
-
-    ],
+    "packages-dev": null,
     "aliases": [
 
     ],
