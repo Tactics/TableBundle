@@ -165,12 +165,4 @@ class Table implements \IteratorAggregate, TableInterface
     {
         return count($this->columns);
     }
-
-    /**
-     * @return array Array with columns
-     */
-    public function getColumns()
-    {
-        return $this->columns;
-    }
 }
