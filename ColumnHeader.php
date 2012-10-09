@@ -100,7 +100,7 @@ class ColumnHeader implements ColumnHeaderInterface
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver
-          ->setOptional(array('route', 'type', 'value', 'sort', 'route_params', 'attributes'))
+          ->setOptional(array('route', 'type', 'value', 'sort', 'sorter_namespace', 'route_params', 'attributes'))
           ->setDefaults(array('attributes' => array()));
     }
 }

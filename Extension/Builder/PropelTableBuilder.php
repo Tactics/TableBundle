@@ -27,6 +27,13 @@ class PropelTableBuilder extends TableBuilder
     protected $columns = array();
 
     /**
+     * Namespace used by \Tactics\Bundle\TableBundle\ModelCriteriaFilter\ModelCriteriaSorter
+     *
+     * @var $sorterNamespace string The sorter namespace.
+     */
+    protected $sorterNamespace = null;
+
+    /**
      * @inheritDoc
      */
     public function __construct($name, $type = '', TableFactoryInterface $factory, array $options = array())
@@ -41,6 +48,28 @@ class PropelTableBuilder extends TableBuilder
 
         $this->objectPeer = new $this->peerName();
         $this->reflector  = new \ReflectionClass($this->modelCriteria->getModelName());
+    }
+
+    /**
+     * Sets namespace used by \Tactics\Bundle\TableBundle\ModelCriteriaFilter\ModelCriteriaSorter
+     *
+     * @param $v string The sorter namespace.
+     */
+    public function setSorterNamespace($v)
+    {
+       $this->sorterNamespace = $v; 
+
+       return $this;
+    }
+
+    /**
+     * Retrieves namespace used by \Tactics\Bundle\TableBundle\ModelCriteriaFilter\ModelCriteriaSorter
+     *
+     * @return string The sorter namespace.
+     */
+    public function getSorterNamespace()
+    {
+        return $this->sorterNamespace;
     }
 
     /**
@@ -73,6 +102,10 @@ class PropelTableBuilder extends TableBuilder
             if (! $headerType)
             {
                 $headerType = 'sortable';
+            }
+
+            if ('sortable' === $headerType && $this->getSorterNamespace()) {
+                $options['header/sorter_namespace'] = $this->getSorterNamespace();
             }
 
             // Guess column header value (title)
