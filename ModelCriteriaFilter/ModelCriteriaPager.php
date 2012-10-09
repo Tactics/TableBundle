@@ -5,26 +5,39 @@ namespace Tactics\TableBundle\ModelCriteriaFilter;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\HttpFoundation\Request;
-use \ModelCriteria;
-use \Criteria;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
+use \ModelCriteria;
+use \Criteria;
 
 /**
  * @author Aaron Muylaert <aaron.muylaert at tactics.be>
  */
 class ModelCriteriaPager implements ModelCriteriaFilterInterface
 {
+    /**
+      * @var $container ContainerInterface A ContainerInterface instance.
+     */
     protected $container;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct(ContainerInterface $container) {
         $this->container = $container;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setContainer(ContainerInterface $container = null) {
         $this->container = $container;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function execute(ModelCriteria $mc, $key = null, $options = array())
     {
         $request = $this->container->get('request'); 
