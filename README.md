@@ -63,3 +63,66 @@ Column Extensions
 
   * route: array("your_route_name", array('id' => PersoonPeer::ID), array('fixed_param' => 'somevalue'))
  
+
+ColumnHeader types
+------------------
+
+#####SortableColumnHeader
+
+If you create multiple tables in one action that are supposed to be sorted,
+you'll have to specify the sorter's session key.
+
+```
+$builder->add('Foo', 'text', 'sortable', array(
+    'header/sorter_namespace' => 'key'
+))
+```
+
+If you use the PropelTableBuilder, you can set the sorter key using the
+```setSorterNamespace``` method.
+
+
+ModelCriteriaSorter
+-------------------
+
+A very simple interface to do stuff with Propel's \ModelCriteria.
+Multisort \ModelCriteria based on request and session parameters.
+
+Let's say you have a page that displays a simple list of Foo's.
+
+```
+/**
+ * @Route("foo/list", name="foo_list")
+ */
+public function listAction
+{
+    $foos = FooQuery::create();
+}
+```
+
+Now you want the user to be able to sort these Foo's. 
+You also want to save these sorting settings in the session so that when the
+user leaves the page and returns, the same sorting settings are still intact.
+
+This is where ModelCriteriaSorter comes in.
+
+```
+$sorter = new ModelCriteriaSorter($this->container);
+$foos = $sorter->execute($foos);
+```
+
+You can specify the session key, if none given, ModelCriteriaSorter will create
+a default one.
+
+```
+$sorter->execute($foos, 'sorter/special_key');
+```
+
+Now you can send POST and GET request to the listAction to sort your Foo's.
+ModelCriteriaSorter will look for following parameters:
+
+* asc ``` $generator->generate('foo_list', array('asc' => FooPeer::ID)) ```
+* desc ``` $generator->generate('foo_list', array('desc' => FooPeer::ID)) ```
+* unsort ``` $generator->generate('foo_list', array('unsort' => FooPeer::ID)) ```
+
+
