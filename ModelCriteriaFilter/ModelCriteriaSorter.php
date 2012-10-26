@@ -10,16 +10,30 @@ use \Criteria;
 
 class ModelCriteriaSorter implements ModelCriteriaFilterInterface
 {
+    /**
+      * @var $container ContainerInterface A ContainerInterface instance.
+     */
     protected $container;
 
-    public function __construct(ContainerInterface $container) {
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct(ContainerInterface $container) 
+    {
         $this->container = $container;
     }
 
-    public function setContainer(ContainerInterface $container = null) {
+    /**
+     * {@inheritdoc}
+     */
+    public function setContainer(ContainerInterface $container = null) 
+    {
         $this->container = $container;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function execute(ModelCriteria $mc, $key = null, $options = array())
     {
         $request = $this->container->get('request');
@@ -30,15 +44,19 @@ class ModelCriteriaSorter implements ModelCriteriaFilterInterface
 
         $sorts = $session->has($key) ? $session->get($key) : array();
         
-        // Retrieve sort from request.
-        // Create, update or delete sort from current sorts.
-        if ($request->get('asc')) {
-            $sorts = $this->sort($request->get('asc'), Criteria::ASC, $sorts);        
-        } elseif ($request->get('desc')) {
-            $sorts = $this->sort($request->get('desc'), Criteria::DESC, $sorts);
-        } elseif ($request->get('unsort')) {
-            $sorts = $this->unsort($request->get('unsort'), $sorts);
-        } 
+        if ($request->get('sorter_namespace') && $request->get('sorter_namespace') !== $key) {
+            // Nothing.
+        } else {
+            // Retrieve sort from request.
+            // Create, update or delete sort from current sorts.
+            if ($request->get('asc')) {
+                $sorts = $this->sort($request->get('asc'), Criteria::ASC, $sorts);        
+            } elseif ($request->get('desc')) {
+                $sorts = $this->sort($request->get('desc'), Criteria::DESC, $sorts);
+            } elseif ($request->get('unsort')) {
+                $sorts = $this->unsort($request->get('unsort'), $sorts);
+            } 
+        }
 
         // Add sorts to ModelCriteria.
         foreach ($sorts as $sort) {

@@ -78,7 +78,7 @@ class Table implements \IteratorAggregate, TableInterface
      *
      * @param OptionsResolverInterface $resolver The resolver for the options.
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    protected function setDefaultOptions(OptionsResolverInterface $resolver)
     {
       $resolver->setOptional(array('attributes'));
     }
@@ -164,13 +164,5 @@ class Table implements \IteratorAggregate, TableInterface
     public function count()
     {
         return count($this->columns);
-    }
-
-    /**
-     * @return array Array with columns
-     */
-    public function getColumns()
-    {
-        return $this->columns;
     }
 }
