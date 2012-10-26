@@ -69,6 +69,11 @@ class TableExtension extends \Twig_Extension
      */
     public function renderCell(Column $column, array $row)
     {  
+        if ($column->getOption('hidden'))
+        {
+            return '';
+        }
+        
         $cell = $column->getCell($row);
         
         $column->executeExtensions($cell, $row);
@@ -89,6 +94,11 @@ class TableExtension extends \Twig_Extension
      */
     public function renderHeader(ColumnHeader $header)
     {
+        if ($header->getColumn()->getOption('hidden'))
+        {
+            return '';
+        }
+        
         $attributes = '';
 
         foreach ($header->getOption('attributes') as $attribute => $value) {

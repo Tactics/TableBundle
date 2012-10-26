@@ -125,7 +125,7 @@ class Column implements ColumnInterface
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         // todo: put this stuff somewhere propelTableBuilder related
-        $resolver->setOptional(array('method', 'default_value', 'raw'));
-        $resolver->setDefaults(array('raw' => false));
+        $resolver->setOptional(array('method', 'default_value', 'raw', 'hidden'));
+        $resolver->setDefaults(array('raw' => false, 'hidden' => false));
     }
 }
