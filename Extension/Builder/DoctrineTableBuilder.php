@@ -35,6 +35,28 @@ class DoctrineTableBuilder extends TableBuilder
     }
 
     /**
+     * Sets namespace used by \Tactics\Bundle\TableBundle\ModelCriteriaFilter\ModelCriteriaSorter
+     *
+     * @param $v string The sorter namespace.
+     */
+    public function setSorterNamespace($v)
+    {
+       $this->sorterNamespace = $v; 
+
+       return $this;
+    }
+
+    /**
+     * Retrieves namespace used by \Tactics\Bundle\TableBundle\ModelCriteriaFilter\ModelCriteriaSorter
+     *
+     * @return string The sorter namespace.
+     */
+    public function getSorterNamespace()
+    {
+        return $this->sorterNamespace;
+    }
+
+    /**
      * Retrieves all the fieldnames from query builder and adds them.
      *
      * @param array $exclude Names of fields to exclude.
@@ -95,7 +117,7 @@ class DoctrineTableBuilder extends TableBuilder
     public function create($name, $type = null, $headerType = null, array $options = array())
     {
         // do guess work if name is a db field name
-        if (false !== array_search($name, $this->getFieldnames())) {
+        if (false !== array_search($name, $this->getAllFieldNames())) {
             // Default header type: sortable
             if (! $headerType) {
                 $headerType = 'sortable';
