@@ -87,6 +87,18 @@ class DoctrineTableBuilder extends TableBuilder
     }
 
     /**
+     * Proxy method for Doctrine\ORM\Mapping\ClassMetadataInfo::getFieldMapping
+     *
+     * @return array Field mapping.
+     */
+    private function getFieldMapping($fieldName)
+    {
+        $cmd = $this->getClassMetaData();
+
+        return $cmd->getFieldMapping($fieldName);
+    }
+
+    /**
      * Proxy method for Doctrine\ORM\Mapping\ClassMetadataInfo::getAssociationMappings
      *
      * @return array AssociationMappings.
@@ -96,6 +108,19 @@ class DoctrineTableBuilder extends TableBuilder
         $cmd = $this->getClassMetaData();
 
         return $cmd->getAssociationMappings();
+    }
+
+
+    /**
+     * Proxy method for Doctrine\ORM\Mapping\ClassMetadataInfo::getAssociationMapping
+     *
+     * @return array AssociationMapping.
+     */
+    private function getAssociationMapping($fieldName)
+    {
+        $cmd = $this->getClassMetaData();
+
+        return $cmd->getAssociationMapping($fieldName);
     }
 
     /**
@@ -176,74 +201,69 @@ class DoctrineTableBuilder extends TableBuilder
             if (! isset($options['column/method'])) {
                 $options['column/method'] = $this->translateFieldNameToMethod($name);
             }
-
-            // Retrieve TableMap column by name.
-            $rawColName = $this->objectPeer->translateFieldname(
-                $name,
-                \BasePeer::TYPE_COLNAME,
-                \BasePeer::TYPE_RAW_COLNAME
-            );
-
-            $column = $this->tableMap->getColumn($rawColName);
-
-            // guess foreign_key type
-            if (! $type && (true === $column->isForeignKey())) {
+            
+            if (false !== array_key_exists($name, $this->getAssociationMappings())) {
                 $type = 'foreign_key';
             }
-
+            
             // guess foreign_key options
             if ($type == 'foreign_key') {
-                $foreignTable = $column->getRelation()->getForeignTable();
+                die('Call Aaron, he needs to fix this part now that there is a use case.');
+                $mapping = $this->getAssociationMapping($name);
+                // @todo fix protected $cmd var.
+                // @todo support collection valued associations.
+                $cmd = $this->getClassMetaData();
+                if (! $cmd->isSingleValuedAssociation($name)) {
+                    throw new \Exception('Only single value associations are supported at the moment.');
+                }
+
 
                 if (! isset($options['column/route'])) {
                     $container = $this->getTableFactory()->getContainer();
                     $routeResolver = $container->get('tactics.object_route_resolver');
 
                     $options['column/route'] = array(
-                        $routeResolver->retrieveByClass($foreignTable->getClassname()),
+                        $routeResolver->retrieveByClass($mapping['targetEntity']),
                         array('id' => $name)
                     );
                 }
 
-                if (! isset($options['column/foreign_table'])) {
-                    $options['column/foreign_table'] = $foreignTable;
-                }
-
-                // fix header title by removing "id" suffix
-                if ((substr($options['header/value'], -3) == ' id') && strlen($options['header/value']) > 3) {
-                    $options['header/value'] = substr($options['header/value'], 0, -2);
+                if (! isset($options['column/target_entity'])) {
+                    $options['column/target_entity'] = $mapping['targetEntity'];
                 }
             }
 
+            $mapping = $this->getFieldMapping($name);
+
             // guess datetime type
-            if (! $type && in_array($column->getType(), array('DATE', 'TIME', 'TIMESTAMP') )) {
+            if (! $type && in_array($mapping['type'], array('date', 'time', 'datetime') )) {
                 $type = 'date_time';
             }
 
             // guess datetime options
             if ($type == 'date_time') {
 
-                if (! isset($options['column/show_time']) && ($type == 'date_time') && ('DATE' == $column->getType())) {
+                if (! isset($options['column/show_time']) && ($type == 'date_time') && ('date' == $mapping['type'])) {
                     $options['column/show_time'] = false;
                 }
 
-                if (! isset($options['column/show_time']) && ($type == 'date_time') && ('TIME' == $column->getType())) {
+                if (! isset($options['column/show_time']) && ($type == 'date_time') && ('time' == $mapping['type'])) {
                     $options['column/show_date'] = false;
                 }
             }
 
             // guess email type
-            if (! $type && ($rawColName == 'EMAIL')) {
+            if (! $type && ($name == 'email')) {
                 $type = 'email';
             }
 
             // guess array type
-            if (! $type && ($column->getType() == 'ARRAY')) {
+            if (! $type && ($mapping['type'] == 'array')) {
                 $type = 'array';
             }
 
             // guess boolean type
-            if (! $type && ($column->getType() == 'BOOLEAN')) {
+            if (! $type && ($mapping['type'] == 'boolean')) {
                 $type = 'boolean';
             }
         }
