@@ -24,7 +24,6 @@ class DoctrineTableBuilder extends TableBuilder
      */
     protected $sorterNamespace = null;
 
-
     /**
      * @inheritDoc
      */
@@ -33,6 +32,29 @@ class DoctrineTableBuilder extends TableBuilder
         parent::__construct($name, $type, $factory, $options);
 
         $this->queryBuilder = $this->options['query_builder'];
+    }
+
+    /**
+     * @return Doctrine\ORM\Mapping\ClassMetadata
+     */
+    public function getClassMetaData()
+    {
+        $entityClassNames = $this->queryBuilder->getRootEntities();
+
+        if (! $entityClassNames) {
+            throw new \Exception('Unable to retrieve root entities from QueryBuilder.');
+        }
+
+        // @todo: support multiple entities in one table.
+        $entityClassName = $entityClassNames[0];
+
+        $cmf = $this->queryBuilder->getEntityManager()->getMetadataFactory();
+
+        if (! $cmf->hasMetaDataFor($entityClassName)) {
+            throw new \Exception('Unable to retrieve ClassMetaData for "'.$entityClassName.'".');
+        }
+
+        return $cmf->getMetaDataFor($entityClassName);
     }
 
     /**
