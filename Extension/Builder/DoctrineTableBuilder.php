@@ -386,6 +386,6 @@ class DoctrineTableBuilder extends TableBuilder
     {
         parent::setDefaultOptions($resolver);
 
-        $resolver->setRequired(array('query_builder'));
+        $resolver->setRequired(array('repository', 'query'));
     }
 }

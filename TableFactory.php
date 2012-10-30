@@ -162,7 +162,7 @@ class TableFactory implements TableFactoryInterface, ContainerAwareInterface
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setOptional(array('model_criteria', 'query_builder', 'table_class'));
+        $resolver->setOptional(array('model_criteria', 'query', 'repository', 'table_class'));
 
         $resolver->setOptional(array('header_type', 'column_type'));
 
