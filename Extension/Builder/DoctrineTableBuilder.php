@@ -158,7 +158,7 @@ class DoctrineTableBuilder extends TableBuilder
 
             // Guess column header value (title)
             if (! isset($options['header/value'])) {
-                $options['header/value'] = ucfirst(strtolower(str_replace('_', ' ', substr($name, (strpos($name, '.')+1), strlen($name)))));
+                $options['header/value'] = ucfirst(strtolower(str_replace('_', ' ', $name)));
             }
 
             // Guess sort order from model criteria
@@ -269,6 +269,76 @@ class DoctrineTableBuilder extends TableBuilder
         }
 
         return parent::create($name, $type, $headerType, $options);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTable($options = array())
+    {
+        // todo: create!
+        $table = $this->factory->createTable($this->name, $this->type, $options);
+
+        foreach ($this as $column) {
+            $table->add($column);
+        }
+
+        // todo
+        // All of this is a bit weird since we don't really know we're dealing
+        // with sortable columns, well, I know, but ..
+        /*$factory = $this->getTableFactory();
+        $request = $factory->getContainer()->get('request');
+        $orderBy = $request->get('order_by');*/
+
+        // todo
+        // At time of testing, a new table was made each request.
+        // Need to find a way to store table settings into session.
+        /*if ($orderBy)
+        {
+            $column = $table->offsetGet($orderBy);
+            $header = $column->getHeader();
+
+            switch ($header->getState()) {
+                case SortableColumnHeader::ASC:
+                    $header->setState(SortableColumnHeader::DESC);
+                    $this->modelCriteria->orderBy($orderBy, Criteria::DESC);
+                    break;
+                case SortableColumnHeader::DESC:
+                    $header->setState(SortableColumnHeader::NO_SORT);
+                    break;
+                default:
+                    $header->setState(SortableColumnHeader::ASC);
+                    $this->modelCriteria->orderBy($orderBy, Criteria::ASC);
+                    break;
+            }
+        }*/
+
+        foreach ($this->queryBuilder->getQuery()->getResult() as $object) {
+            $rowArr = array('_object' => $object);
+            foreach ($table as $column) {
+                $options = $column->getOptions();
+
+                // get value from object if method defined
+                if (! isset($options['method'])) {
+                    $rowArr[$column->getName()] = array('value' => null);
+                }
+                else {
+                    $method  = $options['method'];
+                    $rowArr[$column->getName()] = array('value' => $object->$method());
+                }
+
+                // default value
+                if (($rowArr[$column->getName()]['value'] === null) &&  isset($options['default_value'])) {
+                    $rowArr[$column->getName()]['value'] = $options['default_value'];
+                }
+            }
+
+            $rows[] = $rowArr;
+        }
+
+        $table->setRows($rows);
+
+        return $table;
     }
 
     /**
