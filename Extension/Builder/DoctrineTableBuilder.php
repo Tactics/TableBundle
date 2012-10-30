@@ -35,6 +35,28 @@ class DoctrineTableBuilder extends TableBuilder
     }
 
     /**
+     * Retrieves all the fieldnames from query builder and adds them.
+     *
+     * @param array $exclude Names of fields to exclude.
+     *
+     * @return DoctrineTableBuilder $this The DoctrineTableBuilder instance.
+     */
+    public function addAll(array $exclude = array())
+    {
+        $cmd = $this->getClassMetaData();
+
+        $fieldNames = array_diff($cmd->getFieldnames(), $exclude);
+        $associationNames = array_diff(array_keys($cmd->getAssociationMappings()), $exclude);
+
+        foreach (array_merge($fieldNames, $associationNames) as $fieldName)
+        {
+            $this->add($fieldName);
+        }
+
+        return $this;
+    }
+
+    /**
      * @return Doctrine\ORM\Mapping\ClassMetadata
      */
     public function getClassMetaData()
