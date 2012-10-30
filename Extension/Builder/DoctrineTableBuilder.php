@@ -120,12 +120,14 @@ class DoctrineTableBuilder extends TableBuilder
         if (false !== array_search($name, $this->getAllFieldNames())) {
             // Default header type: sortable
             if (! $headerType) {
-                $headerType = 'sortable';
+                // @tododoctrine
+                /*$headerType = 'sortable';*/
+                $headerType = 'text';
             }
 
-            if ('sortable' === $headerType && $this->getSorterNamespace()) {
+            /*if ('sortable' === $headerType && $this->getSorterNamespace()) {
                 $options['header/sorter_namespace'] = $this->getSorterNamespace();
-            }
+            }*/
 
             // Guess column header value (title)
             if (! isset($options['header/value'])) {
@@ -133,7 +135,8 @@ class DoctrineTableBuilder extends TableBuilder
             }
 
             // Guess sort order from model criteria
-            if (! isset($options['header/sort'])) {
+            // @tododoctrine
+            /*if (! isset($options['header/sort'])) {
                 foreach ($this->modelCriteria->getOrderByColumns() as $orderByColumn) {
                     if (strpos($orderByColumn, $name) !== false) {
                         // Find out which sort is applied
@@ -146,7 +149,7 @@ class DoctrineTableBuilder extends TableBuilder
                         break;
                     }
                 }
-            }
+            }*/
 
             // todo ColumnHeader extensions should fix this.
             // todo , this is temp fix for _internal problem when using table in render subrequests
@@ -169,7 +172,7 @@ class DoctrineTableBuilder extends TableBuilder
 
             // getMethod throws exception when method is not found.
             if (! isset($options['column/method'])) {
-                $options['column/method'] = $this->translateColnameToMethod($name);
+                $options['column/method'] = $this->translateFieldNameToMethod($name);
             }
 
             // Retrieve TableMap column by name.
@@ -267,6 +270,21 @@ class DoctrineTableBuilder extends TableBuilder
         }
 
         return $cmf->getMetaDataFor($entityClassName);
+    }
+
+    /**
+     * Translate field name to method.
+     *
+     * @param $fieldName string
+     * @return string
+     */
+    private function translateFieldNameToMethod($fieldName)
+    {
+        if (array_search($fieldName, $this->getAllFieldNames()) === false) {
+            throw new \Exception('Unknown field name '.$fieldName);
+        }
+
+        return lcfirst(str_replace(' ', '', ucwords('get'.ucfirst(str_replace('_', ' ', $fieldName)))));
     }
 
     /**
