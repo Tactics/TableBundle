@@ -43,16 +43,50 @@ class DoctrineTableBuilder extends TableBuilder
      */
     public function addAll(array $exclude = array())
     {
-        $cmd = $this->getClassMetaData();
-
-        $fieldNames = array_diff($cmd->getFieldnames(), $exclude);
-        $associationNames = array_diff(array_keys($cmd->getAssociationMappings()), $exclude);
-
-        foreach (array_merge($fieldNames, $associationNames) as $fieldName) {
+        foreach (array_diff($this->getAllFieldNames(), $exclude) as $fieldName) {
             $this->add($fieldName);
         }
 
         return $this;
+    }
+
+    /**
+     * Proxy method for Doctrine\ORM\Mapping\ClassMetadataInfo::getFieldNames
+     *
+     * @return array Fieldnames.
+     */
+    private function getFieldNames()
+    {
+        $cmd = $this->getClassMetaData();
+
+        return $cmd->getFieldNames();
+    }
+
+    /**
+     * Proxy method for Doctrine\ORM\Mapping\ClassMetadataInfo::getAssociationMappings
+     *
+     * @return array AssociationMappings.
+     */
+    private function getAssociationMappings()
+    {
+        $cmd = $this->getClassMetaData();
+
+        return $cmd->getAssociationMappings();
+    }
+
+    /**
+     * Technically incorrect because associations are not fields.
+     * Reason this exists is because I focussed on refactoring the 
+     * PropelTableBuilder.
+     *
+     * Will create an array with all association names and merge it with field 
+     * names.
+     *
+     * @return array
+     */
+    private function getAllFieldNames()
+    {
+        return array_merge($this->getFieldNames(), array_keys($this->getAssociationMappings()));
     }
 
     /**
