@@ -8,6 +8,8 @@ use Tactics\TableBundle\TableFactoryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use Doctrine\Common\Util\Inflector;
+
 class DoctrineTableBuilder extends TableBuilder
 {
     protected $columns = array();
@@ -284,7 +286,7 @@ class DoctrineTableBuilder extends TableBuilder
             throw new \Exception('Unknown field name '.$fieldName);
         }
 
-        return lcfirst(str_replace(' ', '', ucwords('get'.ucfirst(str_replace('_', ' ', $fieldName)))));
+        return 'get'.Inflector::camelize($fieldName);
     }
 
     /**
