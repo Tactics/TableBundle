@@ -15,9 +15,15 @@ class DoctrineTableBuilder extends TableBuilder
     protected $columns = array();
 
     /**
-     * @var $queryBuilder Doctrine\ORM\QueryBuilder A QueryBuilder instance.
+     * @var $query Doctrine\ORM\Query A Query instance.
      */
-    protected $queryBuilder = null;
+    protected $query = null;
+
+    /**
+     * @var $repository Doctrine\ORM\EntityRepository An EntityRepository 
+     * instance.
+     */
+    protected $repository = null;
 
     /**
      * Namespace used by \Tactics\Bundle\TableBundle\ModelCriteriaFilter\ModelCriteriaSorter
@@ -33,7 +39,8 @@ class DoctrineTableBuilder extends TableBuilder
     {
         parent::__construct($name, $type, $factory, $options);
 
-        $this->queryBuilder = $this->options['query_builder'];
+        $this->repository = $this->options['repository'];
+        $this->query      = $this->options['query'];
     }
 
     /**
@@ -313,7 +320,10 @@ class DoctrineTableBuilder extends TableBuilder
             }
         }*/
 
-        foreach ($this->queryBuilder->getQuery()->getResult() as $object) {
+        $results = ('Pagerfanta\\Pagerfanta' === get_class($this->query)) ? 
+            $this->query : $this->query->getResult();
+
+        foreach ($results as $object) {
             $rowArr = array('_object' => $object);
             foreach ($table as $column) {
                 $options = $column->getOptions();
@@ -346,22 +356,10 @@ class DoctrineTableBuilder extends TableBuilder
      */
     public function getClassMetaData()
     {
-        $entityClassNames = $this->queryBuilder->getRootEntities();
+        $container = $this->getTableFactory()->getContainer();
+        $cmf = $container->get('doctrine')->getEntityManager()->getMetadataFactory();
 
-        if (! $entityClassNames) {
-            throw new \Exception('Unable to retrieve root entities from QueryBuilder.');
-        }
-
-        // @todo: support multiple entities in one table.
-        $entityClassName = $entityClassNames[0];
-
-        $cmf = $this->queryBuilder->getEntityManager()->getMetadataFactory();
-
-        if (! $cmf->hasMetaDataFor($entityClassName)) {
-            throw new \Exception('Unable to retrieve ClassMetaData for "'.$entityClassName.'".');
-        }
-
-        return $cmf->getMetaDataFor($entityClassName);
+        return $cmf->getMetadataFor($this->repository->getClassName());
     }
 
     /**
