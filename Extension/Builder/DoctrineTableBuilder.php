@@ -4,6 +4,7 @@ namespace Tactics\TableBundle\Extension\Builder;
 
 use Tactics\TableBundle\TableBuilder;
 use Tactics\TableBundle\TableFactoryInterface;
+use Tactics\TableBundle\Extension\Type\SortableColumnHeader;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -41,6 +42,17 @@ class DoctrineTableBuilder extends TableBuilder
 
         $this->repository = $this->options['repository'];
         $this->query      = $this->options['query'];
+    }
+
+    /**
+     * $this->query can be a Pagerfanta instance or a Query instance.
+     * 
+     * @return Doctrine\ORM\Query
+     */
+    public function getQuery()
+    {
+        return ('Pagerfanta\\Pagerfanta' === get_class($this->query)) ? 
+            $this->query->getAdapter()->getQuery() : $this->query->getResult();
     }
 
     /**
@@ -154,36 +166,37 @@ class DoctrineTableBuilder extends TableBuilder
         if (false !== array_search($name, $this->getAllFieldNames())) {
             // Default header type: sortable
             if (! $headerType) {
-                // @tododoctrine
-                /*$headerType = 'sortable';*/
-                $headerType = 'text';
+                $headerType = 'sortable';
             }
 
-            /*if ('sortable' === $headerType && $this->getSorterNamespace()) {
+            if ('sortable' === $headerType && $this->getSorterNamespace()) {
                 $options['header/sorter_namespace'] = $this->getSorterNamespace();
-            }*/
+            }
 
             // Guess column header value (title)
             if (! isset($options['header/value'])) {
                 $options['header/value'] = ucfirst(strtolower(str_replace('_', ' ', $name)));
             }
 
-            // Guess sort order from model criteria
-            // @tododoctrine
-            /*if (! isset($options['header/sort'])) {
-                foreach ($this->modelCriteria->getOrderByColumns() as $orderByColumn) {
-                    if (strpos($orderByColumn, $name) !== false) {
-                        // Find out which sort is applied
-                        if (strpos($orderByColumn, Criteria::ASC)) {
-                            $options['header/sort'] = SortableColumnHeader::ASC;
-                        } else {
-                            $options['header/sort'] = SortableColumnHeader::DESC;
-                        }
+            // Guess sort order from Query
+            if (! isset($options['header/sort'])) {
+                $selectStmt = $this->getQuery()->getAST();
 
-                        break;
+                if ($selectStmt->orderByClause) {
+                    foreach ($selectStmt->orderByClause->orderByItems as $orderByItem) {
+                        $expr = $orderByItem->expression;
+                        if ($expr->identificationVariable.'.'.$name === $expr->identificationVariable.'.'.$expr->field) {
+                            if ($orderByItem->isAsc()) {
+                                $options['header/sort'] = SortableColumnHeader::ASC;
+                            } else {
+                                $options['header/sort'] = SortableColumnHeader::DESC;
+                            }
+
+                            break;
+                        }
                     }
                 }
-            }*/
+            }
 
             // todo ColumnHeader extensions should fix this.
             // todo , this is temp fix for _internal problem when using table in render subrequests
@@ -223,7 +236,6 @@ class DoctrineTableBuilder extends TableBuilder
                 if (! $cmd->isSingleValuedAssociation($name)) {
                     throw new \Exception('Only single value associations are supported at the moment.');
                 }
-
 
                 if (! isset($options['column/route'])) {
                     $container = $this->getTableFactory()->getContainer();
@@ -293,16 +305,25 @@ class DoctrineTableBuilder extends TableBuilder
         // todo
         // All of this is a bit weird since we don't really know we're dealing
         // with sortable columns, well, I know, but ..
-        /*$factory = $this->getTableFactory();
+        $factory = $this->getTableFactory();
         $request = $factory->getContainer()->get('request');
-        $orderBy = $request->get('order_by');*/
+        $orderBy = $request->get('order_by');
 
         // todo
         // At time of testing, a new table was made each request.
         // Need to find a way to store table settings into session.
-        /*if ($orderBy)
+        if ($orderBy)
         {
-            $column = $table->offsetGet($orderBy);
+            /**
+             * @var $idvc array An array containing Doctrine\ORM\Query\AST\IdentificationVariableDeclaration instances.
+             */
+            $idvcs = $this->getQuery()->getAST()->fromClause->identificationVariableDeclarations;
+
+            // @todo support multiple entities in one table.
+            $idvc = $idvcs[0];
+            $aliasIdentificationVariable = $idvc->rangeVariableDeclaration->aliasIdentificationVariable;
+
+            $column = $table->offsetGet($aliasIdentificationVariable.'.'.$orderBy);
             $header = $column->getHeader();
 
             switch ($header->getState()) {
@@ -318,7 +339,7 @@ class DoctrineTableBuilder extends TableBuilder
                     $this->modelCriteria->orderBy($orderBy, Criteria::ASC);
                     break;
             }
-        }*/
+        }
 
         $results = ('Pagerfanta\\Pagerfanta' === get_class($this->query)) ? 
             $this->query : $this->query->getResult();
