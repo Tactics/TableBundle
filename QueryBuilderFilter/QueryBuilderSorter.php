@@ -34,7 +34,7 @@ class QueryBuilderSorter implements QueryBuilderFilterInterface
     /**
      * {@inheritdoc}
      */
-    public function execute(QueryBuilder $mc, $key = null, $options = array())
+    public function execute(QueryBuilder $qb, $key = null, $options = array())
     {
         $request = $this->container->get('request');
         $session = $this->container->get('session');
@@ -50,23 +50,23 @@ class QueryBuilderSorter implements QueryBuilderFilterInterface
             // Retrieve sort from request.
             // Create, update or delete sort from current sorts.
             if ($request->get('asc')) {
-                $sorts = $this->sort($request->get('asc'), Criteria::ASC, $sorts);        
+                $sorts = $this->sort($request->get('asc'), 'ASC', $sorts);        
             } elseif ($request->get('desc')) {
-                $sorts = $this->sort($request->get('desc'), Criteria::DESC, $sorts);
+                $sorts = $this->sort($request->get('desc'), 'DESC', $sorts);
             } elseif ($request->get('unsort')) {
                 $sorts = $this->unsort($request->get('unsort'), $sorts);
             } 
         }
 
-        // Add sorts to ModelCriteria.
+        // Add sorts to QueryBuilder.
         foreach ($sorts as $sort) {
-            $mc->orderBy($sort['name'], $sort['asc_or_desc']);
+            $qb->addOrderBy($sort['name'], $sort['asc_or_desc']);
         } 
 
         // Set updated sorts in session.
         $session->set($key, $sorts);
         
-        return $mc;
+        return $qb;
     }
 
     private function sort($name, $ascOrDesc, $sorts) 
