@@ -1,14 +1,14 @@
 <?php
 
-namespace Tactics\TableBundle\ModelCriteriaFilter;
+namespace Tactics\TableBundle\QueryBuilderFilter;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\HttpFoundation\Request;
-use \ModelCriteria;
-use \Criteria;
 
-class ModelCriteriaSorter implements ModelCriteriaFilterInterface
+use Doctrine\ORM\QueryBuilder;
+
+class QueryBuilderSorter implements QueryBuilderFilterInterface
 {
     /**
       * @var $container ContainerInterface A ContainerInterface instance.
@@ -34,7 +34,7 @@ class ModelCriteriaSorter implements ModelCriteriaFilterInterface
     /**
      * {@inheritdoc}
      */
-    public function execute(ModelCriteria $mc, $key = null, $options = array())
+    public function execute(QueryBuilder $mc, $key = null, $options = array())
     {
         $request = $this->container->get('request');
         $session = $this->container->get('session');
