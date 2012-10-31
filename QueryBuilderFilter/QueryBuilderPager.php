@@ -37,7 +37,7 @@ class QueryBuilderPager implements QueryBuilderFilterInterface
     /**
      * {@inheritdoc}
      */
-    public function execute(QueryBuilder $mc, $key = null, $options = array())
+    public function execute(QueryBuilder $qb, $key = null, $options = array())
     {
         $request = $this->container->get('request'); 
         $session = $this->container->get('session');
