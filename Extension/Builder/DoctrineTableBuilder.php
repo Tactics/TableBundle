@@ -4,6 +4,7 @@ namespace Tactics\TableBundle\Extension\Builder;
 
 use Tactics\TableBundle\TableBuilder;
 use Tactics\TableBundle\TableFactoryInterface;
+use Tactics\TableBundle\Extension\Type\SortableColumnHeader;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -184,7 +185,7 @@ class DoctrineTableBuilder extends TableBuilder
                 if ($selectStmt->orderByClause) {
                     foreach ($selectStmt->orderByClause->orderByItems as $orderByItem) {
                         $expr = $orderByItem->expression;
-                        if ($name === $expr->identificationVariable.$expr->field) {
+                        if ($expr->identificationVariable.'.'.$name === $expr->identificationVariable.'.'.$expr->field) {
                             if ($orderByItem->isAsc()) {
                                 $options['header/sort'] = SortableColumnHeader::ASC;
                             } else {
@@ -235,7 +236,6 @@ class DoctrineTableBuilder extends TableBuilder
                 if (! $cmd->isSingleValuedAssociation($name)) {
                     throw new \Exception('Only single value associations are supported at the moment.');
                 }
-
 
                 if (! isset($options['column/route'])) {
                     $container = $this->getTableFactory()->getContainer();
@@ -314,7 +314,16 @@ class DoctrineTableBuilder extends TableBuilder
         // Need to find a way to store table settings into session.
         if ($orderBy)
         {
-            $column = $table->offsetGet($orderBy);
+            /**
+             * @var $idvc array An array containing Doctrine\ORM\Query\AST\IdentificationVariableDeclaration instances.
+             */
+            $idvcs = $this->getQuery()->getAST()->fromClause->identificationVariableDeclarations;
+
+            // @todo support multiple entities in one table.
+            $idvc = $idvcs[0];
+            $aliasIdentificationVariable = $idvc->rangeVariableDeclaration->aliasIdentificationVariable;
+
+            $column = $table->offsetGet($aliasIdentificationVariable.'.'.$orderBy);
             $header = $column->getHeader();
 
             switch ($header->getState()) {

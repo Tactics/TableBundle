@@ -50,11 +50,11 @@ class QueryBuilderSorter implements QueryBuilderFilterInterface
             // Retrieve sort from request.
             // Create, update or delete sort from current sorts.
             if ($request->get('asc')) {
-                $sorts = $this->sort($request->get('asc'), 'ASC', $sorts);        
+                $sorts = $this->sort($this->addAlias($qb, $request->get('asc')), 'ASC', $sorts);        
             } elseif ($request->get('desc')) {
-                $sorts = $this->sort($request->get('desc'), 'DESC', $sorts);
+                $sorts = $this->sort($this->addAlias($qb, $request->get('desc')), 'DESC', $sorts);
             } elseif ($request->get('unsort')) {
-                $sorts = $this->unsort($request->get('unsort'), $sorts);
+                $sorts = $this->unsort($this->addAlias($qb, $request->get('unsort')), $sorts);
             } 
         }
 
@@ -67,6 +67,15 @@ class QueryBuilderSorter implements QueryBuilderFilterInterface
         $session->set($key, $sorts);
         
         return $qb;
+    }
+
+    private function addAlias(QueryBuilder $qb, $fieldName)
+    {
+        // @todo support multiply entities.
+        $aliases = $qb->getRootAliases();
+        $alias = $aliases[0];
+
+        return $alias.'.'.$fieldName;
     }
 
     private function sort($name, $ascOrDesc, $sorts) 
