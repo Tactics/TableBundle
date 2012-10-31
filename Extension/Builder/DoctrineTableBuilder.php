@@ -157,9 +157,9 @@ class DoctrineTableBuilder extends TableBuilder
                 $headerType = 'sortable';
             }
 
-            /*if ('sortable' === $headerType && $this->getSorterNamespace()) {
+            if ('sortable' === $headerType && $this->getSorterNamespace()) {
                 $options['header/sorter_namespace'] = $this->getSorterNamespace();
-            }*/
+            }
 
             // Guess column header value (title)
             if (! isset($options['header/value'])) {
