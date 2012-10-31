@@ -13,7 +13,7 @@ use Doctrine\ORM\QueryBuilder;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 
-class QueryBuilderPager implements QueryBuilderPagerFilter
+class QueryBuilderPager implements QueryBuilderFilterInterface
 {
     /**
       * @var $container ContainerInterface A ContainerInterface instance.
