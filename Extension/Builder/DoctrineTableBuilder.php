@@ -305,14 +305,14 @@ class DoctrineTableBuilder extends TableBuilder
         // todo
         // All of this is a bit weird since we don't really know we're dealing
         // with sortable columns, well, I know, but ..
-        /*$factory = $this->getTableFactory();
+        $factory = $this->getTableFactory();
         $request = $factory->getContainer()->get('request');
-        $orderBy = $request->get('order_by');*/
+        $orderBy = $request->get('order_by');
 
         // todo
         // At time of testing, a new table was made each request.
         // Need to find a way to store table settings into session.
-        /*if ($orderBy)
+        if ($orderBy)
         {
             $column = $table->offsetGet($orderBy);
             $header = $column->getHeader();
@@ -330,7 +330,7 @@ class DoctrineTableBuilder extends TableBuilder
                     $this->modelCriteria->orderBy($orderBy, Criteria::ASC);
                     break;
             }
-        }*/
+        }
 
         $results = ('Pagerfanta\\Pagerfanta' === get_class($this->query)) ? 
             $this->query : $this->query->getResult();
