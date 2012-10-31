@@ -154,9 +154,7 @@ class DoctrineTableBuilder extends TableBuilder
         if (false !== array_search($name, $this->getAllFieldNames())) {
             // Default header type: sortable
             if (! $headerType) {
-                // @tododoctrine
-                /*$headerType = 'sortable';*/
-                $headerType = 'text';
+                $headerType = 'sortable';
             }
 
             /*if ('sortable' === $headerType && $this->getSorterNamespace()) {
