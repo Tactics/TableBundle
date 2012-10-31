@@ -228,6 +228,7 @@ class DoctrineTableBuilder extends TableBuilder
             
             // guess foreign_key options
             if ($type == 'foreign_key') {
+                var_dump($name);
                 die('Call Aaron, he needs to fix this part now that there is a use case.');
                 $mapping = $this->getAssociationMapping($name);
                 // @todo fix protected $cmd var.
