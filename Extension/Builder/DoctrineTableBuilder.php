@@ -345,6 +345,7 @@ class DoctrineTableBuilder extends TableBuilder
         $results = ('Pagerfanta\\Pagerfanta' === get_class($this->query)) ? 
             $this->query : $this->query->getResult();
 
+        $rows = array();
         foreach ($results as $object) {
             $rowArr = array('_object' => $object);
             foreach ($table as $column) {
