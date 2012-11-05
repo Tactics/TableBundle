@@ -1,4 +1,4 @@
-<th{% if header.options.attributes is not empty %}{{ render_attributes(header.options.attributes) }} {% endif %}>
+<th{% if header.options.attributes is not empty %}{{ render_attributes(header.options.attributes|default([])) }} {% endif %}>
   {% block cell_content %}
     {{ header.value }}
   {% endblock %}

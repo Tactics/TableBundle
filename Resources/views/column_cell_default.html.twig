@@ -1,5 +1,5 @@
 {% spaceless %}
-    <td{% if cell.attributes is defined %}{{ render_attributes(cell.attributes) }}{% endif %}>   
+    <td{% if cell.attributes is defined %}{{ render_attributes(cell.attributes|default([])) }}{% endif %}>   
         {% block cell_content %}
             {% if cell.url|default(false) %}
                 <a href="{{ cell.url }}">
