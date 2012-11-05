@@ -120,6 +120,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                                         ':'.$fieldName
                                     )
                                 );
+                                break;
                             case '=':
                                 $qb->andWhere(
                                     $qb->expr()->eq(
@@ -204,7 +205,9 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                         }
                     }
 
-                    if (! isset($options['comparison']) || 'IS NULL' !== $options['comparison'] && 'IS NOT NULL' !== $options['comparison']) {
+                    if (isset($options['comparison']) && 'LIKE' === $options['comparison']) {
+                        $qb->setParameter($fieldName, '%'.$value.'%');
+                    } elseif (! isset($options['comparison']) || 'IS NULL' !== $options['comparison'] && 'IS NOT NULL' !== $options['comparison']) {
                         $qb->setParameter($fieldName, $value);
                     }
                 }
