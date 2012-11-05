@@ -10,6 +10,7 @@ namespace Tactics\TableBundle;
 use Tactics\TableBundle\Exception\TableException;
 use Tactics\TableBundle\Exception\UnknownTypeException;
 use Tactics\TableBundle\ColumnHeaderInterface;
+
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -178,7 +179,7 @@ class TableFactory implements TableFactoryInterface, ContainerAwareInterface
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setOptional(array('model_criteria', 'query', 'repository', 'table_class'));
+        $resolver->setOptional(array('model_criteria', 'query', 'repository', 'table_class', 'filter'));
 
         $resolver->setOptional(array('header_type', 'column_type'));
 

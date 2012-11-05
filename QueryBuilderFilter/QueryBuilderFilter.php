@@ -37,6 +37,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
     public function __construct(ContainerInterface $container) {
         $this->container = $container;
     }
+    
 
     /**
      * {@inheritdoc}
@@ -346,12 +347,17 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
     {
         $resolver
             ->setDefaults(array(
-                'comparison' => '=',
+                'comparison' => 'LIKE',
                 'type'     => 'text',
                 'value'    => null,
                 'choices'  => null
         ));
 
         $resolver->setOptional(array('label', 'form_field_name'));
+    }
+    
+    public function buildFromType(QueryBuilderFilterTypeInterface $type)
+    {
+        $type->build($this);
     }
 }
