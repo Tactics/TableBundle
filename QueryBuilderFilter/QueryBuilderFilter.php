@@ -347,7 +347,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
     {
         $resolver
             ->setDefaults(array(
-                'comparison' => '=',
+                'comparison' => 'LIKE',
                 'type'     => 'text',
                 'value'    => null,
                 'choices'  => null
