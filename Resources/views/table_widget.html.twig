@@ -1,4 +1,4 @@
-<table{{ render_attributes(table.options.attributes) }}>
+<table{{ render_attributes(table.options.attributes|default([])) }}>
     <thead>
         <tr>
             {% for column in table %}

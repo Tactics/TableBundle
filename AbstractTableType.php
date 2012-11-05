@@ -12,8 +12,14 @@ namespace Tactics\TableBundle;
  *
  * @author Gert Vrebos <gert.vrebos at tactics.be>
  */
-class AbstractTableType implements TableTypeInterface
+abstract class AbstractTableType implements TableTypeInterface
 {
+    
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        
+    }
+    
     
 }
 
