@@ -244,7 +244,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
      * @param $name    string The name of the filter
      * @param $options array  Additional options.
      *
-     * @return $this ModelCriteriaFilter The ModelCriteriaFilter instance.
+     * @return $this QueryBuilderFilter The QueryBuilder instance.
      */
     public function add($name, array $options = array()) 
     {
@@ -293,7 +293,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
     public function getForm() 
     {
         $builder = $this->container->get('form.factory')
-            ->createBuilder(new ModelCriteriaFilterType());
+            ->createBuilder(new QueryBuilderType());
 
         foreach ($this->fields as $fieldName => $options)
         {
@@ -343,7 +343,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
     {
         $resolver
             ->setDefaults(array(
-                'criteria' => Criteria::LIKE,
+                'comparison' => '=',
                 'type'     => 'text',
                 'value'    => null,
                 'choices'  => null
