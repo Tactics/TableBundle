@@ -11,6 +11,9 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Tactics\TableBundle\Form\Type\QueryBuilderFilterType;
 use Tactics\myDate\myDate;
 
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Query\Expr\Comparison;
+
 class QueryBuilderFilter implements QueryBuilderFilterInterface
 {
     /**
@@ -45,7 +48,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
     /**
      * {@inheritdoc}
      */
-    public function execute(ModelCriteria $mc, $key = null, $options = array())
+    public function execute(QueryBuilder $qb, $key = null, $options = array())
     {
         $request = $this->container->get('request');
         $session = $this->container->get('session');
@@ -68,24 +71,32 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
             $this->values = $session->get($key);
         }
         
-        // Add filter info to ModelCriteria.
+        // Translate filter info into a QuiryBuilder query.
         foreach ($this->fields as $fieldName => $options) {
-            $formFieldName = $options['form_field_name'];
-            
             if (($options['type'] === 'date') || ($options['type'] === 'datum')) {
                 
               $value = $this->get($fieldName, '_from');
               if ($value)
               {
                   $dt = \DateTime::createFromFormat('d/m/Y', $value);
-                  $mc->addAnd($fieldName, $dt, Criteria::GREATER_EQUAL);
+                  $qb->andWhere(
+                      $qb->expr()->gte(
+                          $this->getAlias($qb, $fieldName),
+                          ':'.$fieldName.'_from'
+                      ))
+                      ->setParameter($fieldName.'_from', $dt);
               }
               
               $value = $this->get($fieldName, '_to');
               if ($value)
               {
                   $dt = \DateTime::createFromFormat('d/m/Y', $value);
-                  $mc->addAnd($fieldName, $dt, Criteria::LESS_EQUAL);
+                  $qb->andWhere(
+                      $qb->expr()->lte(
+                          $this->getAlias($qb, $fieldName),
+                          ':'.$fieldName.'_to'
+                      ))
+                      ->setParameter($fieldName.'_to', $dt);
               }
             }
             else
@@ -93,19 +104,125 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                 $value = $this->get($fieldName);
                                 
                 if ($value) {
-                    if ($options['criteria'] === Criteria::LIKE) {
-                        $value = '%'.$value.'%';
+                    if (! isset($options['comparison'])) {
+                        $qb->andWhere(
+                            $qb->expr()->eq(
+                                $this->getAlias($qb, $fieldName),
+                                ':'.$fieldName
+                            )
+                        );
+                    } else {
+                        switch ($options['comparison']) {
+                            case 'LIKE':
+                                $qb->andWhere(
+                                    $qb->expr()->like(
+                                        $this->getAlias($qb, $fieldName),
+                                        ':'.$fieldName
+                                    )
+                                );
+                            case '=':
+                                $qb->andWhere(
+                                    $qb->expr()->eq(
+                                        $this->getAlias($qb, $fieldName),
+                                        ':'.$fieldName
+                                    )
+                                );
+                                break;
+                            case '<>':
+                                $qb->andWhere(
+                                    $qb->expr()->neq(
+                                        $this->getAlias($qb, $fieldName),
+                                        ':'.$fieldName
+                                    )
+                                );
+                                break;
+                            case '<':
+                                $qb->andWhere(
+                                    $qb->expr()->lt(
+                                        $this->getAlias($qb, $fieldName),
+                                        ':'.$fieldName
+                                    )
+                                );
+                                break;
+                            case '<=':
+                                $qb->andWhere(
+                                    $qb->expr()->lte(
+                                        $this->getAlias($qb, $fieldName),
+                                        ':'.$fieldName
+                                    )
+                                );
+                                break;
+                            case '>':
+                                $qb->andWhere(
+                                    $qb->expr()->gt(
+                                        $this->getAlias($qb, $fieldName),
+                                        ':'.$fieldName
+                                    )
+                                );
+                                break;
+                            case '>=':
+                                $qb->andWhere(
+                                    $qb->expr()->gte(
+                                        $this->getAlias($qb, $fieldName),
+                                        ':'.$fieldName
+                                    )
+                                );
+                                break;
+                            case 'IS NULL':
+                                $qb->andWhere(
+                                    $qb->expr()->isNull(
+                                        $this->getAlias($qb, $fieldName)
+                                    )
+                                );
+                                break;
+                            case 'IS NOT NULL':
+                                $qb->andWhere(
+                                    $qb->expr()->isNotNull(
+                                        $this->getAlias($qb, $fieldName)
+                                    )
+                                );
+                                break;
+                            case 'IN':
+                                $qb->andWhere(
+                                    $qb->expr()->in(
+                                        $this->getAlias($qb, $fieldName),
+                                        ':'.$fieldName
+                                    )
+                                );
+                                break;
+                            case 'NOT IN':
+                                $qb->andWhere(
+                                    $qb->expr()->notIn(
+                                        $this->getAlias($qb, $fieldName),
+                                        ':'.$fieldName
+                                    )
+                                );
+                                break;
+                            default:
+                                throw new \Exception('Unsupported comparison '.$options['comparison']);
+                                break;
+                        }
                     }
 
-                    $mc->addAnd($fieldName, $value, $options['criteria']);
+                    if (! isset($options['comparison']) || 'IS NULL' !== $options['comparison'] && 'IS NOT NULL' !== $options['comparison']) {
+                        $qb->setParameter($fieldName, $value);
+                    }
                 }
             }
         }
         
-        return $mc;
+        return $qb;
     }
-    
-    
+
+    private function getAlias(QueryBuilder $qb, $fieldName)
+    {
+        // @todo support multiply entities.
+        $aliases = $qb->getRootAliases();
+        $alias = $aliases[0];
+
+        return $alias.'.'.$fieldName;
+    }
+
     /**
      * Returns the current value of the field.
      * 
