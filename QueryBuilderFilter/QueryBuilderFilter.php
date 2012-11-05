@@ -293,7 +293,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
     public function getForm() 
     {
         $builder = $this->container->get('form.factory')
-            ->createBuilder(new QueryBuilderType());
+            ->createBuilder(new QueryBuilderFilterType());
 
         foreach ($this->fields as $fieldName => $options)
         {
