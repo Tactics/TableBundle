@@ -154,7 +154,22 @@ class DoctrineTableBuilder extends TableBuilder
      */
     private function getAllFieldNames()
     {
-        return array_merge($this->getFieldNames(), array_keys($this->getAssociationMappings()));
+        return array_merge($this->getFieldNames(), $this->getAssociationMappingNames());
+    }
+
+    /**
+     * Returns tableized version of association mapping names.
+     *
+     * @return array
+     */
+    private function getAssociationMappingNames()
+    {
+        $names = array_keys($this->getAssociationMappings());
+        array_walk($names, function(&$value, &$key) {
+            $value = Inflector::tableize($value);
+        });
+
+        return $names;
     }
 
     /**
@@ -162,9 +177,15 @@ class DoctrineTableBuilder extends TableBuilder
      */
     public function create($name, $type = null, $headerType = null, array $options = array())
     {
-        // do guess work if name is a db field name
         if (false !== array_search($name, $this->getAllFieldNames())) {
-            // Default header type: sortable
+            if (false !== array_search($name, $this->getFieldNames())) {
+                $mapping = $this->getFieldMapping($name);
+            } elseif (false !== array_search($name, $this->getAssociationMappingNames())) {
+                $type = 'association';
+                $name = Inflector::camelize($name);
+                $mapping = $this->getAssociationMapping($name);
+            }
+
             if (! $headerType) {
                 $headerType = 'sortable';
             }
@@ -173,12 +194,10 @@ class DoctrineTableBuilder extends TableBuilder
                 $options['header/sorter_namespace'] = $this->getSorterNamespace();
             }
 
-            // Guess column header value (title)
             if (! isset($options['header/value'])) {
                 $options['header/value'] = ucfirst(strtolower(str_replace('_', ' ', $name)));
             }
 
-            // Guess sort order from Query
             if (! isset($options['header/sort'])) {
                 $selectStmt = $this->getQuery()->getAST();
 
@@ -221,39 +240,6 @@ class DoctrineTableBuilder extends TableBuilder
             if (! isset($options['column/method'])) {
                 $options['column/method'] = $this->translateFieldNameToMethod($name);
             }
-            
-            if (false !== array_key_exists($name, $this->getAssociationMappings())) {
-                $type = 'foreign_key';
-            }
-            
-            // guess foreign_key options
-            if ($type == 'foreign_key') {
-                var_dump($name);
-                die('Call Aaron, he needs to fix this part now that there is a use case.');
-                $mapping = $this->getAssociationMapping($name);
-                // @todo fix protected $cmd var.
-                // @todo support collection valued associations.
-                $cmd = $this->getClassMetaData();
-                if (! $cmd->isSingleValuedAssociation($name)) {
-                    throw new \Exception('Only single value associations are supported at the moment.');
-                }
-
-                if (! isset($options['column/route'])) {
-                    $container = $this->getTableFactory()->getContainer();
-                    $routeResolver = $container->get('tactics.object_route_resolver');
-
-                    $options['column/route'] = array(
-                        $routeResolver->retrieveByClass($mapping['targetEntity']),
-                        array('id' => $name)
-                    );
-                }
-
-                if (! isset($options['column/target_entity'])) {
-                    $options['column/target_entity'] = $mapping['targetEntity'];
-                }
-            }
-
-            $mapping = $this->getFieldMapping($name);
 
             // guess datetime type
             if (! $type && in_array($mapping['type'], array('date', 'time', 'datetime') )) {
@@ -393,7 +379,7 @@ class DoctrineTableBuilder extends TableBuilder
      */
     private function translateFieldNameToMethod($fieldName)
     {
-        if (array_search($fieldName, $this->getAllFieldNames()) === false) {
+        if (array_search(Inflector::tableize($fieldName), $this->getAllFieldNames()) === false) {
             throw new \Exception('Unknown field name '.$fieldName);
         }
 
