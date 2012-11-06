@@ -328,7 +328,10 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                     $fieldOptions['choices'] = $options['choices'];
                     $builder->add($formFieldName, $options['type'], $fieldOptions);
                     break;
-                
+                case 'entity':
+                    $fieldOptions['class'] = $options['class'];
+                    $fieldOptions['query_builder'] = $options['query_builder'];
+                    $builder->add($formFieldName, $options['type'], $fieldOptions);
                 default:
                     $builder->add($formFieldName, $options['type'], $fieldOptions);
                     break;
@@ -350,7 +353,9 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                 'comparison' => 'LIKE',
                 'type'     => 'text',
                 'value'    => null,
-                'choices'  => null
+                'choices'  => null,
+                'class' => null,
+                'query_builder' => null,
         ));
 
         $resolver->setOptional(array('label', 'form_field_name'));
