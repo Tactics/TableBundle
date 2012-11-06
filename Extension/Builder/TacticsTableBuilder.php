@@ -30,9 +30,11 @@ class TacticsTableBuilder extends DoctrineTableBuilder
      */
     public function __construct($name, $type = '', TableFactoryInterface $factory, array $options = array())
     {
-        $aliasLetter = strtolower(substr($options['repository']->getClassName(), strrpos($options['repository']->getClassName(), '\\') + 1, 1));
-        
-        $options['query'] = $options['repository']->createQueryBuilder($aliasLetter);
+        if (! isset($options['query'])) {
+            $aliasLetter = strtolower(substr($options['repository']->getClassName(), strrpos($options['repository']->getClassName(), '\\') + 1, 1));
+            
+            $options['query'] = $options['repository']->createQueryBuilder($aliasLetter);
+        }
         
         $this->sorterFilter = new QueryBuilderSorter($factory->getContainer());
         $qb = $this->sorterFilter->execute($options['query']);
