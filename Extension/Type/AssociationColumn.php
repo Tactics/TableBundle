@@ -33,7 +33,7 @@ class AssociationColumn extends Column
                 }
 
                 $cell['value'] = implode(', ', $names);
-            } elseif ($objectOrCollection && get_class($objectOrCollection) === $this->getOption('target_entity')) {
+            } elseif ($objectOrCollection) {
                 $cell['value'] = $targetMethod ? $objectOrCollection->$targetMethod() : (string) $objectOrCollection;
             } else {
                 $cell['value'] = null;
@@ -53,6 +53,5 @@ class AssociationColumn extends Column
         parent::setDefaultOptions($resolver);
         
         $resolver->setOptional(array('target_method'));
-        $resolver->setRequired(array('target_entity'));
     }    
 }
