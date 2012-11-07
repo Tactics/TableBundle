@@ -74,8 +74,11 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
         
         // Translate filter info into a QuiryBuilder query.
         foreach ($this->fields as $fieldName => $options) {
+            if($options['type'] === 'entity') {
+                $options['comparison'] = '=';
+            }
             if (($options['type'] === 'date') || ($options['type'] === 'datum')) {
-                
+              
               $value = $this->get($fieldName, '_from');
               if ($value)
               {
@@ -103,7 +106,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
             else
             {
                 $value = $this->get($fieldName);
-                                
+                
                 if ($value) {
                     if (! isset($options['comparison'])) {
                         $qb->andWhere(
@@ -214,7 +217,6 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                 }
             }
         }
-        
         return $qb;
     }
 
