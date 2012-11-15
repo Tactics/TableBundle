@@ -110,6 +110,15 @@ class ActionsColumn extends Column
             {
                 $cell['actions'][$action]['attributes']['class'] = trim($cell['actions'][$action]['attributes']['class'] . ' ' . 'disabled');
             }
+
+            if (isset($cell['actions'][$action]['enabled_if'])){
+                $method = $cell['actions'][$action]['enabled_if'];
+
+                if (! $row['_object']->$method()) {
+                    $cell['actions'][$action]['attributes']['class'] = trim($cell['actions'][$action]['attributes']['class'] . ' ' . 'disabled');
+                    $cell['actions'][$action]['disabled'] = true;
+                }
+            }
             
             // BC
             if (isset($options['route_param'])) {
@@ -163,7 +172,7 @@ class ActionsColumn extends Column
     {
         $resolver->setRequired(array('route'));
         
-        $resolver->setOptional(array('route_param', 'disabled', 'attributes', 'icon', 'title'));
+        $resolver->setOptional(array('route_param', 'disabled', 'enabled_if', 'attributes', 'icon', 'title'));
         
         $resolver->setDefaults(array(
             'attributes' => array('style' => 'text-align: center;', 'class' => ''),
