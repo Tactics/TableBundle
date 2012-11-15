@@ -330,6 +330,10 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                     $fieldOptions['choices'] = $options['choices'];
                     $builder->add($formFieldName, $options['type'], $fieldOptions);
                     break;
+                case 'boolean':
+                    $options['type'] = 'choice';
+                    $options['choices'] = array(0 => 'No', 1 => 'Yes');
+                    break;
                 case 'entity':
                     $fieldOptions['class'] = $options['class'];
                     $fieldOptions['query_builder'] = $options['query_builder'];
