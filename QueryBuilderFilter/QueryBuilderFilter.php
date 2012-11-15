@@ -74,8 +74,11 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
         
         // Translate filter info into a QuiryBuilder query.
         foreach ($this->fields as $fieldName => $options) {
+            if($options['type'] === 'entity') {
+                $options['comparison'] = '=';
+            }
             if (($options['type'] === 'date') || ($options['type'] === 'datum')) {
-                
+              
               $value = $this->get($fieldName, '_from');
               if ($value)
               {
@@ -103,7 +106,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
             else
             {
                 $value = $this->get($fieldName);
-                                
+                
                 if ($value) {
                     if (! isset($options['comparison'])) {
                         $qb->andWhere(
@@ -214,7 +217,6 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                 }
             }
         }
-        
         return $qb;
     }
 
@@ -328,7 +330,14 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                     $fieldOptions['choices'] = $options['choices'];
                     $builder->add($formFieldName, $options['type'], $fieldOptions);
                     break;
-                
+                case 'boolean':
+                    $options['type'] = 'choice';
+                    $options['choices'] = array(0 => 'No', 1 => 'Yes');
+                    break;
+                case 'entity':
+                    $fieldOptions['class'] = $options['class'];
+                    $fieldOptions['query_builder'] = $options['query_builder'];
+                    $builder->add($formFieldName, $options['type'], $fieldOptions);
                 default:
                     $builder->add($formFieldName, $options['type'], $fieldOptions);
                     break;
@@ -350,7 +359,9 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                 'comparison' => 'LIKE',
                 'type'     => 'text',
                 'value'    => null,
-                'choices'  => null
+                'choices'  => null,
+                'class' => null,
+                'query_builder' => null,
         ));
 
         $resolver->setOptional(array('label', 'form_field_name'));
