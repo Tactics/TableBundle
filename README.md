@@ -41,9 +41,14 @@ Parameters:
 
 #####ActionsColumn
 
-   Parameters:
+  Parameters:
 
   * actions:
+    * icon
+    * title
+    * route
+    * disabled
+    * enabled_if
  
 ActionColumns example:
 
