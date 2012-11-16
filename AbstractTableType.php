@@ -1,11 +1,8 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Tactics\TableBundle;
+
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Description of AbstractTableType
