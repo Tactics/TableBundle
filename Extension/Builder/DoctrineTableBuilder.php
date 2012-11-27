@@ -182,7 +182,6 @@ class DoctrineTableBuilder extends TableBuilder
                 $mapping = $this->getFieldMapping($name);
             } elseif (false !== array_search($name, $this->getAssociationMappingNames())) {
                 $type = 'association';
-                $name = Inflector::camelize($name);
                 $mapping = $this->getAssociationMapping($name);
             }
 
