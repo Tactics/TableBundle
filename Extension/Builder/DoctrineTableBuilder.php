@@ -27,11 +27,18 @@ class DoctrineTableBuilder extends TableBuilder
     protected $repository = null;
 
     /**
-     * Namespace used by \Tactics\Bundle\TableBundle\ModelCriteriaFilter\ModelCriteriaSorter
+     * Namespace used by \Tactics\Bundle\TableBundle\ModelCriteriaFilter\QueryBuilderSorter
      *
      * @var $sorterNamespace string The sorter namespace.
      */
     protected $sorterNamespace = null;
+
+    /**
+     * Namespace used by \Tactics\Bundle\TableBundle\ModelCriteriaFilter\QueryBuilderPager
+     *
+     * @var $sorterNamespace string The sorter namespace.
+     */
+    protected $pagerNamespace = null;
 
     /**
      * @inheritDoc
@@ -56,7 +63,7 @@ class DoctrineTableBuilder extends TableBuilder
     }
 
     /**
-     * Sets namespace used by \Tactics\Bundle\TableBundle\ModelCriteriaFilter\ModelCriteriaSorter
+     * Sets namespace used by \Tactics\Bundle\TableBundle\QueryBuilderFilter\QueryBuilderSorter
      *
      * @param $v string The sorter namespace.
      */
@@ -68,13 +75,35 @@ class DoctrineTableBuilder extends TableBuilder
     }
 
     /**
-     * Retrieves namespace used by \Tactics\Bundle\TableBundle\ModelCriteriaFilter\ModelCriteriaSorter
+     * Retrieves namespace used by \Tactics\Bundle\TableBundle\QueryBuilderFilter\QueryBuilderSorter
      *
      * @return string The sorter namespace.
      */
     public function getSorterNamespace()
     {
         return $this->sorterNamespace;
+    }
+
+    /**
+     * Sets namespace used by \Tactics\Bundle\TableBundle\QueryBuilderFilter\QueryBuilderPager
+     *
+     * @param $v string The pager namespace.
+     */
+    public function setPagerNamespace($v)
+    {
+       $this->pagerNamespace = $v; 
+
+       return $this;
+    }
+
+    /**
+     * Retrieves namespace used by \Tactics\Bundle\TableBundle\QueryBuilderFilter\QueryBuilderPager
+     *
+     * @return string The pager namespace.
+     */
+    public function getPagerNamespace()
+    {
+        return $this->pagerNamespace;
     }
 
     /**
