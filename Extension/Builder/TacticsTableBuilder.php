@@ -72,8 +72,8 @@ class TacticsTableBuilder extends DoctrineTableBuilder
             unset($options['filter']);
         }
         
-        $this->pagerFilter = new QueryBuilderPager($factory->getContainer(), $pagerNamespace);
-        $this->pagerfanta = $this->pagerFilter->execute($qb);
+        $this->pagerFilter = new QueryBuilderPager($factory->getContainer());
+        $this->pagerfanta = $this->pagerFilter->execute($qb, $pagerNamespace);
         
         // override query with pager
         $options['query'] = $this->pagerfanta;
