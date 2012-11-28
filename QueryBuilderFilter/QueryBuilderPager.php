@@ -61,7 +61,7 @@ class QueryBuilderPager implements QueryBuilderFilterInterface
         }
 
         $pager = new Pagerfanta(new DoctrineORMAdapter($qb));
-        $pager->setCurrentPage($page)->setMaxPerPage($options['max_per_page']);
+        $pager->setMaxPerPage($options['max_per_page'])->setCurrentPage($page);
 
         return $pager;
     }
