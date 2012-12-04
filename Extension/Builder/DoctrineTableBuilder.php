@@ -379,11 +379,11 @@ class DoctrineTableBuilder extends TableBuilder
      */
     private function translateFieldNameToMethod($fieldName)
     {
-        if (array_search(Inflector::tableize($fieldName), $this->getAllFieldNames()) === false) {
+        if (array_search(Inflector::tableize($fieldName), $this->getAllFieldNames()) === false) {            
             throw new \Exception('Unknown field name '.$fieldName);
         }
 
-        return 'get'.Inflector::camelize($fieldName);
+        return Inflector::camelize('get' . $fieldName);
     }
 
     /**
