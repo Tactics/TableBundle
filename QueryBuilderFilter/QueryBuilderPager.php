@@ -20,6 +20,8 @@ class QueryBuilderPager implements QueryBuilderFilterInterface
      */
     protected $container;
 
+    protected $namespace = null;
+
     /**
      * {@inheritdoc}
      */
@@ -48,10 +50,13 @@ class QueryBuilderPager implements QueryBuilderFilterInterface
         $options = $resolver->resolve($options);
 
         $key = null === $key ? 'pager/'.$request->attributes->get('_route') : $key;
+        $this->namespace = $key;
 
         $page = $request->get('page');
-
-        if ($page) {
+        if ($request->get('pager_namespace') && $request->get('pager_namespace') !== $this->getNamespace()) {
+            $page = $session->get($key);
+        }
+        elseif ($page) {
             $session->set($key, $page);
         } elseif (! $page && $session->has($key)) {
             $page = $session->get($key);
@@ -61,7 +66,7 @@ class QueryBuilderPager implements QueryBuilderFilterInterface
         }
 
         $pager = new Pagerfanta(new DoctrineORMAdapter($qb));
-        $pager->setCurrentPage($page)->setMaxPerPage($options['max_per_page']);
+        $pager->setMaxPerPage($options['max_per_page'])->setCurrentPage($page);
 
         return $pager;
     }
@@ -77,5 +82,10 @@ class QueryBuilderPager implements QueryBuilderFilterInterface
             ->setDefaults(array(
                 'max_per_page' => 10
         ));
+    }
+
+    public function getNamespace()
+    {
+        return $this->namespace;
     }
 }

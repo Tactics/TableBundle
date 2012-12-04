@@ -18,12 +18,25 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class TacticsTableBuilder extends DoctrineTableBuilder
 {
 
+    /**
+     * @var $sorterFilter Tactics\Bundle\TableBundle\QueryBuilderFilter\QueryBuilderSorter
+     */
     protected $sorterFilter;
+
+    /**
+     * @var $pagerFilter Tactics\Bundle\TableBundle\QueryBuilderFilter\QueryBuilderPager
+     */
     protected $pagerFilter;
+
+    /**
+     * @var $filterFilter Tactics\Bundle\TableBundle\QueryBuilderFilter\QueryBuilderFilter
+     */
     protected $filterFilter;
     
+    /**
+     * @var $pagerfanta Pagerfanta\Pagerfanta
+     */
     protected $pagerfanta;
-
         
     /**
      * @inheritDoc
@@ -36,8 +49,21 @@ class TacticsTableBuilder extends DoctrineTableBuilder
             $options['query'] = $options['repository']->createQueryBuilder($aliasLetter);
         }
         
+        $sorterNamespace = null;
+        $pagerNamespace = null;
+
+        if (isset($options['namespace'])) {
+            $sorterNamespace = 'sorter/'.$options['namespace'];
+            $pagerNamespace = 'pager/'.$options['namespace'];
+
+            $this->setSorterNamespace($sorterNamespace);
+            $this->setPagerNamespace($pagerNamespace);
+            // @todo fix uglyness using OptionsResolver.
+            unset($options['namespace']);
+        }
+
         $this->sorterFilter = new QueryBuilderSorter($factory->getContainer());
-        $qb = $this->sorterFilter->execute($options['query']);
+        $qb = $this->sorterFilter->execute($options['query'], $sorterNamespace);
         
         if (isset($options['filter']))
         {
@@ -47,7 +73,7 @@ class TacticsTableBuilder extends DoctrineTableBuilder
         }
         
         $this->pagerFilter = new QueryBuilderPager($factory->getContainer());
-        $this->pagerfanta = $this->pagerFilter->execute($qb);
+        $this->pagerfanta = $this->pagerFilter->execute($qb, $pagerNamespace);
         
         // override query with pager
         $options['query'] = $this->pagerfanta;
