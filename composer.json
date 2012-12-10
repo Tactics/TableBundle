@@ -13,8 +13,8 @@
   }],
   "require": {
     "propel/propel1": "1.6.*",
-    "symfony/options-resolver": "2.1.*"
-
+    "symfony/options-resolver": "2.1.*",
+    "white-october/pagerfanta-bundle": "dev-master"
   },
   "autoload": {
     "psr-0": { "Tactics\\TableBundle": "" }
