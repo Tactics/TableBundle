@@ -35,6 +35,8 @@ class AssociationColumn extends Column
                 $cell['value'] = implode(', ', $names);
             } elseif ($objectOrCollection) {
                 $cell['value'] = $targetMethod ? $objectOrCollection->$targetMethod() : (string) $objectOrCollection;
+
+                $cell = $this->generateUrl($objectOrCollection, $cell);
             } else {
                 $cell['value'] = null;
             }
@@ -52,6 +54,29 @@ class AssociationColumn extends Column
     {
         parent::setDefaultOptions($resolver);
         
-        $resolver->setOptional(array('target_method'));
+        $resolver->setOptional(array('target_method', 'entity_route_resolver'));
     }    
+
+    /**
+     * @return Tactics\Bundle\EntityRouteBundle\EntityRouteResolver|null
+     */
+    private function getEntityRouteResolver()
+    {
+        return $this->getOption('entity_route_resolver'); 
+    }
+
+    private function generateUrl($entity, $cell)
+    {
+        $resolver = $this->getEntityRouteResolver();
+
+        if (
+            ! isset($cell['route']) &&
+            $resolver && 
+            $resolver->hasEntityRoute($entity)
+        ) {
+            $cell['url'] = $resolver->generateUrl($entity);
+        }
+
+        return $cell;
+    }
 }
