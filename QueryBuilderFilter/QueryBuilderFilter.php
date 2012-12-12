@@ -309,7 +309,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                 'required' => false,
                 'data' => $value,
                 'label' => $options['label'],
-                'render_optional_text' => false 
+                'render_optional_text' => false,
             );
             
             $formFieldName = $options['form_field_name'];
@@ -319,13 +319,19 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
             {
                 case 'date':
                 case 'datum':
-                    $fieldOptions['data'] = $value ? \DateTime::createFromFormat('d/m/Y', $value) : null;
-                    $fieldOptions['label'] = $options['label'] . ' from';
-                    $builder->add($formFieldName . '_from', $options['type'], $fieldOptions);
-                    $fieldOptions['label'] = $options['label'] . ' to';
-                    $builder->add($formFieldName . '_to', $options['type'], $fieldOptions);
-                    break;
-                
+                    if ($options['datum_from_and_to']){
+                        $fieldOptions['data'] = $value ? \DateTime::createFromFormat('d/m/Y', $value) : null;
+                        $fieldOptions['label'] = $options['label'] . ' from';
+                        $builder->add($formFieldName . '_from', $options['type'], $fieldOptions);
+                        $fieldOptions['label'] = $options['label'] . ' to';
+                        $builder->add($formFieldName . '_to', $options['type'], $fieldOptions);
+                        break;    
+                    }
+                    else {
+                        $fieldOptions['data'] = $value ? \DateTime::createFromFormat('d/m/Y', $value) : null;
+                        $builder->add($formFieldName, $options['type'], $fieldOptions);
+                        break;
+                    }
                 case 'choice':
                     $fieldOptions['choices'] = $options['choices'];
                     $builder->add($formFieldName, $options['type'], $fieldOptions);
@@ -362,6 +368,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                 'choices'  => null,
                 'class' => null,
                 'query_builder' => null,
+                'datum_from_and_to' => true
         ));
 
         $resolver->setOptional(array('label', 'form_field_name'));
