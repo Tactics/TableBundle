@@ -61,7 +61,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
         // Update fields and place them in the session.
         if ($request->getMethod() == 'POST' && $filterBy) {
             $this->values = $filterBy;
-            
+
             // Store current filter values in session
             $session->set($key, $this->values);
         }
@@ -107,7 +107,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
             {
                 $value = $this->get($fieldName);
                 
-                if ($value) {
+                if ('' !== $value) {
                     if (! isset($options['comparison'])) {
                         $qb->andWhere(
                             $qb->expr()->eq(
@@ -338,7 +338,8 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                     break;
                 case 'boolean':
                     $options['type'] = 'choice';
-                    $options['choices'] = array(0 => 'No', 1 => 'Yes');
+                    $fieldOptions['choices'] = array(0 => 'No', 1 => 'Yes');
+                    $builder->add($formFieldName, $options['type'], $fieldOptions);
                     break;
                 case 'entity':
                     $fieldOptions['class'] = $options['class'];
