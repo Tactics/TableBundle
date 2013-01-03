@@ -20,107 +20,212 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class PropelTableBuilder extends TableBuilder
 {
     protected $modelCriteria;
+    protected $peerName;
     protected $objectPeer;
+    protected $tableMap;
     protected $reflector;
     protected $columns = array();
 
     /**
+     * Namespace used by \Tactics\Bundle\TableBundle\ModelCriteriaFilter\ModelCriteriaSorter
+     *
+     * @var $sorterNamespace string The sorter namespace.
+     */
+    protected $sorterNamespace = null;
+
+    /**
      * @inheritDoc
-     */    
+     */
     public function __construct($name, $type = '', TableFactoryInterface $factory, array $options = array())
     {
         parent::__construct($name, $type, $factory, $options);
-        
-        $this->modelCriteria = $this->options['model_criteria'];
-        
-        $peerName = $this->modelCriteria->getModelPeerName();
 
-        $this->objectPeer = new $peerName();
+        $this->modelCriteria = $this->options['model_criteria'];
+
+        $this->peerName = $this->modelCriteria->getModelPeerName();
+
+        $this->tableMap = $this->modelCriteria->getTableMap();
+
+        $this->objectPeer = new $this->peerName();
         $this->reflector  = new \ReflectionClass($this->modelCriteria->getModelName());
-        // todo clean up.
-        $this->dummy      = $this->modelCriteria->find()->getFirst();
     }
-    
+
+    /**
+     * Sets namespace used by \Tactics\Bundle\TableBundle\ModelCriteriaFilter\ModelCriteriaSorter
+     *
+     * @param $v string The sorter namespace.
+     */
+    public function setSorterNamespace($v)
+    {
+       $this->sorterNamespace = $v; 
+
+       return $this;
+    }
+
+    /**
+     * Retrieves namespace used by \Tactics\Bundle\TableBundle\ModelCriteriaFilter\ModelCriteriaSorter
+     *
+     * @return string The sorter namespace.
+     */
+    public function getSorterNamespace()
+    {
+        return $this->sorterNamespace;
+    }
+
     /**
      * Retrieves all the fieldnames from ModelCriteria and adds them.
-     * Todo: All fields have to be added, fields can be set to visible or 
+     * Todo: All fields have to be added, fields can be set to visible or
      * invisible.
      *
      * @param array $exclude Names of fields to exclude.
      *
-     * @return PropelTableBuilder $this The PropelTableBuilder instance. 
-     */ 
+     * @return PropelTableBuilder $this The PropelTableBuilder instance.
+     */
     public function addAll(array $exclude = array())
     {
         foreach (array_diff($this->getFieldnames(), $exclude) as $key => $fieldName) {
-            $options = array();
-
-            // todo clean this up?
-            $options['header/value'] = ucfirst(strtolower(str_replace('_', ' ', substr($fieldName, (strpos($fieldName, '.')+1), strlen($fieldName)))));
-
-            // Look for fieldname in order by columns
-            foreach ($this->modelCriteria->getOrderByColumns() as $orderByColumn) {
-                if (strpos($orderByColumn, $fieldName) !== false) {
-                    // Find out which sort is applied
-                    if (strpos($orderByColumn, Criteria::ASC)) {
-                        $options['header/sort'] = SortableColumnHeader::ASC;
-                    } else {
-                        $options['header/sort'] = SortableColumnHeader::DESC; 
-                    }
-
-                    break;
-                }
-            }
-            
-            // todo ColumnHeader extensions should fix this.
-            $request = $this->getTableFactory()->getContainer()->get('request');
-            $route = $request->attributes->get('_route'); 
-            $options['header/route'] = $route;
-            $options['header/route_params'] = $request->attributes->get('_route_params') ?
-                $request->attributes->get('_route_params') : array();
-
-            $this->add($fieldName, null, 'sortable', $options);
+            $this->add($fieldName);
         }
 
         return $this;
     }
-    
+
     /**
      * @inheritDoc
-     */     
+     */
     public function create($name, $type = null, $headerType = null, array $options = array())
     {
-        // todo Method should not be an option but a Column Extension.
-        // getMethod throws exception when method is not found.
-        if (! isset($options['column/method'])) {
-            $method = $this->reflector->getMethod($this->translateColnameToMethod($name));
-        }
-        else {
-            $method = $this->reflector->getMethod($options['column/method']);
-        }
-
-        $options['column/method'] = $method->getName();
-      
-        // guess type based on modelcriteria properties.
-        if (null === $type) {
-            // Guess the method.
-            // Throws exception when method not found.
-            $methodName = $options['column/method'];
-
-            // todo don't use dummy.
-            $val = null;
-            if ($this->dummy) {
-                $val = $this->dummy->$methodName(); 
+        // do guess work if name is a db field name
+        if (false !== array_search($name, $this->getFieldnames()))
+        {
+            // Default header type: sortable
+            if (! $headerType)
+            {
+                $headerType = 'sortable';
             }
 
-            if (is_object($val) && get_class($val) === 'DateTime') {
+            if ('sortable' === $headerType && $this->getSorterNamespace()) {
+                $options['header/sorter_namespace'] = $this->getSorterNamespace();
+            }
+
+            // Guess column header value (title)
+            if (! isset($options['header/value'])) {
+                $options['header/value'] = ucfirst(strtolower(str_replace('_', ' ', substr($name, (strpos($name, '.')+1), strlen($name)))));
+            }
+
+            // Guess sort order from model criteria
+            if (! isset($options['header/sort'])) {
+                foreach ($this->modelCriteria->getOrderByColumns() as $orderByColumn) {
+                    if (strpos($orderByColumn, $name) !== false) {
+                        // Find out which sort is applied
+                        if (strpos($orderByColumn, Criteria::ASC)) {
+                            $options['header/sort'] = SortableColumnHeader::ASC;
+                        } else {
+                            $options['header/sort'] = SortableColumnHeader::DESC;
+                        }
+
+                        break;
+                    }
+                }
+            }
+
+            // todo ColumnHeader extensions should fix this.
+            // todo , this is temp fix for _internal problem when using table in render subrequests
+            // @see https://github.com/Tactics/TableBundle/issues/10
+            $router = $this->getTableFactory()->getContainer()->get("router");
+            $route = $router->match($this->getTableFactory()->getContainer()->get('request')->getPathInfo());
+            
+            $routeParams = $route;
+            unset($routeParams['_controller']);
+            unset($routeParams['_route']);
+            
+            $options['header/route'] = $route['_route'];
+            $options['header/route_params'] = $routeParams;
+            
+            // OLD WAY, does not work for sub requests: always returns '_internal'
+            // $request = $this->getTableFactory()->getContainer()->get('request');
+            // $route = $request->attributes->get('_route');
+            // $options['header/route'] = $route;
+            // $options['header/route_params'] = $request->attributes->get('_route_params') ? $request->attributes->get('_route_params') : array();
+
+
+            // getMethod throws exception when method is not found.
+            if (! isset($options['column/method'])) {
+                $options['column/method'] = $this->translateColnameToMethod($name);
+            }
+
+            // Retrieve TableMap column by name.
+            $rawColName = $this->objectPeer->translateFieldname(
+                $name,
+                \BasePeer::TYPE_COLNAME,
+                \BasePeer::TYPE_RAW_COLNAME
+            );
+
+            $column = $this->tableMap->getColumn($rawColName);
+
+            // guess foreign_key type
+            if (! $type && (true === $column->isForeignKey())) {
+                $type = 'foreign_key';
+            }
+
+            // guess foreign_key options
+            if ($type == 'foreign_key') {
+                $foreignTable = $column->getRelation()->getForeignTable();
+
+                if (! isset($options['column/route'])) {
+                    $container = $this->getTableFactory()->getContainer();
+                    $routeResolver = $container->get('tactics.object_route_resolver');
+
+                    $options['column/route'] = array(
+                        $routeResolver->retrieveByClass($foreignTable->getClassname()),
+                        array('id' => $name)
+                    );
+                }
+
+                if (! isset($options['column/foreign_table'])) {
+                    $options['column/foreign_table'] = $foreignTable;
+                }
+                
+                // fix header title by removing "id" suffix
+                if ((substr($options['header/value'], -3) == ' id') && strlen($options['header/value']) > 3)
+                {
+                    $options['header/value'] = substr($options['header/value'], 0, -2);
+                }
+            }
+
+            // guess datetime type
+            if (! $type && in_array($column->getType(), array('DATE', 'TIME', 'TIMESTAMP') )) {
                 $type = 'date_time';
             }
-            else {
-                $type = 'text';
+
+            // guess datetime options
+            if ($type == 'date_time') {
+
+                if (! isset($options['column/show_time']) && ($type == 'date_time') && ('DATE' == $column->getType())) {
+                    $options['column/show_time'] = false;
+                }
+
+                if (! isset($options['column/show_time']) && ($type == 'date_time') && ('TIME' == $column->getType())) {
+                    $options['column/show_date'] = false;
+                }
+            }
+
+            // guess email type
+            if (! $type && ($rawColName == 'EMAIL')) {
+                $type = 'email';
+            }
+
+            // guess array type
+            if (! $type && ($column->getType() == 'ARRAY')) {
+                $type = 'array';
+            }
+
+            // guess boolean type
+            if (! $type && ($column->getType() == 'BOOLEAN')) {
+                $type = 'boolean';
             }
         }
-        
+
         return parent::create($name, $type, $headerType, $options);
     }
 
@@ -137,7 +242,7 @@ class PropelTableBuilder extends TableBuilder
     /**
      * Translate raw colname to method.
      *
-     * @param $rawColname string 
+     * @param $rawColname string
      * @return string
      */
     private function translateColnameToMethod($colname)
@@ -147,7 +252,7 @@ class PropelTableBuilder extends TableBuilder
         }
 
         return 'get'.$this->objectPeer->translateFieldName(
-            $colname, 
+            $colname,
             \BasePeer::TYPE_COLNAME,
             \BasePeer::TYPE_PHPNAME
         );
@@ -156,10 +261,10 @@ class PropelTableBuilder extends TableBuilder
     /**
      * {@inheritdoc}
      */
-    public function getTable()
+    public function getTable($options = array())
     {
         // todo: create!
-        $table = $this->factory->createTable($this->name, $this->type, array());
+        $table = $this->factory->createTable($this->name, $this->type, $options);
 
         foreach ($this as $column) {
             $table->add($column);
@@ -167,10 +272,10 @@ class PropelTableBuilder extends TableBuilder
 
         // todo
         // All of this is a bit weird since we don't really know we're dealing
-        // with sortable columns, well, I know, but .. 
+        // with sortable columns, well, I know, but ..
         $factory = $this->getTableFactory();
         $request = $factory->getContainer()->get('request');
-        $orderBy = $request->get('order_by'); 
+        $orderBy = $request->get('order_by');
 
         // todo
         // At time of testing, a new table was made each request.
@@ -198,19 +303,30 @@ class PropelTableBuilder extends TableBuilder
         $rows = array();
 
         foreach ($this->modelCriteria->find() as $object) {
-            $rowArr = array();
+            $rowArr = array('_object' => $object);
             foreach ($table as $column) {
                 $options = $column->getOptions();
-                $method  = $options['method'];
 
-                $rowArr[$column->getName()] = array('value' => $object->$method());
+                // get value from object if method defined
+                if (! isset($options['method'])) {
+                    $rowArr[$column->getName()] = array('value' => null);
+                }
+                else {
+                    $method  = $options['method'];
+                    $rowArr[$column->getName()] = array('value' => $object->$method());
+                }
+
+                // default value
+                if (($rowArr[$column->getName()]['value'] === null) &&  isset($options['default_value'])) {
+                    $rowArr[$column->getName()]['value'] = $options['default_value'];
+                }
             }
 
             $rows[] = $rowArr;
         }
 
         $table->setRows($rows);
-        
+
         return $table;
     }
 
@@ -220,8 +336,7 @@ class PropelTableBuilder extends TableBuilder
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         parent::setDefaultOptions($resolver);
-        
+
         $resolver->setRequired(array('model_criteria'));
     }
 }
-

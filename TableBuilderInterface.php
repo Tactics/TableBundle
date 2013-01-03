@@ -31,7 +31,7 @@ interface TableBuilderInterface extends \Traversable, \Countable
     public function add($child, $type = null, $headerTypeOrOptions = null, array $options = array());
 
     /**
-     * Creates a table builder.
+     * Creates a new column
      *
      * @param string                   $name    The name of the form or the name of the property
      * @param string|TableTypeInterface $type    The type of the form or null if name is a property

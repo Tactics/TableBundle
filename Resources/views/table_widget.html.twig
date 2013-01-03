@@ -1,4 +1,4 @@
-<table{{ render_attributes(table.attributes) }}>
+<table{{ render_attributes(table.options.attributes|default([])) }}>
     <thead>
         <tr>
             {% for column in table %}
@@ -8,13 +8,22 @@
     </thead>
     <tbody>
 
-        {% for row in table.rows %}
-            <tr>
-            {% for column in table %}
-                {{ render_cell(column, row)  }}
+        {% if table.rows|length %}
+            {% for row in table.rows %}
+                <tr>
+                {% for column in table %}
+                    {{ render_cell(column, row)  }}
+                {% endfor %}
+                </tr>
             {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="{{ table|length }}">
+                    {% trans %}No results{% endtrans %}
+                </td>
             </tr>
-        {% endfor %}
+        {% endif %}
+         
         
     </tbody>
 </table>

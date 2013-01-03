@@ -1,20 +1,33 @@
-(function($) {
-    $(function($) {
-        $('.form-filter').live('submit', function() {
-            var form = $(this);
+jQuery(function($) {
+    $('.form-filter')
+    // Submit filter using ajax
+    .live('submit', function() {
+        var form = $(this);
+        var target = '#'+form.attr('data-target');
 
-            $.ajax({
-                url:      form.attr('action'),
-                type:     "POST",
-                data:     form.serialize(), 
-                dataType: "html",
-                success:  function(html) {
-                    var target = '#'+form.attr('data-target');
-                    $(target).replaceWith($(target, $(html)));
-                }
-            });
+        $(target).closest('.widget').addClass('ajax-loading');
 
-            return false;
+        $.ajax({
+            url:      form.attr('action'),
+            type:     "POST",
+            data:     form.serialize(), 
+            dataType: "html",
+            success:  function(html) {
+                $(target).replaceWith($(target, $(html)));
+            },
+            complete: function()
+            {
+                $(target).closest('.widget').removeClass('ajax-loading');
+            }
         });
-    });
-})(jQuery);
+
+        return false;
+    })
+    // Form submit button clears all filter values and submits form
+    .live('reset', function() {
+        var form = $(this);            
+        form.find(':text, select, :radio').val('');
+        form.submit();
+        return false;
+    })
+});

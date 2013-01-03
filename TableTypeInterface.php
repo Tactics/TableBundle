@@ -1,11 +1,8 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Tactics\TableBundle;
+
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Description of TableTypeInterface
@@ -14,20 +11,26 @@ namespace Tactics\TableBundle;
  */
 interface TableTypeInterface
 {
-    
     /**
-     * Returns the name of this type.
-     *
-     * @return string The name of this type
+     * Builds the form with the given builder
+     * 
+     * @param TableBuilderInterface
      */
-    public function getName();
-    
+    public function build(TableBuilderInterface $builder, array $options);
+
+
     /**
      * Sets the default options for this type.
      *
      * @param OptionsResolverInterface $resolver The resolver for the options.
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver);
-
+    
+    /**
+     * Returns the type of table builder to be used.
+     * 
+     * @return string The type of table builder
+     */
+    public function getBuilderType();
 }
 

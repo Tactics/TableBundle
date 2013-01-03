@@ -20,11 +20,6 @@ class Table implements \IteratorAggregate, TableInterface
     protected $rows = array();
     
     /**
-     * @var array An array of attributes.
-     */
-    protected $attributes = array();
-
-    /**
      * @var string The name of the table.
      */
     protected $name;
@@ -40,7 +35,7 @@ class Table implements \IteratorAggregate, TableInterface
      * @param string $name The name of the table.
      * @param array $options Options to configure the table.
      */
-    public function __construct($name, array $options)
+    public function __construct($name, array $options = array())
     {
         $this->name = $name;
         
@@ -83,10 +78,20 @@ class Table implements \IteratorAggregate, TableInterface
      *
      * @param OptionsResolverInterface $resolver The resolver for the options.
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    protected function setDefaultOptions(OptionsResolverInterface $resolver)
     {
+      $resolver->setOptional(array('attributes'));
     }
     
+    public function getOptions()
+    {
+        return $this->options;
+    }
+    
+    public function getOption($name)
+    {
+        return isset($this->options[$name]) ? $this->options[$name] : null;
+    }
     
     /**
      * Returns a column by name (implements \ArrayAccess).
@@ -110,7 +115,7 @@ class Table implements \IteratorAggregate, TableInterface
      */
     public function offsetExists($name)
     {
-        return isset($this->children[$name]);
+        return isset($this->columns[$name]);
     }
 
     /**
@@ -160,25 +165,4 @@ class Table implements \IteratorAggregate, TableInterface
     {
         return count($this->columns);
     }
-
-    /**
-     * @param array $attributes The HTML attributes of the table.
-     *
-     * @return Table $this The Table instance.
-     */
-    public function setAttributes(array $attributes)
-    {
-        $this->attributes = $attributes;
-
-        return $this;
-    }
-
-    /**
-     * @return array The HTML attributes of the table.
-     */
-    public function getAttributes()
-    {
-        return $this->attributes;
-    }
-
 }

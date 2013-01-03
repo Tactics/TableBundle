@@ -2,8 +2,10 @@
 
 {% block cell_content %}
     {% for action,options in column.actions %}
-        <a href="{{ path(options.route, get_hash(options.route_param, cell.value)) }}" title="{{ options.title }}" {{ render_attributes(options.attributes) }}>
-            <i class="icon-{{ options.icon }}"></i>
+        {% set cell_options = cell.actions[action] %}
+
+        <a href="{{ cell_options.disabled|default(false) ? '#' : path(cell_options.route_name, cell_options.route_params) }}" title="{{ cell_options.title|trans }}" {{ render_attributes(cell_options.attributes|default([])) }}>
+            <i class="icon-{{ cell_options.icon }}"></i>
         </a> 
         &nbsp;
     {% endfor %}

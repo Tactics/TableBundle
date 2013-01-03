@@ -1,6 +1,6 @@
 <?php
 
-namespace Tactics\TableBundle\ModelCriteriaFilter;
+namespace Tactics\TableBundle\QueryBuilderFilter;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -8,18 +8,19 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use \ModelCriteria;
-use \Criteria;
+use Doctrine\ORM\QueryBuilder;
 
-/**
- * @author Aaron Muylaert <aaron.muylaert at tactics.be>
- */
-class ModelCriteriaPager implements ModelCriteriaFilterInterface
+use Pagerfanta\Pagerfanta;
+use Pagerfanta\Adapter\DoctrineORMAdapter;
+
+class QueryBuilderPager implements QueryBuilderFilterInterface
 {
     /**
       * @var $container ContainerInterface A ContainerInterface instance.
      */
     protected $container;
+
+    protected $namespace = null;
 
     /**
      * {@inheritdoc}
@@ -38,7 +39,7 @@ class ModelCriteriaPager implements ModelCriteriaFilterInterface
     /**
      * {@inheritdoc}
      */
-    public function execute(ModelCriteria $mc, $key = null, $options = array())
+    public function execute(QueryBuilder $qb, $key = null, $options = array())
     {
         $request = $this->container->get('request'); 
         $session = $this->container->get('session');
@@ -49,10 +50,13 @@ class ModelCriteriaPager implements ModelCriteriaFilterInterface
         $options = $resolver->resolve($options);
 
         $key = null === $key ? 'pager/'.$request->attributes->get('_route') : $key;
+        $this->namespace = $key;
 
         $page = $request->get('page');
-
-        if ($page) {
+        if ($request->get('pager_namespace') && $request->get('pager_namespace') !== $this->getNamespace()) {
+            $page = $session->get($key);
+        }
+        elseif ($page) {
             $session->set($key, $page);
         } elseif (! $page && $session->has($key)) {
             $page = $session->get($key);
@@ -61,7 +65,10 @@ class ModelCriteriaPager implements ModelCriteriaFilterInterface
             $session->set($key, $page);
         }
 
-        return $mc->paginate($page, $options['max_per_page']);
+        $pager = new Pagerfanta(new DoctrineORMAdapter($qb));
+        $pager->setMaxPerPage($options['max_per_page'])->setCurrentPage($page);
+
+        return $pager;
     }
 
     /**
@@ -75,5 +82,10 @@ class ModelCriteriaPager implements ModelCriteriaFilterInterface
             ->setDefaults(array(
                 'max_per_page' => 10
         ));
+    }
+
+    public function getNamespace()
+    {
+        return $this->namespace;
     }
 }

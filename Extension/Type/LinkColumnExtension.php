@@ -15,32 +15,39 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  * @author Gert Vrebos <gert.vrebos at tactics.be>
  */
 class LinkColumnExtension extends AbstractColumnTypeExtension {
-    
+
     private $router;
-    
-    
+
+
     public function __construct($router) {
         $this->router = $router;
     }
-    
+
     public function execute(ColumnInterface $column, array &$row, array &$cell) {
         $route = $column->getOption('route');
         
-        if (! $route)
+        // Todo: Not sure if this is the correct place to check for empty 
+        // value.
+        if (! $route || ! $cell['value'])
         {
             return;
         }
-        
+
+        $cell['url'] = $this->router->generate($route[0], self::resolveRouteParameters($route, $row));
+    }
+
+    static public function resolveRouteParameters($route, $row)
+    {
         if (! is_array($route) || !  $route[0])
         {
-            throw new InvalidOptionException('"route" option form LinkColumnExtension should be an array with up to 3 elements: route name (string), list of dynamic route parameters (array), list of static route parameters (array).');
+            throw new InvalidOptionException('"route" option should be an array with up to 3 elements: route name (string), list of dynamic route parameters (array), list of static route parameters (array).');
         }
-        
+
         // dynamic route parameters, to be replace by row values
         $route[1] = (isset($route[1]) && is_array($route[1])) ? $route[1]: array();
         // static route parameters
         $route[2] = (isset($route[2]) && is_array($route[2])) ? $route[2]: array();
-        
+
         // resolve all route parameters
         foreach($route[1] as &$param)
         {
@@ -57,13 +64,11 @@ class LinkColumnExtension extends AbstractColumnTypeExtension {
                 return;
             }
         }
-        
-        $routeParameters = array_merge($route[1], $route[2]);
-        
-        $url = $this->router->generate($route[0], $routeParameters);
-        $cell['url'] = $url;
-    }
 
+        return array_merge($route[1], $route[2]);
+    }
+    
+    
     /**
      * Overrides the default options from the extended type.
      *
@@ -75,4 +80,3 @@ class LinkColumnExtension extends AbstractColumnTypeExtension {
     }
 
 }
-

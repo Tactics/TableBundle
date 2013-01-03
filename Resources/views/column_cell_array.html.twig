@@ -1,0 +1,6 @@
+{% extends "TacticsTableBundle::column_cell_default.html.twig" %}
+
+{% block cell_content %}
+    {% for item in cell.value %}{{ item }}{%- if not loop.last %}{{ column.options.separator }}{% endif %}{% endfor %}
+{% endblock %}
+

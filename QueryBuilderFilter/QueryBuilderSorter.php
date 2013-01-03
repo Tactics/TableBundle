@@ -1,14 +1,14 @@
 <?php
 
-namespace Tactics\TableBundle\ModelCriteriaFilter;
+namespace Tactics\TableBundle\QueryBuilderFilter;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\HttpFoundation\Request;
-use \ModelCriteria;
-use \Criteria;
 
-class ModelCriteriaSorter implements ModelCriteriaFilterInterface
+use Doctrine\ORM\QueryBuilder;
+
+class QueryBuilderSorter implements QueryBuilderFilterInterface
 {
     /**
       * @var $container ContainerInterface A ContainerInterface instance.
@@ -34,7 +34,7 @@ class ModelCriteriaSorter implements ModelCriteriaFilterInterface
     /**
      * {@inheritdoc}
      */
-    public function execute(ModelCriteria $mc, $key = null, $options = array())
+    public function execute(QueryBuilder $qb, $key = null, $options = array())
     {
         $request = $this->container->get('request');
         $session = $this->container->get('session');
@@ -50,23 +50,32 @@ class ModelCriteriaSorter implements ModelCriteriaFilterInterface
             // Retrieve sort from request.
             // Create, update or delete sort from current sorts.
             if ($request->get('asc')) {
-                $sorts = $this->sort($request->get('asc'), Criteria::ASC, $sorts);        
+                $sorts = $this->sort($this->addAlias($qb, $request->get('asc')), 'ASC', $sorts);        
             } elseif ($request->get('desc')) {
-                $sorts = $this->sort($request->get('desc'), Criteria::DESC, $sorts);
+                $sorts = $this->sort($this->addAlias($qb, $request->get('desc')), 'DESC', $sorts);
             } elseif ($request->get('unsort')) {
-                $sorts = $this->unsort($request->get('unsort'), $sorts);
+                $sorts = $this->unsort($this->addAlias($qb, $request->get('unsort')), $sorts);
             } 
         }
 
-        // Add sorts to ModelCriteria.
+        // Add sorts to QueryBuilder.
         foreach ($sorts as $sort) {
-            $mc->orderBy($sort['name'], $sort['asc_or_desc']);
+            $qb->addOrderBy($sort['name'], $sort['asc_or_desc']);
         } 
 
         // Set updated sorts in session.
         $session->set($key, $sorts);
         
-        return $mc;
+        return $qb;
+    }
+
+    private function addAlias(QueryBuilder $qb, $fieldName)
+    {
+        // @todo support multiply entities.
+        $aliases = $qb->getRootAliases();
+        $alias = $aliases[0];
+
+        return $alias.'.'.$fieldName;
     }
 
     private function sort($name, $ascOrDesc, $sorts) 
