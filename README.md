@@ -130,4 +130,36 @@ ModelCriteriaSorter will look for following parameters:
 * desc ``` $generator->generate('foo_list', array('desc' => FooPeer::ID)) ```
 * unsort ``` $generator->generate('foo_list', array('unsort' => FooPeer::ID)) ```
 
+Using multiple tables on one page
+---------------------------------
 
+Using multiple tables on one page becomes a problem when they contain sortable columns and pagers.
+In this case, you can namespace your table using the TacticsTableBuilder.
+
+```
+// Assuming you are in a controller that extends from TacticsController.
+
+$builder = $this->createTableBuilder(new BazTableType(), array(
+   'namespace' => 'foo/baz'
+));
+
+$builder2 = $this->createTableBuilder(new BarTableType(), array(
+   'namespace' => 'foo/bar'
+));
+```
+
+Rendering a pagerfanta that makes use of the namespace is troublesome, you'll have to pass the builder
+instances to your template.
+
+```
+   return $this->render('FooBundle:Foo:show.html.twig', array(
+      'builder'  => $builder,
+      'builder2' => $builder2
+   ))
+```
+
+And render the pager using the pager_widget twig function instead of the pagerfanta twig function.
+
+```
+   {{ pager_widget(builder) }}
+```
