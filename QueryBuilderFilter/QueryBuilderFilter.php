@@ -107,7 +107,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
             {
                 $value = $this->get($fieldName);
                 
-                if ('' !== $value) {
+                if (null !== $value && '' !== $value) {
                     if (! isset($options['comparison'])) {
                         $qb->andWhere(
                             $qb->expr()->eq(
@@ -203,6 +203,11 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                                     )
                                 );
                                 break;
+                              case 'INSTANCE OF':
+                                $qb->andWhere(
+                                    $this->getAlias($qb) . ' INSTANCE OF ' . $value
+                                );
+                                break;
                             default:
                                 throw new \Exception('Unsupported comparison '.$options['comparison']);
                                 break;
@@ -211,6 +216,8 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
 
                     if (isset($options['comparison']) && 'LIKE' === $options['comparison']) {
                         $qb->setParameter($fieldName, '%'.$value.'%');
+                    } elseif (isset($options['comparison']) && 'INSTANCE OF' === $options['comparison']) {
+                        // Nothing
                     } elseif (! isset($options['comparison']) || 'IS NULL' !== $options['comparison'] && 'IS NOT NULL' !== $options['comparison']) {
                         $qb->setParameter($fieldName, $value);
                     }
@@ -220,13 +227,13 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
         return $qb;
     }
 
-    private function getAlias(QueryBuilder $qb, $fieldName)
+    private function getAlias(QueryBuilder $qb, $fieldName = null)
     {
         // @todo support multiply entities.
         $aliases = $qb->getRootAliases();
         $alias = $aliases[0];
 
-        return $alias.'.'.$fieldName;
+        return $fieldName ? $alias . '.' . $fieldName : $alias;
     }
 
     /**
