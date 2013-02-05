@@ -225,7 +225,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                             $qb->setParameter($fieldName, $value);
                         }
                     }
-            }
+                }
             }
         }
         return $qb;
