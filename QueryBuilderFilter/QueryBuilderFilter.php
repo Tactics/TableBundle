@@ -74,154 +74,158 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
         
         // Translate filter info into a QuiryBuilder query.
         foreach ($this->fields as $fieldName => $options) {
-            if($options['type'] === 'entity') {
-                $options['comparison'] = '=';
-            }
-            if (($options['type'] === 'date') || ($options['type'] === 'datum')) {
-              
-              $value = $this->get($fieldName, '_from');
-              if ($value)
-              {
-                  $dt = \DateTime::createFromFormat('d/m/Y', $value);
-                  $qb->andWhere(
-                      $qb->expr()->gte(
-                          $this->getAlias($qb, $fieldName),
-                          ':'.$fieldName.'_from'
-                      ))
-                      ->setParameter($fieldName.'_from', $dt);
-              }
-              
-              $value = $this->get($fieldName, '_to');
-              if ($value)
-              {
-                  $dt = \DateTime::createFromFormat('d/m/Y', $value);
-                  $qb->andWhere(
-                      $qb->expr()->lte(
-                          $this->getAlias($qb, $fieldName),
-                          ':'.$fieldName.'_to'
-                      ))
-                      ->setParameter($fieldName.'_to', $dt);
-              }
-            }
-            else
-            {
-                $value = $this->get($fieldName);
-                
-                if (null !== $value && '' !== $value) {
-                    if (! isset($options['comparison'])) {
-                        $qb->andWhere(
-                            $qb->expr()->eq(
-                                $this->getAlias($qb, $fieldName),
-                                ':'.$fieldName
-                            )
-                        );
-                    } else {
-                        switch ($options['comparison']) {
-                            case 'LIKE':
-                                $qb->andWhere(
-                                    $qb->expr()->like(
-                                        $this->getAlias($qb, $fieldName),
-                                        ':'.$fieldName
-                                    )
-                                );
-                                break;
-                            case '=':
-                                $qb->andWhere(
-                                    $qb->expr()->eq(
-                                        $this->getAlias($qb, $fieldName),
-                                        ':'.$fieldName
-                                    )
-                                );
-                                break;
-                            case '<>':
-                                $qb->andWhere(
-                                    $qb->expr()->neq(
-                                        $this->getAlias($qb, $fieldName),
-                                        ':'.$fieldName
-                                    )
-                                );
-                                break;
-                            case '<':
-                                $qb->andWhere(
-                                    $qb->expr()->lt(
-                                        $this->getAlias($qb, $fieldName),
-                                        ':'.$fieldName
-                                    )
-                                );
-                                break;
-                            case '<=':
-                                $qb->andWhere(
-                                    $qb->expr()->lte(
-                                        $this->getAlias($qb, $fieldName),
-                                        ':'.$fieldName
-                                    )
-                                );
-                                break;
-                            case '>':
-                                $qb->andWhere(
-                                    $qb->expr()->gt(
-                                        $this->getAlias($qb, $fieldName),
-                                        ':'.$fieldName
-                                    )
-                                );
-                                break;
-                            case '>=':
-                                $qb->andWhere(
-                                    $qb->expr()->gte(
-                                        $this->getAlias($qb, $fieldName),
-                                        ':'.$fieldName
-                                    )
-                                );
-                                break;
-                            case 'IS NULL':
-                                $qb->andWhere(
-                                    $qb->expr()->isNull(
-                                        $this->getAlias($qb, $fieldName)
-                                    )
-                                );
-                                break;
-                            case 'IS NOT NULL':
-                                $qb->andWhere(
-                                    $qb->expr()->isNotNull(
-                                        $this->getAlias($qb, $fieldName)
-                                    )
-                                );
-                                break;
-                            case 'IN':
-                                $qb->andWhere(
-                                    $qb->expr()->in(
-                                        $this->getAlias($qb, $fieldName),
-                                        ':'.$fieldName
-                                    )
-                                );
-                                break;
-                            case 'NOT IN':
-                                $qb->andWhere(
-                                    $qb->expr()->notIn(
-                                        $this->getAlias($qb, $fieldName),
-                                        ':'.$fieldName
-                                    )
-                                );
-                                break;
-                              case 'INSTANCE OF':
-                                $qb->andWhere(
-                                    $this->getAlias($qb) . ' INSTANCE OF ' . $value
-                                );
-                                break;
-                            default:
-                                throw new \Exception('Unsupported comparison '.$options['comparison']);
-                                break;
+            if (isset($options['filter']) && $this->get($fieldName)) {
+                $options['filter']($qb, $this->getAlias($qb), $fieldName, $this->get($fieldName));
+            } else {
+                if($options['type'] === 'entity') {
+                    $options['comparison'] = '=';
+                }
+                if (($options['type'] === 'date') || ($options['type'] === 'datum')) {
+                  
+                  $value = $this->get($fieldName, '_from');
+                  if ($value)
+                  {
+                      $dt = \DateTime::createFromFormat('d/m/Y', $value);
+                      $qb->andWhere(
+                          $qb->expr()->gte(
+                              $this->getAlias($qb, $fieldName),
+                              ':'.$fieldName.'_from'
+                          ))
+                          ->setParameter($fieldName.'_from', $dt);
+                  }
+                  
+                  $value = $this->get($fieldName, '_to');
+                  if ($value)
+                  {
+                      $dt = \DateTime::createFromFormat('d/m/Y', $value);
+                      $qb->andWhere(
+                          $qb->expr()->lte(
+                              $this->getAlias($qb, $fieldName),
+                              ':'.$fieldName.'_to'
+                          ))
+                          ->setParameter($fieldName.'_to', $dt);
+                  }
+                }
+                else
+                {
+                    $value = $this->get($fieldName);
+                    
+                    if (null !== $value && '' !== $value) {
+                        if (! isset($options['comparison'])) {
+                            $qb->andWhere(
+                                $qb->expr()->eq(
+                                    $this->getAlias($qb, $fieldName),
+                                    ':'.$fieldName
+                                )
+                            );
+                        } else {
+                            switch ($options['comparison']) {
+                                case 'LIKE':
+                                    $qb->andWhere(
+                                        $qb->expr()->like(
+                                            $this->getAlias($qb, $fieldName),
+                                            ':'.$fieldName
+                                        )
+                                    );
+                                    break;
+                                case '=':
+                                    $qb->andWhere(
+                                        $qb->expr()->eq(
+                                            $this->getAlias($qb, $fieldName),
+                                            ':'.$fieldName
+                                        )
+                                    );
+                                    break;
+                                case '<>':
+                                    $qb->andWhere(
+                                        $qb->expr()->neq(
+                                            $this->getAlias($qb, $fieldName),
+                                            ':'.$fieldName
+                                        )
+                                    );
+                                    break;
+                                case '<':
+                                    $qb->andWhere(
+                                        $qb->expr()->lt(
+                                            $this->getAlias($qb, $fieldName),
+                                            ':'.$fieldName
+                                        )
+                                    );
+                                    break;
+                                case '<=':
+                                    $qb->andWhere(
+                                        $qb->expr()->lte(
+                                            $this->getAlias($qb, $fieldName),
+                                            ':'.$fieldName
+                                        )
+                                    );
+                                    break;
+                                case '>':
+                                    $qb->andWhere(
+                                        $qb->expr()->gt(
+                                            $this->getAlias($qb, $fieldName),
+                                            ':'.$fieldName
+                                        )
+                                    );
+                                    break;
+                                case '>=':
+                                    $qb->andWhere(
+                                        $qb->expr()->gte(
+                                            $this->getAlias($qb, $fieldName),
+                                            ':'.$fieldName
+                                        )
+                                    );
+                                    break;
+                                case 'IS NULL':
+                                    $qb->andWhere(
+                                        $qb->expr()->isNull(
+                                            $this->getAlias($qb, $fieldName)
+                                        )
+                                    );
+                                    break;
+                                case 'IS NOT NULL':
+                                    $qb->andWhere(
+                                        $qb->expr()->isNotNull(
+                                            $this->getAlias($qb, $fieldName)
+                                        )
+                                    );
+                                    break;
+                                case 'IN':
+                                    $qb->andWhere(
+                                        $qb->expr()->in(
+                                            $this->getAlias($qb, $fieldName),
+                                            ':'.$fieldName
+                                        )
+                                    );
+                                    break;
+                                case 'NOT IN':
+                                    $qb->andWhere(
+                                        $qb->expr()->notIn(
+                                            $this->getAlias($qb, $fieldName),
+                                            ':'.$fieldName
+                                        )
+                                    );
+                                    break;
+                                  case 'INSTANCE OF':
+                                    $qb->andWhere(
+                                        $this->getAlias($qb) . ' INSTANCE OF ' . $value
+                                    );
+                                    break;
+                                default:
+                                    throw new \Exception('Unsupported comparison '.$options['comparison']);
+                                    break;
+                            }
+                        }
+
+                        if (isset($options['comparison']) && 'LIKE' === $options['comparison']) {
+                            $qb->setParameter($fieldName, '%'.$value.'%');
+                        } elseif (isset($options['comparison']) && 'INSTANCE OF' === $options['comparison']) {
+                            // Nothing
+                        } elseif (! isset($options['comparison']) || 'IS NULL' !== $options['comparison'] && 'IS NOT NULL' !== $options['comparison']) {
+                            $qb->setParameter($fieldName, $value);
                         }
                     }
-
-                    if (isset($options['comparison']) && 'LIKE' === $options['comparison']) {
-                        $qb->setParameter($fieldName, '%'.$value.'%');
-                    } elseif (isset($options['comparison']) && 'INSTANCE OF' === $options['comparison']) {
-                        // Nothing
-                    } elseif (! isset($options['comparison']) || 'IS NULL' !== $options['comparison'] && 'IS NOT NULL' !== $options['comparison']) {
-                        $qb->setParameter($fieldName, $value);
-                    }
-                }
+            }
             }
         }
         return $qb;
@@ -379,7 +383,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                 'datum_from_and_to' => true
         ));
 
-        $resolver->setOptional(array('label', 'form_field_name'));
+        $resolver->setOptional(array('label', 'form_field_name', 'filter'));
     }
     
     public function buildFromType(QueryBuilderFilterTypeInterface $type)
