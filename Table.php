@@ -169,22 +169,20 @@ class Table implements \IteratorAggregate, TableInterface
     /**
      * Export the table to CSV.
      *
+     * Should I use fputcsv? I am kind of reinventing the wheel here.
+     * The problem I have with fputcsv is that it writes to a physical file...
+     *
      * @return string $csv The table formatted as CSV.
      */
     public function exportToCsv()
     {
-        // Should I use fputcsv? I am kind of reinventing the wheel here.
-        // The problem I have with fputcsv is that it writes to a physical file...
-
         $csv = $this->createCsvHeaders();
 
         foreach ($this->getRows() as $row) {
             $csv .= $this->createCsvRow($row);
         }
 
-        $csv = $this->str_lreplace("\r\n", '', $csv);
-
-        return $csv;
+        return $this->removeLastNewLineCharacter($csv);
     }
 
     /**
@@ -267,5 +265,17 @@ class Table implements \IteratorAggregate, TableInterface
         $data .= $this->createNewLineCharacter();
 
         return $data;
+    }
+
+    /**
+     * Removes the last new line character for a csv formatted string.
+     *
+     * @param string $csv
+     *
+     * @return string $csv
+     */
+    private function removeLastNewLineCharacter($csv)
+    {
+        return $this->str_lreplace("\r\n", '', $csv);
     }
 }
