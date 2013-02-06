@@ -54,8 +54,7 @@ class CsvDataTransformer implements DataTransformerInterface
             $this->csv .= sprintf('%s;', $column->getHeader()->getValue());
         }
 
-        $this->csv .= $this->createNewLineCharacter();
-
+        $this->appendNewLineCharacter();
         $this->cleanUpLastRow();
     }
 
@@ -89,16 +88,17 @@ class CsvDataTransformer implements DataTransformerInterface
         }
 
         $this->cleanUpLastRow();
-
-        $this->csv .= $this->createNewLineCharacter();
+        $this->appendNewLineCharacter();
     }
 
     /**
-     * @return string A newline character
+     * Appends a newline character to the csv formatted string.
+     *
+     * @return void
      */
-    private function createNewLineCharacter()
+    private function appendNewLineCharacter()
     {
-        return "\r\n";
+        $this->csv .= "\r\n";
     }
 
     /**
