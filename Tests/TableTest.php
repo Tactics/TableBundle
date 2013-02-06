@@ -189,7 +189,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
             ))
         ;
 
-        $csv = "Name;Age;\r\nAaron;23\r\nJoris;35";
+        $csv = "Name;Age\r\nAaron;23\r\nJoris;35";
 
         $this->assertEquals($csv, $this->table->exportToCsv());
     }
