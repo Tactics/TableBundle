@@ -184,8 +184,8 @@ class TableTest extends \PHPUnit_Framework_TestCase
             ->add(new Column('Name', new ColumnHeader('Name')))
             ->add(new Column('Age', new ColumnHeader('Age')))
             ->setRows(array(
-                array('Aaron', '23'),
-                array('Joris', '35'),
+                array('Name' => 'Aaron','Age' => '23'),
+                array('Name' => 'Joris', 'Age' => '35'),
             ))
         ;
 
