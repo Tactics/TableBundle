@@ -185,7 +185,7 @@ class Table implements \IteratorAggregate, TableInterface
         }
 
         // Delete trailing delimiter
-        $this->str_lreplace(';', '', $csv);
+        $csv = $this->str_lreplace(';', '', $csv);
 
         // New line
         $csv .= "\r\n";
@@ -198,14 +198,14 @@ class Table implements \IteratorAggregate, TableInterface
             }
 
             // Delete trailing delimiter
-            $this->str_lreplace(';', '', $csv);
+            $csv = $this->str_lreplace(';', '', $csv);
 
             // New Line
             $csv .= "\r\n";
         }
 
         // Remove last occurance of \r\n
-        $this->str_lreplace("\r\n", '', $csv);
+        $csv = $this->str_lreplace("\r\n", '', $csv);
 
         return $csv;
     }
