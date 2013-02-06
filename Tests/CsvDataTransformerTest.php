@@ -9,6 +9,9 @@ use Tactics\TableBundle\CsvDataTransformer;
 
 class CsvDataTransformerTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @covers Tactics\TableBundle\CsvDataTransformer::transform
+     */
     public function testTransform()
     {
         $table = new Table('Table');
@@ -27,6 +30,13 @@ class CsvDataTransformerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($csv, $table->transformData(new CsvDataTransformer()));
     }
 
+    /**
+     * Row values that are objects should be transformed to a string correctly.
+     * \DateTime should get formatted "d/m/Y", all other objects should be cast 
+     * to string.
+     *
+     * @covers Tactics\TableBundle\CsvDataTransformer::transform
+     */
     public function testDateTimeAndObjectFormatting()
     {
         $table  = new Table('Table');
@@ -47,6 +57,12 @@ class CsvDataTransformerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($csv, $table->transformData(new CsvDataTransformer()));
     }
 
+    /**
+     * Test wheher cell value that is an object but cannot be cast to string is 
+     * transformed to an empty string.
+     *
+     * @covers Tactics\TableBundle\CsvDataTransformer::transform
+     */
     public function testNonStringableObjectFormatting()
     {
         $table  = new Table('Table');
@@ -68,6 +84,10 @@ class CsvDataTransformerTest extends \PHPUnit_Framework_TestCase
     }
 }
 
+/**
+ * Dummy classes for testing the formatting of a \DateTime object and 
+ * formatting of an object.
+ */
 class Person
 {
     protected $name;
