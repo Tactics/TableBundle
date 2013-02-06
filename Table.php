@@ -178,9 +178,6 @@ class Table implements \IteratorAggregate, TableInterface
 
         $csv = $this->createCsvAndwriteHeaders();
 
-        // Delete trailing delimiter
-        $csv = $this->str_lreplace(';', '', $csv);
-
         // New line
         $csv .= "\r\n";
 
@@ -218,7 +215,18 @@ class Table implements \IteratorAggregate, TableInterface
             $csv .= sprintf('%s;', $column->getHeader()->getValue());
         }
 
-        return $csv;
+        return $this->cleanUpLastRow($csv);
+    }
+
+    /**
+     * Remove trailing delmiter from last row.
+     *
+     * @param string $csv
+     * @return string
+     */
+    private function cleanUpLastRow($csv)
+    {
+        return $this->str_lreplace(';', '', $csv);
     }
 
     /**
@@ -240,5 +248,4 @@ class Table implements \IteratorAggregate, TableInterface
 
         return $subject;
     }
-
 }
