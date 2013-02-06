@@ -185,11 +185,8 @@ class Table implements \IteratorAggregate, TableInterface
                 $csv .= sprintf('%s;', $cell['value']);
             }
 
-            // Delete trailing delimiter
-            $csv = $this->str_lreplace(';', '', $csv);
-
-            // New Line
-            $csv .= "\r\n";
+            $csv = $this->cleanupLastRow($csv);
+            $csv .= $this->createNewLineCharacter();
         }
 
         // Remove last occurance of \r\n
@@ -212,7 +209,9 @@ class Table implements \IteratorAggregate, TableInterface
             $csv .= sprintf('%s;', $column->getHeader()->getValue());
         }
 
-        return $this->addNewLine($this->cleanUpLastRow($csv));
+        $csv .= $this->createNewLineCharacter();
+
+        return $this->cleanUpLastRow($csv);
     }
 
     /**
@@ -233,9 +232,9 @@ class Table implements \IteratorAggregate, TableInterface
      *
      * @return string
      */
-    private function addNewLine($csv)
+    private function createNewLineCharacter()
     {
-        return $csv .= "\r\n";
+        return "\r\n";
     }
 
     /**
