@@ -194,11 +194,11 @@ class Table implements \IteratorAggregate, TableInterface
         foreach ($this->getRows() as $row) {
             foreach ($this as $column) {
                 $cell = $column->getCell($row);
-                $csv .= sprintf('%s;', $column->getCell($row));
+                $csv .= sprintf('%s;', $cell['value']);
             }
 
             // Delete trailing delimiter
-            str_lreplace(';', '', $csv);
+            $this->str_lreplace(';', '', $csv);
 
             // New Line
             $csv .= "\r\n";
