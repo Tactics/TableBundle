@@ -178,18 +178,10 @@ class Table implements \IteratorAggregate, TableInterface
 
         $csv = $this->createCsvHeaders();
 
-        // Write data
         foreach ($this->getRows() as $row) {
-            foreach ($this as $column) {
-                $cell = $column->getCell($row);
-                $csv .= sprintf('%s;', $cell['value']);
-            }
-
-            $csv = $this->cleanupLastRow($csv);
-            $csv .= $this->createNewLineCharacter();
+            $csv .= $this->createCsvRow($row);
         }
 
-        // Remove last occurance of \r\n
         $csv = $this->str_lreplace("\r\n", '', $csv);
 
         return $csv;
@@ -255,5 +247,25 @@ class Table implements \IteratorAggregate, TableInterface
         }
 
         return $subject;
+    }
+
+    /**
+     * Creates a CSV row for a table row.
+     *
+     * @return string $data
+     */
+    private function createCsvRow($row)
+    {
+        $data = '';
+
+        foreach ($this as $column) {
+            $cell = $column->getCell($row);
+            $data .= sprintf('%s;', $cell['value']);
+        }
+
+        $data = $this->cleanupLastRow($data);
+        $data .= $this->createNewLineCharacter();
+
+        return $data;
     }
 }
