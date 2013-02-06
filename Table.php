@@ -176,7 +176,7 @@ class Table implements \IteratorAggregate, TableInterface
         // Should I use fputcsv? I am kind of reinventing the wheel here.
         // The problem I have with fputcsv is that it writes to a physical file...
 
-        $csv = $this->createCsvAndwriteHeaders();
+        $csv = $this->createCsvHeaders();
 
         // Write data
         foreach ($this->getRows() as $row) {
@@ -204,7 +204,7 @@ class Table implements \IteratorAggregate, TableInterface
      *
      * @return string
      */
-    private function createCsvAndWriteHeaders()
+    private function createCsvHeaders()
     {
         $csv = '';
 
