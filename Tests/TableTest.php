@@ -174,4 +174,18 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(0, $this->table->count());
     }
+
+    /**
+     * @covers Tactics\TableBundle\Table::transformData
+     */
+    public function testTransformData()
+    {
+        $transformerMock = $this->getMock('Tactics\TableBundle\CsvDataTransformer');
+        $transformerMock
+            ->expects($this->once())
+            ->method('transform')
+        ;
+
+        $this->table->transformData($transformerMock);
+    }
 }
