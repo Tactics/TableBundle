@@ -176,21 +176,16 @@ class TableTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Tactics\TableBundle\Table::exportToCsv
+     * @covers Tactics\TableBundle\Table::transformData
      */
-    public function testExportToCsv()
+    public function testTransformData()
     {
-        $this->table
-            ->add(new Column('Name', new ColumnHeader('Name')))
-            ->add(new Column('Age', new ColumnHeader('Age')))
-            ->setRows(array(
-                array('Name' => 'Aaron','Age' => '23'),
-                array('Name' => 'Joris', 'Age' => '35'),
-            ))
+        $transformerMock = $this->getMock('Tactics\TableBundle\CsvDataTransformer');
+        $transformerMock
+            ->expects($this->once())
+            ->method('transform')
         ;
 
-        $csv = "Name;Age\r\nAaron;23\r\nJoris;35";
-
-        $this->assertEquals($csv, $this->table->exportToCsv());
+        $this->table->transformData($transformerMock);
     }
 }
