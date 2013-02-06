@@ -180,7 +180,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
      */
     public function testExportToCsv()
     {
-        $table
+        $this->table
             ->add(new Column('Name', new ColumnHeader('Name')))
             ->add(new Column('Age', new ColumnHeader('Age')))
             ->setRows(array(
