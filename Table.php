@@ -193,7 +193,8 @@ class Table implements \IteratorAggregate, TableInterface
         // Write data
         foreach ($this->getRows() as $row) {
             foreach ($this as $column) {
-                $csv .= sprintf('%s;', $column->getCell($row)->getValue());
+                $cell = $column->getCell($row);
+                $csv .= sprintf('%s;', $column->getCell($row));
             }
 
             // Delete trailing delimiter
