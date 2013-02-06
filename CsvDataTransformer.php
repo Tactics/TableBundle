@@ -84,7 +84,20 @@ class CsvDataTransformer implements DataTransformerInterface
     {
         foreach ($table as $column) {
             $cell = $column->getCell($row);
-            $this->csv .= $cell['value'].$this->delimiter;
+
+            if ($cell['value'] instanceof \DateTime) {
+                $value = $cell['value']->format('d/m/Y');
+            } elseif (is_object($cell['value'])) {
+                try {
+                    $value = (string) $cell['value'];
+                } catch (\Exception $e) {
+                    $value = '';
+                }
+            } else {
+                $value = $cell['value'];
+            }
+
+            $this->csv .= $value.$this->delimiter;
         }
 
         $this->cleanUpLastRow();
