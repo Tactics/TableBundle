@@ -26,4 +26,48 @@ class CsvDataTransformerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($csv, $table->transformData(new CsvDataTransformer()));
     }
+
+    public function testDateTimeFormatting()
+    {
+        $table  = new Table('Table');
+        $person = new StringablePerson('Aaron');
+
+        $table
+            ->add(new Column('Name', new ColumnHeader('Name')))
+            ->add(new Column('Birthdate', new ColumnHeader('Birthdate')))
+            ->setRows(array(
+                array('Name' => $person, 'Birthdate' => $person->getBirthdate())
+            ))
+        ;
+
+        $date = new \DateTime()->format('d/m/Y');
+
+        $csv = "Name;Birthdate\r\nAaron;$date";
+
+        $this->assertEquals($csv, $table->transformData(new CsvDataTransformer()));
+    }
+}
+
+class Person
+{
+    protected $name;
+
+    protected $birthdate = new \DateTime();
+
+    public function __construct($name)
+    {
+        $this->name = $name;
+    }
+    public function getBirthdate()
+    {
+        return $this->birthdate;
+    }
+}
+
+class StringablePerson extends Person
+{
+    public function __toString()
+    {
+        return $this->name;
+    }
 }
