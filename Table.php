@@ -165,4 +165,67 @@ class Table implements \IteratorAggregate, TableInterface
     {
         return count($this->columns);
     }
+
+    /**
+     * Export the table to CSV.
+     *
+     * @return string $csv The table formatted as CSV.
+     */
+    public function exportToCsv()
+    {
+        // Should I use fputcsv? I am kind of reinventing the wheel here.
+        // The problem I have with fputcsv is that it writes to a physical file...
+
+        $csv = '';
+
+        // Write headers
+        foreach ($this as $column) {
+            // @todo translate headers.
+            $csv .= sprintf('%s;', $column->getHeader()->getValue());
+        }
+
+        // Delete trailing delimiter
+        $this->str_lreplace(';', '', $csv);
+
+        // New line
+        $csv .= "\r\n";
+
+        // Write data
+        foreach ($this->getRows() as $row) {
+            foreach ($this as $column) {
+                $csv .= sprintf('%s;', $column->getCell($row)->getValue());
+            }
+
+            // Delete trailing delimiter
+            str_lreplace(';', '', $csv);
+
+            // New Line
+            $csv .= "\r\n";
+        }
+
+        // Remove last occurance of \r\n
+        $this->str_lreplace("\r\n", '', $csv);
+
+        return $csv;
+    }
+
+    /**
+     * Replaces last occurence of a string in a string.
+     *
+     * @param string $search  The string that needs to be replaced.
+     * @param string $replace The replacement.
+     * @param string $subject The string to search in.
+     *
+     * @return string
+     */
+    private function str_lreplace($search, $replace, $subject)
+    {
+        $pos = strrpos($subject, $search);
+
+        if($pos !== false) {
+            $subject = substr_replace($subject, $replace, $pos, strlen($search));
+        }
+
+        return $subject;
+    }
 }
