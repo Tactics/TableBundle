@@ -178,9 +178,6 @@ class Table implements \IteratorAggregate, TableInterface
 
         $csv = $this->createCsvAndwriteHeaders();
 
-        // New line
-        $csv .= "\r\n";
-
         // Write data
         foreach ($this->getRows() as $row) {
             foreach ($this as $column) {
@@ -215,7 +212,7 @@ class Table implements \IteratorAggregate, TableInterface
             $csv .= sprintf('%s;', $column->getHeader()->getValue());
         }
 
-        return $this->cleanUpLastRow($csv);
+        return $this->addNewLine($this->cleanUpLastRow($csv));
     }
 
     /**
@@ -227,6 +224,18 @@ class Table implements \IteratorAggregate, TableInterface
     private function cleanUpLastRow($csv)
     {
         return $this->str_lreplace(';', '', $csv);
+    }
+
+    /**
+     * Appends a newline character to the csv.
+     *
+     * @param string $csv
+     *
+     * @return string
+     */
+    private function addNewLine($csv)
+    {
+        return $csv .= "\r\n";
     }
 
     /**
