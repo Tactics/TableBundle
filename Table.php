@@ -176,13 +176,7 @@ class Table implements \IteratorAggregate, TableInterface
         // Should I use fputcsv? I am kind of reinventing the wheel here.
         // The problem I have with fputcsv is that it writes to a physical file...
 
-        $csv = '';
-
-        // Write headers
-        foreach ($this as $column) {
-            // @todo translate headers.
-            $csv .= sprintf('%s;', $column->getHeader()->getValue());
-        }
+        $csv = $this->createCsvAndwriteHeaders();
 
         // Delete trailing delimiter
         $csv = $this->str_lreplace(';', '', $csv);
@@ -211,6 +205,23 @@ class Table implements \IteratorAggregate, TableInterface
     }
 
     /**
+     * Creates a new string that will act as the CSV and writes the table 
+     * headers to it.
+     *
+     * @return string
+     */
+    private function createCsvAndWriteHeaders()
+    {
+        $csv = '';
+
+        foreach ($this as $column) {
+            $csv .= sprintf('%s;', $column->getHeader()->getValue());
+        }
+
+        return $csv;
+    }
+
+    /**
      * Replaces last occurence of a string in a string.
      *
      * @param string $search  The string that needs to be replaced.
@@ -229,4 +240,5 @@ class Table implements \IteratorAggregate, TableInterface
 
         return $subject;
     }
+
 }
