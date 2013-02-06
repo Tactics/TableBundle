@@ -3,7 +3,7 @@
 namespace Tactics\TableBundle;
 
 use Tactics\TableBundle\TableInterface;
-
+use Tactics\TableBundle\DataTransformerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
@@ -167,115 +167,14 @@ class Table implements \IteratorAggregate, TableInterface
     }
 
     /**
-     * Export the table to CSV.
+     * Transform the table data.
      *
-     * Should I use fputcsv? I am kind of reinventing the wheel here.
-     * The problem I have with fputcsv is that it writes to a physical file...
+     * @param Tactics\TableBundle\DataTransformerInterface $transformer
      *
-     * @return string $csv The table formatted as CSV.
+     * @return mixed 
      */
-    public function exportToCsv()
+    public function transformData(DataTransformerInterface $transformer)
     {
-        $csv = $this->createCsvHeaders();
-
-        foreach ($this->getRows() as $row) {
-            $csv .= $this->createCsvRow($row);
-        }
-
-        return $this->removeLastNewLineCharacter($csv);
-    }
-
-    /**
-     * Creates a new string that will act as the CSV and writes the table 
-     * headers to it.
-     *
-     * @return string
-     */
-    private function createCsvHeaders()
-    {
-        $csv = '';
-
-        foreach ($this as $column) {
-            $csv .= sprintf('%s;', $column->getHeader()->getValue());
-        }
-
-        $csv .= $this->createNewLineCharacter();
-
-        return $this->cleanUpLastRow($csv);
-    }
-
-    /**
-     * Remove trailing delmiter from last row.
-     *
-     * @param string $csv
-     * @return string
-     */
-    private function cleanUpLastRow($csv)
-    {
-        return $this->str_lreplace(';', '', $csv);
-    }
-
-    /**
-     * Appends a newline character to the csv.
-     *
-     * @param string $csv
-     *
-     * @return string
-     */
-    private function createNewLineCharacter()
-    {
-        return "\r\n";
-    }
-
-    /**
-     * Replaces last occurence of a string in a string.
-     *
-     * @param string $search  The string that needs to be replaced.
-     * @param string $replace The replacement.
-     * @param string $subject The string to search in.
-     *
-     * @return string
-     */
-    private function str_lreplace($search, $replace, $subject)
-    {
-        $pos = strrpos($subject, $search);
-
-        if($pos !== false) {
-            $subject = substr_replace($subject, $replace, $pos, strlen($search));
-        }
-
-        return $subject;
-    }
-
-    /**
-     * Creates a CSV row for a table row.
-     *
-     * @return string $data
-     */
-    private function createCsvRow($row)
-    {
-        $data = '';
-
-        foreach ($this as $column) {
-            $cell = $column->getCell($row);
-            $data .= sprintf('%s;', $cell['value']);
-        }
-
-        $data = $this->cleanupLastRow($data);
-        $data .= $this->createNewLineCharacter();
-
-        return $data;
-    }
-
-    /**
-     * Removes the last new line character for a csv formatted string.
-     *
-     * @param string $csv
-     *
-     * @return string $csv
-     */
-    private function removeLastNewLineCharacter($csv)
-    {
-        return $this->str_lreplace("\r\n", '', $csv);
+        return $transformer->transform($this);
     }
 }
