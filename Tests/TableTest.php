@@ -174,4 +174,23 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(0, $this->table->count());
     }
+
+    /**
+     * @covers Tactics\TableBundle\Table::exportToCsv
+     */
+    public function testExportToCsv()
+    {
+        $table
+            ->add(new Column('Name', new ColumnHeader('Name')))
+            ->add(new Column('Age', new ColumnHeader('Age')))
+            ->setRows(array(
+                array('Aaron', '23'),
+                array('Joris', '35'),
+            ))
+        ;
+
+        $csv = "Name;Age;\r\nAaron;23\r\nJoris;35";
+
+        $this->assertEquals($csv, $table->exportToCsv());
+    }
 }
