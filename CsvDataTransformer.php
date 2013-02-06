@@ -51,7 +51,7 @@ class CsvDataTransformer implements DataTransformerInterface
     private function writeHeaders(Table $table)
     {
         foreach ($table as $column) {
-            $this->csv .= sprintf('%s;', $column->getHeader()->getValue());
+            $this->csv .= $column->getHeader()->getValue().$this->delimiter;
         }
 
         $this->appendNewLineCharacter();
@@ -84,7 +84,7 @@ class CsvDataTransformer implements DataTransformerInterface
     {
         foreach ($table as $column) {
             $cell = $column->getCell($row);
-            $this->csv .= sprintf('%s;', $cell['value']);
+            $this->csv .= $cell['value'].$this->delimiter;
         }
 
         $this->cleanUpLastRow();
@@ -108,7 +108,7 @@ class CsvDataTransformer implements DataTransformerInterface
      */
     private function cleanUpLastRow()
     {
-        $this->csv = $this->str_lreplace(';', '', $this->csv);
+        $this->csv = $this->str_lreplace($this->delimiter, '', $this->csv);
     }
 
     /**
