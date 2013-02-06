@@ -27,7 +27,7 @@ class CsvDataTransformerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($csv, $table->transformData(new CsvDataTransformer()));
     }
 
-    public function testDateTimeFormatting()
+    public function testDateTimeAndObjectFormatting()
     {
         $table  = new Table('Table');
         $person = new StringablePerson('Aaron');
@@ -40,9 +40,29 @@ class CsvDataTransformerTest extends \PHPUnit_Framework_TestCase
             ))
         ;
 
-        $date = new \DateTime()->format('d/m/Y');
+        $date = new \DateTime();
 
-        $csv = "Name;Birthdate\r\nAaron;$date";
+        $csv = "Name;Birthdate\r\nAaron;{$date->format('d/m/Y')}";
+
+        $this->assertEquals($csv, $table->transformData(new CsvDataTransformer()));
+    }
+
+    public function testNonStringableObjectFormatting()
+    {
+        $table  = new Table('Table');
+        $person = new Person('Aaron');
+
+        $table
+            ->add(new Column('Name', new ColumnHeader('Name')))
+            ->add(new Column('Birthdate', new ColumnHeader('Birthdate')))
+            ->setRows(array(
+                array('Name' => $person, 'Birthdate' => $person->getBirthdate())
+            ))
+        ;
+
+        $date = new \DateTime();
+
+        $csv = "Name;Birthdate\r\n;{$date->format('d/m/Y')}";
 
         $this->assertEquals($csv, $table->transformData(new CsvDataTransformer()));
     }
@@ -52,11 +72,12 @@ class Person
 {
     protected $name;
 
-    protected $birthdate = new \DateTime();
+    protected $birthdate;
 
     public function __construct($name)
     {
         $this->name = $name;
+        $this->birthdate = new \DateTime();
     }
     public function getBirthdate()
     {
