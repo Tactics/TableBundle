@@ -7,14 +7,17 @@
  <target name="build" depends="prepare,phpunit"/>
 
  <target name="clean" description="Cleanup build artifacts">
-  <delete dir="${basedir}/build/pdepend"/>
+  <delete dir="${basedir}/build/logs"/>
  </target>
 
  <target name="prepare" depends="clean, vendors" description="Prepare for build">
+   <mkdir dir="${basedir}/build/logs"/>
  </target>
 
  <target name="phpunit" description="Run unit tests with PHPUnit">
   <exec executable="phpunit" failonerror="true"/>
+  <arg value="--log-junit=${basedir}/build/logs/phpunit.xml" />
+  <arg value="--coverage-clover=${basedir}/build/logs/phpunit.coverage.xml" />
  </target>
 
  <target name="vendors" depends="composer">
