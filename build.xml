@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="TableBundle" default="build">
+ <property name="composer.path" value="${basedir}/composer.phar" />
+ <available property="composer.exists" file="${composer.path}" />
+ 
+ <target name="build" depends="prepare,phpunit"/>
+
+ <target name="clean" description="Cleanup build artifacts">
+  <delete dir="${basedir}/build/pdepend"/>
+ </target>
+
+ <target name="prepare" depends="clean" description="Prepare for build">
+ </target>
+
+ <target name="phpunit" description="Run unit tests with PHPUnit">
+  <exec executable="phpunit" failonerror="true"/>
+ </target>
+
+ <target name="vendors" depends="composer">
+   <exec executable="${basedir}/composer.phar" failonerror="true">
+   <arg value="install" />
+  </exec>
+ </target>
+
+ <target name="composer" unless="composer.exists">
+  <get src="http://getcomposer.org/composer.phar" dest="${composer.path}" />
+  <chmod file="${composer.path}" perm="775" />
+ </target>
+</project>
+
