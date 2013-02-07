@@ -4,7 +4,7 @@
  <property name="composer.path" value="${basedir}/composer.phar" />
  <available property="composer.exists" file="${composer.path}" />
  
- <target name="build" depends="prepare,phpunit"/>
+ <target name="build" depends="prepare,phpunit,clean-vendors"/>
 
  <target name="clean" description="Cleanup build artifacts">
   <delete dir="${basedir}/../build/logs"/>
