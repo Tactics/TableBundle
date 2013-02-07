@@ -31,5 +31,10 @@
   <get src="http://getcomposer.org/composer.phar" dest="${composer.path}" />
   <chmod file="${composer.path}" perm="775" />
  </target>
+
+ <target name="clean-vendors" description="Cleanup vendors before running sonar">
+  <delete dir="${basedir}/vendor"/>
+ </target>
+
 </project>
 
