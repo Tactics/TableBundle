@@ -10,7 +10,7 @@
   <delete dir="${basedir}/build/pdepend"/>
  </target>
 
- <target name="prepare" depends="clean" description="Prepare for build">
+ <target name="prepare" depends="clean, vendors" description="Prepare for build">
  </target>
 
  <target name="phpunit" description="Run unit tests with PHPUnit">
