@@ -1,4 +1,4 @@
-TableBundle [![Build Status](http://ci.tactics.be:8080/job/TableBundle/badge/icon)](http://ci.tactics.be:8080/job/TableBundle/)            
+TableBundle
 ===========
 
 TODO
