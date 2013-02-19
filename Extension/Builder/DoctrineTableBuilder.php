@@ -393,10 +393,11 @@ class DoctrineTableBuilder extends TableBuilder
      */
     public function getClassMetaData()
     {
-        $container = $this->getTableFactory()->getContainer();
-        $cmf = $container->get('doctrine')->getEntityManager()->getMetadataFactory();
-
-        return $cmf->getMetadataFor($this->repository->getClassName());
+          $repo = new \ReflectionClass(get_class($this->repository));
+          $method = $repo->getMethod('getClassMetadata');
+          $method->setAccessible(true);
+          
+          return $method->invoke($this->repository);
     }
 
     /**

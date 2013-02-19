@@ -3,7 +3,7 @@
 namespace Tactics\TableBundle;
 
 use Tactics\TableBundle\TableInterface;
-
+use Tactics\TableBundle\DataTransformerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
@@ -164,5 +164,17 @@ class Table implements \IteratorAggregate, TableInterface
     public function count()
     {
         return count($this->columns);
+    }
+
+    /**
+     * Transform the table data.
+     *
+     * @param Tactics\TableBundle\DataTransformerInterface $transformer
+     *
+     * @return mixed 
+     */
+    public function transformData(DataTransformerInterface $transformer)
+    {
+        return $transformer->transform($this);
     }
 }
