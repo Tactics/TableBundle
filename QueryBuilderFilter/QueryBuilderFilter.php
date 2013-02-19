@@ -309,7 +309,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                 'required' => false,
                 'data' => $value,
                 'label' => $options['label'],
-                'render_optional_text' => false 
+                'render_optional_text' => false ,
             );
             
             $formFieldName = $options['form_field_name'];

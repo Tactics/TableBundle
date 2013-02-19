@@ -62,8 +62,19 @@ class TacticsTableBuilder extends DoctrineTableBuilder
             unset($options['namespace']);
         }
 
+        if (isset($options['default_sort']) && $options['default_sort']) {
+            $sorterOptions = array('default_sort' => $options['default_sort']);
+            unset($options['default_sort']);
+        } else {
+            $sorterOptions = array();
+        }
+
         $this->sorterFilter = new QueryBuilderSorter($factory->getContainer());
-        $qb = $this->sorterFilter->execute($options['query'], $sorterNamespace);
+        $qb = $this->sorterFilter->execute(
+            $options['query'],
+            $sorterNamespace,
+            $sorterOptions
+        );
         
         if (isset($options['filter']))
         {

@@ -42,7 +42,19 @@ class QueryBuilderSorter implements QueryBuilderFilterInterface
         // Retrieve sorts from session.
         $key = null === $key ? 'sorter/'.$request->attributes->get('_route') : $key;
 
-        $sorts = $session->has($key) ? $session->get($key) : array();
+        if ($session->has($key)) {
+            $sorts = $session->get($key);
+        } else {
+            $sorts = array();
+
+            if (isset($options['default_sort']) && $options['default_sort']) {
+                $sorts = $this->sort(
+                    $this->addAlias($qb, $options['default_sort']['name']),
+                    $options['default_sort']['asc_or_desc'],
+                    $sorts
+                );
+            }
+        }
         
         if ($request->get('sorter_namespace') && $request->get('sorter_namespace') !== $key) {
             // Nothing.
