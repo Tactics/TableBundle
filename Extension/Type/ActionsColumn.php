@@ -172,7 +172,19 @@ class ActionsColumn extends Column
     {
         $resolver->setRequired(array('route'));
         
-        $resolver->setOptional(array('route_param', 'disabled', 'enabled_if', 'attributes', 'icon', 'title'));
+        $resolver->setOptional(array(
+            'route_param',
+            'disabled',
+            'enabled_if',
+            'attributes',
+            'icon',
+            'title',
+            'required_roles'
+        ));
+
+        $resolver->setAllowedTypes(array(
+            'required_roles' => 'array'
+        ));
         
         $resolver->setDefaults(array(
             'attributes' => array('style' => 'text-align: center;', 'class' => ''),

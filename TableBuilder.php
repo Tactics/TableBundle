@@ -136,6 +136,28 @@ class TableBuilder implements \IteratorAggregate, TableBuilderInterface
             $headerType = $this->options['header_type'];
         }
 
+        if ($type == 'actions') {
+            foreach ($columnOptions['actions'] as $action => $options) {
+                if (
+                    isset($options['required_roles']) &&
+                    $options['required_roles']
+                ) {
+                    $security = $this->factory->getContainer()->get('security.context');
+
+                    $disabled = true;
+
+                    foreach ($options['required_roles'] as $role) {
+                        if ($security->isGranted($role)) {
+                            $disabled = false;
+                            break;
+                        } 
+                    }
+
+                    $columnOptions['actions'][$action]['disabled'] = $disabled;
+                }
+            }
+        }
+
 
         if (null !== $type) {
             $headerName = isset($headerOptions['value']) ? $headerOptions['value'] : ucfirst($name);
