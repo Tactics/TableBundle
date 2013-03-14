@@ -94,6 +94,16 @@ class TableBuilder implements \IteratorAggregate, TableBuilderInterface
         return $this;
     }
 
+    /**
+     * Extracts options from array with a specific namespace prefix and returns
+     * an array with only the options from the matching namespace, namespace removed
+     * 
+     * eg  array('column/type' => 'one') becomes array('type' => 'one')
+     * 
+     * @param array $options
+     * @param string $ns
+     * @return array with options in namespace, namespace in key removed
+     */
     protected function extractNamespacedOptions($options, $ns)
     {
         $extracted = array();
@@ -126,9 +136,31 @@ class TableBuilder implements \IteratorAggregate, TableBuilderInterface
             $headerType = $this->options['header_type'];
         }
 
+        if ($type == 'actions') {
+            foreach ($columnOptions['actions'] as $action => $options) {
+                if (
+                    isset($options['required_roles']) &&
+                    $options['required_roles']
+                ) {
+                    $security = $this->factory->getContainer()->get('security.context');
+
+                    $disabled = true;
+
+                    foreach ($options['required_roles'] as $role) {
+                        if ($security->isGranted($role)) {
+                            $disabled = false;
+                            break;
+                        } 
+                    }
+
+                    $columnOptions['actions'][$action]['disabled'] = $disabled;
+                }
+            }
+        }
+
 
         if (null !== $type) {
-            $headerName = isset($headerOptions['value']) ? $headerOptions['value'] : $name;
+            $headerName = isset($headerOptions['value']) ? $headerOptions['value'] : ucfirst($name);
 
             $header = $this->factory->createColumnHeader($headerName, $headerType, $headerOptions);
             
@@ -212,10 +244,9 @@ class TableBuilder implements \IteratorAggregate, TableBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function getTable()
+    public function getTable($options = array())
     {
-        // todo: create!
-        $table = $this->factory->createTable($this->name, $this->type, array());
+        $table = $this->factory->createTable($this->name, $this->type, $options);
         
         foreach ($this as $column)
         {

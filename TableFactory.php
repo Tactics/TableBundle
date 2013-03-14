@@ -10,6 +10,7 @@ namespace Tactics\TableBundle;
 use Tactics\TableBundle\Exception\TableException;
 use Tactics\TableBundle\Exception\UnknownTypeException;
 use Tactics\TableBundle\ColumnHeaderInterface;
+
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -88,18 +89,34 @@ class TableFactory implements TableFactoryInterface, ContainerAwareInterface
 
         $name = $options['table_class'];
         unset($options['table_class']);
+        
+        
+        if ($type instanceof TableTypeInterface)
+        {
+            $builderType = $type->getBuilderType();
+        }
+        else
+        {
+            $builderType = $type;
+        }
 
         // todo resolving via dependency injection container
-        
-        $tableBuilderClass = "Tactics\\TableBundle\\Extension\\Builder\\" . \Symfony\Component\DependencyInjection\Container::camelize($type) . 'TableBuilder';
+        $tableBuilderClass = "Tactics\\TableBundle\\Extension\\Builder\\" . \Symfony\Component\DependencyInjection\Container::camelize($builderType) . 'TableBuilder';
         
         if (! class_exists($tableBuilderClass))
         {
-            throw new UnknownTypeException("TableBuilder type '" . $type . "' could not be resolved. (Guess was: $tableBuilderClass )");
+            throw new UnknownTypeException("TableBuilder type '" . $builderType . "' could not be resolved. (Guess was: $tableBuilderClass )");
         }
         
         // todo table type as option.. somehow
-        return new $tableBuilderClass($name, '', $this, $options);
+        $builder = new $tableBuilderClass($name, '', $this, $options);
+        
+        if ($type instanceof TableTypeInterface)
+        {
+            $type->build($builder, $options);
+        }
+        
+        return $builder;
     }
     
     
@@ -150,8 +167,7 @@ class TableFactory implements TableFactoryInterface, ContainerAwareInterface
             throw new UnknownTypeException("ColumnHeader type '" . $type . "' could not be resolved. (Guess was: $columnHeaderClass )");
         }
         
-        // todo attributes instead of empty array.
-        $type = new $columnHeaderClass($name, array(), $options);
+        $type = new $columnHeaderClass($name, $options);
 
         return $type;
     }
@@ -163,7 +179,7 @@ class TableFactory implements TableFactoryInterface, ContainerAwareInterface
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setRequired(array('model_criteria', 'table_class'));
+        $resolver->setOptional(array('model_criteria', 'query', 'repository', 'table_class', 'filter', 'namespace', 'default_sort'));
 
         $resolver->setOptional(array('header_type', 'column_type'));
 

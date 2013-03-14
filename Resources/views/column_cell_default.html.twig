@@ -1,13 +1,13 @@
 {% spaceless %}
-    <td{% if cell.attributes is defined %}{{ render_attributes(cell.attributes) }}{% endif %}>   
+    <td{% if cell.attributes is defined %}{{ render_attributes(cell.attributes|default([])) }}{% endif %}>   
         {% block cell_content %}
             {% if cell.url|default(false) %}
                 <a href="{{ cell.url }}">
             {% endif %}
-                {% block cell_value %}{{ cell.value | raw }}{% endblock %}
+                {% block cell_value %}{% if column.options.raw %}{{ cell.value|raw }}{% else %}{{ cell.value }}{% endif %}{% endblock %}
             {% if cell.url|default(false) %}
                 </a>
             {% endif %}
         {% endblock %}
     </td>
-{% endspaceless %}
+{% endspaceless %}  

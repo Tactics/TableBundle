@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="TableBundle" default="build">
+ <property name="composer.path" value="${basedir}/composer.phar" />
+ <available property="composer.exists" file="${composer.path}" />
+ 
+ <target name="build" depends="prepare,phpunit,clean-vendors"/>
+
+ <target name="clean" description="Cleanup build artifacts">
+  <delete dir="${basedir}/../build/logs"/>
+ </target>
+
+ <target name="prepare" depends="clean, vendors" description="Prepare for build">
+  <mkdir dir="${basedir}/../build/logs"/>
+ </target>
+
+ <target name="phpunit" description="Run unit tests with PHPUnit">
+  <exec executable="phpunit" failonerror="true">
+   <arg value="--log-junit=${basedir}/../build/logs/phpunit.xml" />
+   <arg value="--coverage-clover=${basedir}/../build/logs/phpunit.coverage.xml" />
+  </exec>
+ </target>
+
+ <target name="vendors" depends="composer">
+   <exec executable="${basedir}/composer.phar" failonerror="true">
+   <arg value="install" />
+  </exec>
+ </target>
+
+ <target name="composer" unless="composer.exists">
+  <get src="http://getcomposer.org/composer.phar" dest="${composer.path}" />
+  <chmod file="${composer.path}" perm="775" />
+ </target>
+
+ <target name="clean-vendors" description="Cleanup vendors before running sonar">
+  <delete dir="${basedir}/vendor"/>
+ </target>
+
+</project>
+

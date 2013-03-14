@@ -5,6 +5,12 @@ services:
         arguments: [@service_container]
         tags:
             - { name: twig.extension }
+
+    tactics.twig.query_builder_pager_extension:
+        class: Tactics\TableBundle\Twig\QueryBuilderPagerExtension
+        arguments: [@service_container] 
+        tags:
+            - { name: twig.extension }
         
     tactics.table.factory:
         class: Tactics\TableBundle\TableFactory
@@ -17,5 +23,11 @@ services:
     tactics.table.extension.linkcolumn:
         class: Tactics\TableBundle\Extension\Type\LinkColumnExtension
         arguments: [@router]
+        tags:
+            - { name: tactics.table.extension, alias: column }
+
+    tactics.table.extension.functioncolumn:
+        class: Tactics\TableBundle\Extension\Type\FunctionColumnExtension
+        arguments: [@service_container]
         tags:
             - { name: tactics.table.extension, alias: column }
