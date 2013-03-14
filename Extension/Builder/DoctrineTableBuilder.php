@@ -286,6 +286,12 @@ class DoctrineTableBuilder extends TableBuilder
                 }
             }
 
+            // guess associated object url
+            if ('association' === $type && ! isset($options['column/route'])) {
+                $options['column/entity_route_resolver'] = 
+                    $this->factory->getContainer()->get('tactics.entity_route_resolver');
+            }
+            
             // guess email type
             if (! $type && ($name == 'email')) {
                 $type = 'email';
