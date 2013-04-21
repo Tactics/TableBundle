@@ -106,9 +106,25 @@ class ActionsColumn extends Column
                 $cell['actions'][$action]['icon'] = $action;
             }
             
-            if (isset($cell['actions'][$action]['disabled']) && $cell['actions'][$action]['disabled'])
+            if (isset($cell['actions'][$action]['disabled']))
             {
-                $cell['actions'][$action]['attributes']['class'] = trim($cell['actions'][$action]['attributes']['class'] . ' ' . 'disabled');
+                $disabled = $cell['actions'][$action]['disabled'];
+
+                if (is_callable($disabled)) {
+                    if ($disabled($row)) {
+                        $cell['actions'][$action]['attributes']['class'] = trim(
+                            $cell['actions'][$action]['attributes']['class'] . 
+                            ' ' . 
+                            'disabled'
+                        );
+                    }
+                } elseif ($disabled) { // BC, deprecated.
+                    $cell['actions'][$action]['attributes']['class'] = trim(
+                        $cell['actions'][$action]['attributes']['class'] . 
+                        ' ' . 
+                        'disabled'
+                    );
+                }
             }
 
             if (isset($cell['actions'][$action]['enabled_if'])){
