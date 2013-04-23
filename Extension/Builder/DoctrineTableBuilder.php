@@ -2,7 +2,7 @@
 
 namespace Tactics\TableBundle\Extension\Builder;
 
-use Tactics\TableBundle\TableBuilder;
+use Tactics\TableBundle\TableBuilder as TableBuilderNameSpaceToExtend;
 use Tactics\TableBundle\TableFactoryInterface;
 use Tactics\TableBundle\Extension\Type\SortableColumnHeader;
 
@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Doctrine\Common\Util\Inflector;
 
-class DoctrineTableBuilder extends TableBuilder
+class DoctrineTableBuilder extends TableBuilderNameSpaceToExtend
 {
     protected $columns = array();
 
