@@ -153,7 +153,7 @@ class TableBuilder implements \IteratorAggregate, TableBuilderInterface
                         } 
                     }
 
-                    $columnOptions['actions'][$action]['disabled'] = $disabled;
+                    $columnOptions['actions'][$action]['disabled'] = $disabled ? : (isset($options['disabled']) ? $options['disabled'] : $disabled);
                 }
             }
         }
