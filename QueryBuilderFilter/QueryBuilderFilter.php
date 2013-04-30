@@ -249,9 +249,6 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
         foreach ($this->fields as $fieldName => $options) {
             if (/*$this->get($fieldName) &&*/ ! $this->applyFilter($qb, $fieldName, $options)) {
                 switch ($options['type']) {
-                    case 'entity':
-                        $options['comparison'] = '=';
-                        break;
                     case 'date':
                     case 'datum':
                       $value = $this->get($fieldName, '_from');
@@ -281,6 +278,8 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                       }
 
                     break;
+                    case 'entity':
+                        $options['comparison'] = '=';
                     default:
                         $value = $this->get($fieldName);
 
