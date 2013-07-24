@@ -33,16 +33,20 @@ class TableExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'table_widget' => new \Twig_Function_Method($this, 'renderTable', 
-            array('is_safe' => array('html'))),
-            'render_cell' => new \Twig_Function_Method($this, 'renderCell', 
-            array('is_safe' => array('html'))),
-            'render_header' => new \Twig_Function_Method($this, 'renderHeader', 
-            array('is_safe' => array('html'))),
-            'render_attributes' => new \Twig_Function_Method($this, 'renderAttributes', 
-            array('is_safe' => array('html'))),
-            'table_actions' => new \Twig_Function_Method($this, 'renderActions', 
-            array('is_safe' => array('html')))
+            'pager_totals' => new \Twig_Function_Method($this, 'renderPagerTotals', array('is_safe' => array('html'))),
+            'table_widget' => new \Twig_Function_Method($this, 'renderTable', array('is_safe' => array('html'))),
+            'render_cell' => new \Twig_Function_Method($this, 'renderCell', array('is_safe' => array('html'))),
+            'render_header' => new \Twig_Function_Method($this, 'renderHeader', array('is_safe' => array('html'))),
+            'render_attributes' => new \Twig_Function_Method($this, 'renderAttributes', array('is_safe' => array('html'))),
+            'table_actions' => new \Twig_Function_Method($this, 'renderActions', array('is_safe' => array('html')))
+        );
+    }
+
+    public function renderPagerTotals(\Pagerfanta\Pagerfanta $pagerfanta)
+    {
+        return $this->container->get('templating')->render(
+            'TacticsTableBundle::pager_totals.html.twig',
+            array('pagerfanta' => $pagerfanta)
         );
     }
 
