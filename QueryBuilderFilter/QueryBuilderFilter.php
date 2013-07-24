@@ -260,9 +260,6 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
         foreach ($this->fields as $fieldName => $options) {
             if (/*$this->get($fieldName) &&*/ ! $this->applyFilter($qb, $fieldName, $options)) {
                 switch ($options['type']) {
-                    case 'entity':
-                        $options['comparison'] = '=';
-                        break;
                     case 'date':
                     case 'datum':
                         $this->addDateTimeToQueryBuilder($qb, 'd/m/Y' , $fieldName, $options['entire_day']);
@@ -286,6 +283,8 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                             )
                         );
                     break;
+                    case 'entity':
+                        $options['comparison'] = '=';
                     default:
                         $value = $this->get($fieldName);
 

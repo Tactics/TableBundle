@@ -71,7 +71,7 @@ class QueryBuilderPager implements QueryBuilderFilterInterface
         // Deal with out of range pages. Typical scenario is when you surf to 
         // page x and apply a filter to the collection.
         if ($page > $pager->getNbPages()) {
-            $page = 0;
+            $page = 1;
         }
 
         $pager->setCurrentPage($page);
