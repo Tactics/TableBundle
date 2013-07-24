@@ -138,6 +138,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
         $builder = $this->container->get('form.factory')
             ->createBuilder(new QueryBuilderFilterType());
 
+        //dont loop the field but loop the fields mixed with the sessien values
         foreach ($this->fields as $fieldName => $options)
         {
             $value = isset($this->values[$fieldName]) ? $this->values[$fieldName] : null;
@@ -150,7 +151,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
             );
             
             $formFieldName = $options['form_field_name'];
-            
+
             // Prepare
             switch($options['type'])
             {
@@ -169,6 +170,14 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                         $builder->add($formFieldName, $options['type'], $fieldOptions);
                         break;
                     }
+                case 'date_time':
+                    $fieldOptions['data'] = $value ? \DateTime::createFromFormat('d/m/Y h:i', $value) : null;
+                    $fieldOptions['label'] = $options['label'] . ' from';
+                    $builder->add($formFieldName . '_from', 'tactics_datetime', $fieldOptions);
+                    $fieldOptions['label'] = $options['label'] . ' to';
+                    $builder->add($formFieldName . '_to', 'tactics_datetime', $fieldOptions);
+                    break;
+
                 case 'choice':
                     $fieldOptions['choices'] = $options['choices'];
                     $builder->add($formFieldName, $options['type'], $fieldOptions);
@@ -188,6 +197,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
             }
         }
 
+
         return $builder->getForm();
     }
 
@@ -206,7 +216,8 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                 'choices'  => null,
                 'class' => null,
                 'query_builder' => null,
-                'datum_from_and_to' => true
+                'datum_from_and_to' => true,
+                'entire_day' => true,
         ));
 
         $resolver->setOptional(array('label', 'form_field_name', 'filter'));
@@ -254,32 +265,26 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                         break;
                     case 'date':
                     case 'datum':
-                      $value = $this->get($fieldName, '_from');
-
-                      if ($value)
-                      {
-                          $dt = \DateTime::createFromFormat('d/m/Y', $value);
-                          $qb->andWhere(
-                              $qb->expr()->gte(
-                                  $this->getAlias($qb, $fieldName),
-                                  ':'.$fieldName.'_from'
-                              ))
-                              ->setParameter($fieldName.'_from', $dt);
-                      }
-                      
-                      $value = $this->get($fieldName, '_to');
-
-                      if ($value)
-                      {
-                          $dt = \DateTime::createFromFormat('d/m/Y', $value);
-                          $qb->andWhere(
-                              $qb->expr()->lte(
-                                  $this->getAlias($qb, $fieldName),
-                                  ':'.$fieldName.'_to'
-                              ))
-                              ->setParameter($fieldName.'_to', $dt);
-                      }
-
+                        $this->addDateTimeToQueryBuilder($qb, 'd/m/Y' , $fieldName, $options['entire_day']);
+                    break;
+                    case 'date_time':
+                        $this->addDateTimeToQueryBuilder($qb, 'd/m/Y h:i' , $fieldName, $options['entire_day']);
+                    break;
+                    case 'entity':
+                        $options['comparison'] = '=';
+                    break;
+                    case 'boolean':
+                        $qb->andWhere(
+                            $qb->expr()->andX(
+                                $qb->expr()->eq(
+                                    $this->getAlias($qb, $fieldName),
+                                    $this->get($fieldName)
+                                ),
+                                $qb->expr()->isNotNull(
+                                    $this->getAlias($qb, $fieldName)
+                                )
+                            )
+                        );
                     break;
                     default:
                         $value = $this->get($fieldName);
@@ -415,5 +420,44 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
         }
 
         return true;
+    }
+
+    private function addDateTimeToQueryBuilder($qb, $dateTimeFormat, $fieldName, $includeEntireDay)
+    {
+        $value = $this->get($fieldName, '_from');
+
+        if ($value)
+        {
+            $dt = \DateTime::createFromFormat($dateTimeFormat, $value);
+            //set the hour to 00:00:00 so result that have an hour defined earlier than this hour aren't lost
+            if($includeEntireDay) {
+                $dt->setTime(0,0,0);
+            }
+
+            $qb->andWhere(
+                $qb->expr()->gte(
+                    $this->getAlias($qb, $fieldName),
+                    ':'.$fieldName.'_from'
+                ))
+                ->setParameter($fieldName.'_from', $dt);
+        }
+
+        $value = $this->get($fieldName, '_to');
+
+        if ($value)
+        {
+            $dt = \DateTime::createFromFormat($dateTimeFormat, $value);
+            //set the hour to 23:59:59 so result that have an hour defined earlier than this hour aren't lost
+            if($includeEntireDay) {
+                $dt->setTime(23,59,59);
+            }
+
+            $qb->andWhere(
+                $qb->expr()->lte(
+                    $this->getAlias($qb, $fieldName),
+                    ':'.$fieldName.'_to'
+                ))
+                ->setParameter($fieldName.'_to', $dt);
+        }
     }
 }
