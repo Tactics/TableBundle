@@ -362,7 +362,7 @@ class DoctrineTableBuilder extends TableBuilderNameSpaceToExtend
             }
         }
 
-        $results = ('Pagerfanta\\Pagerfanta' === get_class($this->query)) ? 
+        $results = ('Pagerfanta\\Pagerfanta' === get_class($this->query)) ?
             $this->query : $this->query->getResult();
 
         $rows = array();
