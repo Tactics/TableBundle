@@ -44,10 +44,45 @@ class TableExtension extends \Twig_Extension
 
     public function renderPagerTotals(\Pagerfanta\Pagerfanta $pagerfanta)
     {
+        /**
+         * @todo
+         * At time of writing, the Pagerfanta class on github contained
+         * two public methods: getCurrentPageOffsetStart and getCurrentPageOffsetEnd.
+         * This version of pagerfanta was not yet in the PagerfantaBundle that 
+         * we use, so we do not have them yet.
+         *
+         * I made a couple of private methods that are to be removed when 
+         * PagerfantaBundle's pagerfanta.php is updated to the latest version.
+         */
         return $this->container->get('templating')->render(
             'TacticsTableBundle::pager_totals.html.twig',
-            array('pagerfanta' => $pagerfanta)
+            array(
+                'total' => $pagerfanta->getNbResults(),
+                'current_page_start' => $this->getCurrentPageOffsetStart($pagerfanta),
+                'current_page_end' => $this->getCurrentPageOffsetEnd($pagerfanta),
+            )
         );
+    }
+
+    private function getCurrentPageOffsetStart($pagerfanta)
+    {
+        return $pagerfanta->getNbResults() 
+            ?  $this->calculateOffsetForCurrentPageResults($pagerfanta) + 1 
+            : 0
+        ;
+    }
+
+    private function getCurrentPageOffsetEnd($pagerfanta)
+    {
+        return $pagerfanta->hasNextPage() 
+            ?  $pagerfanta->getCurrentPage() * $pagerfanta->getMaxPerPage() 
+            : $pagerfanta->getNbResults()
+        ;
+    }
+
+    private function calculateOffsetForCurrentPageResults($pagerfanta)
+    {
+        return ($pagerfanta->getCurrentPage() - 1) * $pagerfanta->getMaxPerPage();
     }
 
     /**
