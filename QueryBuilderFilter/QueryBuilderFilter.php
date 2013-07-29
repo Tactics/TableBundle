@@ -406,7 +406,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
             return false;
         }
 
-        if ($this->get($fieldName)) {
+        if ('' !== $this->get($fieldName)) {
             $options['filter']($qb, $this->getAlias($qb), $fieldName, $this->get($fieldName));
         }
 
