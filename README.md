@@ -164,4 +164,11 @@ And render the pager using the pager_widget twig function instead of the pagerfa
    {{ pager_widget(builder) }}
 ```
 
+Setting default values in the filter (v1.0.17 and up)
+-----------------------------------------------------
 
+You can add some default filter values when creating the filter like so:
+```
+$this->createFilter(new myFiltertype(), $myDefaultValues);
+```
+will only be set if there is no filter in the session and no filter is posted yet.
