@@ -270,19 +270,6 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                     case 'entity':
                         $options['comparison'] = '=';
                     break;
-                    case 'boolean':
-                        $qb->andWhere(
-                            $qb->expr()->andX(
-                                $qb->expr()->eq(
-                                    $this->getAlias($qb, $fieldName),
-                                    $this->get($fieldName)
-                                ),
-                                $qb->expr()->isNotNull(
-                                    $this->getAlias($qb, $fieldName)
-                                )
-                            )
-                        );
-                    break;
                     case 'entity':
                         $options['comparison'] = '=';
                     default:
