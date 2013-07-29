@@ -222,7 +222,12 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
 
         $resolver->setOptional(array('label', 'form_field_name', 'filter'));
     }
-    
+
+    public function getValues()
+    {
+        return $this->values;
+    }
+
     public function buildFromType(QueryBuilderFilterTypeInterface $type)
     {
         $type->build($this);
@@ -401,7 +406,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
             return false;
         }
 
-        if ($this->get($fieldName)) {
+        if ('' !== $this->get($fieldName)) {
             $options['filter']($qb, $this->getAlias($qb), $fieldName, $this->get($fieldName));
         }
 
