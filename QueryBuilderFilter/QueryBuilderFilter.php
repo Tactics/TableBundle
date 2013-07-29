@@ -222,7 +222,12 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
 
         $resolver->setOptional(array('label', 'form_field_name', 'filter'));
     }
-    
+
+    public function getValues()
+    {
+        return $this->values;
+    }
+
     public function buildFromType(QueryBuilderFilterTypeInterface $type)
     {
         $type->build($this);
