@@ -32,10 +32,16 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
     protected $values = array();
 
     /**
+     * @var array the default values
+     */
+    protected $default_values;
+
+    /**
      * {@inheritdoc}
      */
-    public function __construct(ContainerInterface $container) {
+    public function __construct(ContainerInterface $container, $defaultValues = array()) {
         $this->container = $container;
+        $this->default_values = $defaultValues;
     }
     
     /**
@@ -50,12 +56,26 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
      */
     public function execute(QueryBuilder $qb, $key = null, $options = array())
     {
-        $this->retrieveFilterFromSession($key);
+        $this->retrieveFilterFromSessionOrDefaultOne($key);
         $this->filter($qb, $options);
 
         return $qb;
     }
 
+    private function retrieveFilterFromSessionOrDefaultOne($key)
+    {
+        if(count($this->retrieveFilterFromSession($key)) === 0 && !$this->values) {
+            $this->values = $this->getDefaultValues();
+            return $this->getDefaultValues();
+        } else {
+            return $this->retrieveFilterFromSession($key);
+        }
+    }
+
+    private function getDefaultValues()
+    {
+        return $this->default_values;
+    }
 
     private function getAlias(QueryBuilder $qb, $fieldName = null)
     {
