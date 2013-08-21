@@ -171,4 +171,6 @@ You can add some default filter values when creating the filter like so:
 ```
 $this->createFilter(new myFiltertype(), $myDefaultValues);
 ```
+
+$myDefaultValues should be an array with keys = form field names.
 will only be set if there is no filter in the session and no filter is posted yet.
