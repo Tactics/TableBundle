@@ -168,7 +168,10 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                 'data' => $value,
                 'label' => $options['label'],
                 'render_optional_text' => false,
+                'attr' => $options['attr'],
             );
+
+
             
             $formFieldName = $options['form_field_name'];
 
@@ -238,6 +241,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                 'query_builder' => null,
                 'datum_from_and_to' => true,
                 'entire_day' => true,
+                'attr' => array(),
         ));
 
         $resolver->setOptional(array('label', 'form_field_name', 'filter'));
