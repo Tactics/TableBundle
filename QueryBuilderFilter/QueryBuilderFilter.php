@@ -32,10 +32,16 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
     protected $values = array();
 
     /**
+     * @var array the default values
+     */
+    protected $default_values;
+
+    /**
      * {@inheritdoc}
      */
-    public function __construct(ContainerInterface $container) {
+    public function __construct(ContainerInterface $container, $defaultValues = array()) {
         $this->container = $container;
+        $this->default_values = $defaultValues;
     }
 
     /**
@@ -50,12 +56,26 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
      */
     public function execute(QueryBuilder $qb, $key = null, $options = array())
     {
-        $this->retrieveFilterFromSession($key);
+        $this->retrieveFilterFromSessionOrDefaultOne($key);
         $this->filter($qb, $options);
 
         return $qb;
     }
 
+    private function retrieveFilterFromSessionOrDefaultOne($key)
+    {
+        if(count($this->retrieveFilterFromSession($key)) === 0 && !$this->values) {
+            $this->values = $this->getDefaultValues();
+            return $this->getDefaultValues();
+        } else {
+            return $this->retrieveFilterFromSession($key);
+        }
+    }
+
+    private function getDefaultValues()
+    {
+        return $this->default_values;
+    }
 
     private function getAlias(QueryBuilder $qb, $fieldName = null)
     {
@@ -148,7 +168,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                 'data' => $value,
                 'label' => $options['label'],
                 'render_optional_text' => false,
-                'attr' => $options['attr']
+                'attr' => $options['attr'],
             );
 
             $formFieldName = $options['form_field_name'];
@@ -219,7 +239,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                 'query_builder' => null,
                 'datum_from_and_to' => true,
                 'entire_day' => true,
-                'attr' => array()
+                'attr' => array(),
         ));
 
         $resolver->setOptional(array('label', 'form_field_name', 'filter'));
@@ -275,10 +295,19 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                         $this->addDateTimeToQueryBuilder($qb, 'd/m/Y h:i' , $fieldName, $options['entire_day']);
                     break;
                     case 'entity':
-                        $options['comparison'] = '=';
+                        $value = $this->get($fieldName);
+                        if ($value) {
+                            $qb->andWhere(
+                                $qb->expr()->eq(
+                                    $this->getAlias($qb, $fieldName),
+                                    ':'.$fieldName
+                                )
+                            )
+                            ->setParameter($fieldName, $this->get($fieldName));
+                            ;
+                        }
                     break;
-                    case 'entity':
-                        $options['comparison'] = '=';
+
                     default:
                         $value = $this->get($fieldName);
 
