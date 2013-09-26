@@ -25,7 +25,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
      * @var $fields array The filtered fields.
      */
     protected $fields = array();
-    
+
     /**
      * @var $values array The filter values
      */
@@ -43,7 +43,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
         $this->container = $container;
         $this->default_values = $defaultValues;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -88,7 +88,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
 
     /**
      * Returns the current value of the field.
-     * 
+     *
      * @param type $name
      */
     public function get($name, $suffix = '')
@@ -97,7 +97,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
         {
             return null;
         }
-        
+
         return isset($this->values[$this->fields[$name]['form_field_name'] . $suffix]) ? $this->values[$this->fields[$name]['form_field_name'] . $suffix] : null;
     }
 
@@ -109,7 +109,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
      *
      * @return $this QueryBuilderFilter The QueryBuilder instance.
      */
-    public function add($name, array $options = array()) 
+    public function add($name, array $options = array())
     {
         $resolver = new OptionsResolver();
         $this->setDefaultOptions($resolver);
@@ -120,29 +120,29 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
             // Replace '.' to '__' because '.' is not allowed in a post request.
             $options['form_field_name'] = str_replace('.', '__', $name);
         }
-        
+
         if (! isset($options['label']))
         {
             $label = $name;
-            
+
             // propel field: strip table name
             if (strpos($label, '.'))
             {
                 $label = substr($label, strpos($label, '.') + 1);
             }
-            
+
             // propel field: remove _id postfix
             if (strpos($label, '_ID') !== false)
             {
                 $label = substr($label, 0, strpos($label, '_ID'));
             }
-            
+
             // humanize
             $label = ucfirst(strtolower(str_replace('_', ' ', $label)));
-            
+
             $options['label'] = $label;
         }
-        
+
         $this->fields[$name] = $options;
 
         return $this;
@@ -153,7 +153,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
      *
      * @return Form A Form instance.
      */
-    public function getForm() 
+    public function getForm()
     {
         $builder = $this->container->get('form.factory')
             ->createBuilder(new QueryBuilderFilterType());
@@ -162,7 +162,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
         foreach ($this->fields as $fieldName => $options)
         {
             $value = isset($this->values[$fieldName]) ? $this->values[$fieldName] : null;
-            
+
             $fieldOptions = array(
                 'required' => false,
                 'data' => $value,
@@ -171,8 +171,6 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                 'attr' => $options['attr'],
             );
 
-
-            
             $formFieldName = $options['form_field_name'];
 
             // Prepare
@@ -183,22 +181,22 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                     if ($options['datum_from_and_to']){
                         $fieldOptions['data'] = $value ? \DateTime::createFromFormat('d/m/Y', $value) : null;
                         $fieldOptions['label'] = $options['label'] . ' from';
-                        $builder->add($formFieldName . '_from', $options['type'], $fieldOptions);
+                        $builder->add($formFieldName . '_from', $options['type']);
                         $fieldOptions['label'] = $options['label'] . ' to';
-                        $builder->add($formFieldName . '_to', $options['type'], $fieldOptions);
-                        break;    
+                        $builder->add($formFieldName . '_to', $options['type']);
+                        break;
                     }
                     else {
                         $fieldOptions['data'] = $value ? \DateTime::createFromFormat('d/m/Y', $value) : null;
-                        $builder->add($formFieldName, $options['type'], $fieldOptions);
+                        $builder->add($formFieldName, $options['type']);
                         break;
                     }
                 case 'date_time':
                     $fieldOptions['data'] = $value ? \DateTime::createFromFormat('d/m/Y h:i', $value) : null;
                     $fieldOptions['label'] = $options['label'] . ' from';
-                    $builder->add($formFieldName . '_from', 'tactics_datetime', $fieldOptions);
+                    $builder->add($formFieldName . '_from', 'tactics_datetime');
                     $fieldOptions['label'] = $options['label'] . ' to';
-                    $builder->add($formFieldName . '_to', 'tactics_datetime', $fieldOptions);
+                    $builder->add($formFieldName . '_to', 'tactics_datetime');
                     break;
 
                 case 'choice':
@@ -264,9 +262,9 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
     {
         $request = $this->container->get('request');
         $session = $this->container->get('session');
-        
+
         $key = null === $key ? 'filter/'.$request->attributes->get('_route') : $key;
-        
+
         // Update fields and place them in the session.
         if ($request->getMethod() == 'POST' && $request->get('filter_by')) {
             $this->values = $request->get('filter_by');
@@ -274,7 +272,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
             // Store current filter values in session
             $session->set($key, $this->values);
         }
-        // User doesn't post, check if filter_by for this route exits in 
+        // User doesn't post, check if filter_by for this route exits in
         // session.
         else if ($session->has($key)) {
             // Retrieve and validate fields
