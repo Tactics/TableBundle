@@ -201,6 +201,9 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
 
                 case 'choice':
                     $fieldOptions['choices'] = $options['choices'];
+                    if (isset($options['multiple'])) {
+                        $fieldOptions['multiple'] = $options['multiple'];
+                    }
                     $builder->add($formFieldName, $options['type'], $fieldOptions);
                     break;
                 case 'boolean':
@@ -209,6 +212,9 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                     $builder->add($formFieldName, $options['type'], $fieldOptions);
                     break;
                 case 'entity':
+                    if (isset($options['multiple'])) {
+                        $fieldOptions['multiple'] = $options['multiple'];
+                    }
                     $fieldOptions['class'] = $options['class'];
                     $fieldOptions['query_builder'] = $options['query_builder'];
                     $builder->add($formFieldName, $options['type'], $fieldOptions);
@@ -242,7 +248,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                 'attr' => array(),
         ));
 
-        $resolver->setOptional(array('label', 'form_field_name', 'filter'));
+        $resolver->setOptional(array('label', 'form_field_name', 'filter', 'multiple'));
     }
 
     public function getValues()
