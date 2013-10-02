@@ -211,6 +211,10 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                     $fieldOptions['choices'] = array(0 => 'No', 1 => 'Yes');
                     $builder->add($formFieldName, $options['type'], $fieldOptions);
                     break;
+                case 'checkbox':
+                    $fieldOptions['data'] = (bool) $fieldOptions['data'];
+                    $builder->add($formFieldName, $options['type'], $fieldOptions);
+                    break;
                 case 'entity':
                     if (isset($options['multiple'])) {
                         $fieldOptions['multiple'] = $options['multiple'];
