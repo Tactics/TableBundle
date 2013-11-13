@@ -1,7 +1,7 @@
 jQuery(function($) {
-    $('.form-filter')
+    $('body')
     // Submit filter using ajax
-    .live('submit', function() {
+    .on('submit', '.form-filter', function() {
         var form = $(this);
         var target = '#'+form.attr('data-target');
 
@@ -10,7 +10,7 @@ jQuery(function($) {
         $.ajax({
             url:      form.attr('action'),
             type:     "POST",
-            data:     form.serialize(), 
+            data:     form.serialize(),
             dataType: "html",
             success:  function(html) {
                 $(target).replaceWith($(target, $(html)));
@@ -24,8 +24,8 @@ jQuery(function($) {
         return false;
     })
     // Form submit button clears all filter values and submits form
-    .live('reset', function() {
-        var form = $(this);            
+    .on('reset', '.form-filter', function() {
+        var form = $(this);
         form.find(':text, select, :radio').val('');
         form.submit();
         return false;

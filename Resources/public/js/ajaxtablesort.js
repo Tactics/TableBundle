@@ -1,8 +1,8 @@
 jQuery(function($) {
-    $('.a-filter').live('click', function() {
+    $('body').on('click', '.a-filter', function() {
         var element = $(this);
         var target  = '#results';
-        
+
         $(target).closest('.widget').addClass('ajax-loading');
 
         $.ajax({
