@@ -5,11 +5,11 @@
     <div class="panel-body">
         <form role="form" data-target="results" class="form-horizontal form-filter" action="{% if action_path is defined %} {{ path(action_path) }} {% else %} {{ path }} {% endif %}" method="post" {{ form_enctype(form) }} novalidate="1">
             <div class="row">
-                            {% for row in form %}
-                                <div class="col-md-5">
-                                    {{ form_row(row) }}
-                                </div>
-                            {% endfor %}
+                {% for row in form %}
+                    <div class="col-md-6">
+                        {{ form_row(row) }}
+                    </div>
+                {% endfor %}
             </div>
             <input type="submit" class="btn btn-primary" value="Filter" />
             <input type="reset" class="btn" value="Reset" />
