@@ -4,9 +4,9 @@
     {% for action,options in column.actions %}
         {% set cell_options = cell.actions[action] %}
 
-        {% if 
+        {% if
             'class' in cell_options.attributes|default([])|keys and
-            'disabled' in cell_options.attributes.class 
+            'disabled' in cell_options.attributes.class
         %}
             {% set url = '#' %}
         {% else %}
@@ -14,8 +14,8 @@
         {% endif %}
 
         <a href="{{ url }}" title="{{ cell_options.title|trans }}" {{ render_attributes(cell_options.attributes|default([])) }}>
-            <i class="icon-{{ cell_options.icon }}"></i>
-        </a> 
+            <i class="{{ cell_options.icon }}"></i>
+        </a>
         &nbsp;
     {% endfor %}
 {% endblock %}
