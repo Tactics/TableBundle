@@ -39,7 +39,7 @@ class ActionsColumn extends Column
 
         $headerAttributes = $this->getHeader()->getOption('attributes');
         $headerAttributes = $headerAttributes ? $headerAttributes : array();
-        $headerAttributes['style'] = (isset($headerAttributes['style']) ? $headerAttributes['style'] : '') . sprintf('; width: %upx;', count($this->options['actions']) * 25);
+        $headerAttributes['style'] = (isset($headerAttributes['style']) ? $headerAttributes['style'] : '') . sprintf('; width: %upx;', count($this->options['actions']) * 26);
         $headerAttributes['style'] .= 'text-align: center;';
         $this->getHeader()->setOption('attributes', $headerAttributes);
 
