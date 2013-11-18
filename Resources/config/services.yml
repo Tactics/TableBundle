@@ -1,5 +1,5 @@
-parameters: 
-services: 
+parameters:
+services:
     tactics.twig.object_table_extension:
         class: Tactics\TableBundle\Twig\TableExtension
         arguments: [@service_container]
@@ -8,10 +8,10 @@ services:
 
     tactics.twig.query_builder_pager_extension:
         class: Tactics\TableBundle\Twig\QueryBuilderPagerExtension
-        arguments: [@service_container] 
+        arguments: [@service_container]
         tags:
             - { name: twig.extension }
-        
+
     tactics.table.factory:
         class: Tactics\TableBundle\TableFactory
         arguments: [@service_container, [], []]
@@ -31,3 +31,9 @@ services:
         arguments: [@service_container]
         tags:
             - { name: tactics.table.extension, alias: column }
+
+    tactics.pagerfanta.extension:
+        class: Tactics\TableBundle\Twig\PagerExtension
+        arguments: [@service_container]
+        tags:
+            - { name: twig.extension }

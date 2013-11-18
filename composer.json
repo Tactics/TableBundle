@@ -13,7 +13,7 @@
   }],
   "require": {
     "symfony/options-resolver": "2.1.*",
-    "white-october/pagerfanta-bundle": "dev-master",
+    "pagerfanta/pagerfanta": "1.0.*",
     "tactics/entity-route-bundle": "v1.0"
   },
   "autoload": {
