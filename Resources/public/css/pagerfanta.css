@@ -1,0 +1,7 @@
+.pagination .chosen-container {
+    width: 100px !important;
+}
+
+.pagination > li > a, .pagination > li > span {
+    line-height: 2.7 !important;
+}
