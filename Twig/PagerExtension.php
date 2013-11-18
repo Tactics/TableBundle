@@ -2,9 +2,10 @@
 
 namespace Tactics\TableBundle\Twig;
 
+use Pagerfanta\PagerfantaInterface;
+
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Pagerfanta\PagerfantaInterface;
 
 class PagerExtension extends \Twig_Extension
 {
@@ -28,14 +29,15 @@ class PagerExtension extends \Twig_Extension
         );
     }
 
-    public function renderPagerfanta(PagerfantaInterface $pagerfanta, array $routeOptions = array())
+    public function renderPagerfanta(PagerfantaInterface $pagerfanta, array $options = array())
     {
-        $routeOptions = $this->resolveRouteOptions($routeOptions);
+        $options = $this->resolveOptions($options);
+        $this->guardAgainstInternalRoute($options['routeName']);
 
         return $this->container->get('templating')->render(
             'TacticsTableBundle:Pager:pager.html.twig', array(
                 'pager' => $pagerfanta,
-                'routeOptions' => $routeOptions,
+                'options' => $options,
             )
         );
     }
@@ -47,21 +49,24 @@ class PagerExtension extends \Twig_Extension
         return $this->container->get('router')->generate($options['routeName'], $routeParams);
     }
 
-    private function resolveRouteOptions(array $options)
+    private function resolveOptions(array $options)
     {
         return $this->createAndConfigureOptionsResolver()->resolve($options);
     }
 
     private function createAndConfigureOptionsResolver()
     {
-        $this->guardAgainstInternalRoute($this->container->get('request')->attributes->get('_route'));
-
         $resolver = new OptionsResolver();
 
-        return $resolver->setDefaults(array(
-            'routeName' => $this->container->get('request')->attributes->get('_route'),
-            'routeParams' => array_merge($this->container->get('request')->query->all(), $this->container->get('request')->attributes->get('_route_params'))
-        ));
+        return $resolver
+            ->setDefaults(array(
+                'routeName' => $this->container->get('request')->attributes->get('_route'),
+                'routeParams' => array_merge($this->container->get('request')->query->all(), $this->container->get('request')->attributes->get('_route_params', array()))
+            ))
+            ->setOptional(array(
+                'containerCssClass',
+            ))
+        ;
     }
 
     private function guardAgainstInternalRoute($routeName)
