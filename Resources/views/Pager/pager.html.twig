@@ -2,12 +2,21 @@
     <div class="text-center">
         <ul class="pagination">
             <li class="{% if not pager.hasPreviousPage %} disabled {% endif %}">
-                <a {% if pager.hasPreviousPage %}href="{{ generate_page_route(1, routeOptions) }}"{% endif %}>
+                <a {% if pager.hasPreviousPage %}href="{{ generate_page_route(1, routeOptions) }}"{% endif %}
+                    title="1"
+                >
                     <i class="fa fa-angle-double-left"></i>
                 </a>
             </li>
             <li class="{% if not pager.hasPreviousPage %} disabled {% endif %}">
-                <a {% if pager.hasPreviousPage %}href="{{ generate_page_route(pager.previousPage, routeOptions) }}"{% endif %}>
+                <a
+                    {% if pager.hasPreviousPage %}
+                        href="{{ generate_page_route(pager.previousPage, routeOptions) }}"
+                        title="{{ pager.previousPage }}"
+                    {% else %}
+                        title="1"
+                    {% endif %}
+                >
                     <i class="fa fa-angle-left"></i>
                 </a>
             </li>
@@ -15,24 +24,33 @@
             <li>
                 <span>
                     <select
-                        class="pager chosen"
+                        class="pager chosen form-control"
                         data-route-name="{{ routeOptions.routeName }}"
                         data-route-parameters="{{ routeOptions.routeParams|json_encode() }}"
                     >
                         {% for i in range (1, pager.nbPages) %}
                             <option value="{{ i }}" {% if pager.currentPage == i %}selected="selected"{% endif %}>{{ i }}</option>
                         {% endfor %}
-                    </select> / {{ pager.nbPages }}
+                    </select>
                 </span>
             </li>
 
             <li class="{% if not pager.hasNextPage %} disabled {% endif %}">
-                <a {% if pager.hasNextPage %}href="{{ generate_page_route(pager.nextPage, routeOptions) }}"{% endif %}>
+                <a
+                    {% if pager.hasNextPage %}
+                        href="{{ generate_page_route(pager.nextPage, routeOptions) }}"
+                        title="{{ pager.nextPage }}"
+                    {% else %}
+                        title="{{ pager.nbPages }}"
+                    {% endif %}
+                >
                     <i class="fa fa-angle-right"></i>
                 </a>
             </li>
             <li class="{% if not pager.hasNextPage %} disabled {% endif %}">
-                <a {% if pager.hasNextPage %}href="{{ generate_page_route(pager.nbPages, routeOptions) }}"{% endif %}>
+                <a {% if pager.hasNextPage %}href="{{ generate_page_route(pager.nbPages, routeOptions) }}"{% endif %}
+                    title="{{ pager.nbPages }}"
+                >
                     <i class="fa fa-angle-double-right"></i>
                 </a>
             </li>
