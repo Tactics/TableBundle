@@ -176,6 +176,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
             // Prepare
             switch($options['type'])
             {
+                case 'tactics_date':
                 case 'date':
                 case 'datum':
                     if ($options['datum_from_and_to']){

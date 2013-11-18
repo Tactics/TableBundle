@@ -1,12 +1,12 @@
-<div class="widget filter">
-    <div class="widget-header">
-        <h3>Filter</h3>
+<div class="panel panel-default filter">
+    <div class="panel-heading">
+        <div class="panel-title">Filter</div>
     </div>
-    <div class="widget-content">
-        <form data-target="results" class="form-horizontal form-filter" action="{% if action_path is defined %} {{ path(action_path) }} {% else %} {{ path }} {% endif %}" method="post" {{ form_enctype(form) }} novalidate="1">
+    <div class="panel-body">
+        <form role="form" data-target="results" class="form-horizontal form-filter" action="{% if action_path is defined %} {{ path(action_path) }} {% else %} {{ path }} {% endif %}" method="post" {{ form_enctype(form) }} novalidate="1">
             <div class="row">
                 {% for row in form %}
-                    <div class="span5">
+                    <div class="col-md-6">
                         {{ form_row(row) }}
                     </div>
                 {% endfor %}
