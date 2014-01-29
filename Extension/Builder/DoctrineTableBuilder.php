@@ -21,7 +21,7 @@ class DoctrineTableBuilder extends TableBuilderNameSpaceToExtend
     protected $query = null;
 
     /**
-     * @var $repository Doctrine\ORM\EntityRepository An EntityRepository 
+     * @var $repository Doctrine\ORM\EntityRepository An EntityRepository
      * instance.
      */
     protected $repository = null;
@@ -53,12 +53,12 @@ class DoctrineTableBuilder extends TableBuilderNameSpaceToExtend
 
     /**
      * $this->query can be a Pagerfanta instance or a Query instance.
-     * 
+     *
      * @return Doctrine\ORM\Query
      */
     public function getQuery()
     {
-        return ('Pagerfanta\\Pagerfanta' === get_class($this->query)) ? 
+        return ('Pagerfanta\\Pagerfanta' === get_class($this->query)) ?
             $this->query->getAdapter()->getQuery() : $this->query->getResult();
     }
 
@@ -69,7 +69,7 @@ class DoctrineTableBuilder extends TableBuilderNameSpaceToExtend
      */
     public function setSorterNamespace($v)
     {
-       $this->sorterNamespace = $v; 
+       $this->sorterNamespace = $v;
 
        return $this;
     }
@@ -91,7 +91,7 @@ class DoctrineTableBuilder extends TableBuilderNameSpaceToExtend
      */
     public function setPagerNamespace($v)
     {
-       $this->pagerNamespace = $v; 
+       $this->pagerNamespace = $v;
 
        return $this;
     }
@@ -173,10 +173,10 @@ class DoctrineTableBuilder extends TableBuilderNameSpaceToExtend
 
     /**
      * Technically incorrect because associations are not fields.
-     * Reason this exists is because I focussed on refactoring the 
+     * Reason this exists is because I focussed on refactoring the
      * PropelTableBuilder.
      *
-     * Will create an array with all association names and merge it with field 
+     * Will create an array with all association names and merge it with field
      * names.
      *
      * @return array
@@ -232,7 +232,7 @@ class DoctrineTableBuilder extends TableBuilderNameSpaceToExtend
                 if ($selectStmt->orderByClause) {
                     foreach ($selectStmt->orderByClause->orderByItems as $orderByItem) {
                         $expr = $orderByItem->expression;
-                        if ($expr->identificationVariable.'.'.$name === $expr->identificationVariable.'.'.$expr->field) {
+                        if (is_object($expr) && $expr->identificationVariable.'.'.$name === $expr->identificationVariable.'.'.$expr->field) {
                             if ($orderByItem->isAsc()) {
                                 $options['header/sort'] = SortableColumnHeader::ASC;
                             } else {
@@ -288,10 +288,10 @@ class DoctrineTableBuilder extends TableBuilderNameSpaceToExtend
 
             // guess associated object url
             if ('association' === $type && ! isset($options['column/route'])) {
-                $options['column/entity_route_resolver'] = 
+                $options['column/entity_route_resolver'] =
                     $this->factory->getContainer()->get('tactics.entity_route_resolver');
             }
-            
+
             // guess email type
             if (! $type && ($name == 'email')) {
                 $type = 'email';
@@ -402,7 +402,7 @@ class DoctrineTableBuilder extends TableBuilderNameSpaceToExtend
           $repo = new \ReflectionClass(get_class($this->repository));
           $method = $repo->getMethod('getClassMetadata');
           $method->setAccessible(true);
-          
+
           return $method->invoke($this->repository);
     }
 
@@ -414,7 +414,7 @@ class DoctrineTableBuilder extends TableBuilderNameSpaceToExtend
      */
     private function translateFieldNameToMethod($fieldName)
     {
-        if (array_search(Inflector::tableize($fieldName), $this->getAllFieldNames()) === false) {            
+        if (array_search(Inflector::tableize($fieldName), $this->getAllFieldNames()) === false) {
             throw new \Exception('Unknown field name '.$fieldName);
         }
 
