@@ -298,6 +298,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
         foreach ($this->fields as $fieldName => $options) {
             if (/*$this->get($fieldName) &&*/ ! $this->applyFilter($qb, $fieldName, $options)) {
                 switch ($options['type']) {
+                    case 'tactics_date':
                     case 'date':
                     case 'datum':
                         $this->addDateTimeToQueryBuilder($qb, 'd/m/Y' , $fieldName, $options['entire_day']);
