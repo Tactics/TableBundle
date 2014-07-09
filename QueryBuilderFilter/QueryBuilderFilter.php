@@ -182,9 +182,9 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                     if ($options['datum_from_and_to']){
                         $fieldOptions['data'] = $value ? \DateTime::createFromFormat('d/m/Y', $value) : null;
                         $fieldOptions['label'] = $options['label'] . ' from';
-                        $builder->add($formFieldName . '_from', $options['type']);
+                        $builder->add($formFieldName . '_from', $options['type'], $fieldOptions);
                         $fieldOptions['label'] = $options['label'] . ' to';
-                        $builder->add($formFieldName . '_to', $options['type']);
+                        $builder->add($formFieldName . '_to', $options['type'], $fieldOptions);
                         break;
                     }
                     else {
@@ -323,7 +323,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                     default:
                         $value = $this->get($fieldName);
 
-                        if ($value) {
+                        if ($value !== null) {
                             if (! isset($options['comparison'])) {
                                 $qb->andWhere(
                                     $qb->expr()->eq(
