@@ -304,7 +304,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                         $this->addDateTimeToQueryBuilder($qb, 'd/m/Y' , $fieldName, $options['entire_day']);
                     break;
                     case 'date_time':
-                        $this->addDateTimeToQueryBuilder($qb, 'd/m/Y h:i' , $fieldName, $options['entire_day']);
+                        $this->addDateTimeToQueryBuilder($qb, 'd/m/Y H:i' , $fieldName, $options['entire_day']);
                     break;
                     case 'entity':
                         $value = $this->get($fieldName);
@@ -462,36 +462,45 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
 
         if ($value)
         {
-            $dt = \DateTime::createFromFormat($dateTimeFormat, $value);
-            //set the hour to 00:00:00 so result that have an hour defined earlier than this hour aren't lost
-            if($includeEntireDay) {
-                $dt->setTime(0,0,0);
-            }
 
-            $qb->andWhere(
-                $qb->expr()->gte(
-                    $this->getAlias($qb, $fieldName),
-                    ':'.$fieldName.'_from'
-                ))
-                ->setParameter($fieldName.'_from', $dt);
+            $value = is_array($value) ? implode(' ', $value) : $value;
+            $dt = \DateTime::createFromFormat($dateTimeFormat, $value);
+
+            if($dt) {
+                //set the hour to 00:00:00 so result that have an hour defined earlier than this hour aren't lost
+                if($includeEntireDay) {
+                    $dt->setTime(0,0,0);
+                }
+
+                $qb->andWhere(
+                    $qb->expr()->gte(
+                        $this->getAlias($qb, $fieldName),
+                        ':'.$fieldName.'_from'
+                    ))
+                    ->setParameter($fieldName.'_from', $dt);
+            }
         }
 
         $value = $this->get($fieldName, '_to');
 
         if ($value)
         {
+            $value = is_array($value) ? implode(' ', $value) : $value;
             $dt = \DateTime::createFromFormat($dateTimeFormat, $value);
-            //set the hour to 23:59:59 so result that have an hour defined earlier than this hour aren't lost
-            if($includeEntireDay) {
-                $dt->setTime(23,59,59);
-            }
 
-            $qb->andWhere(
-                $qb->expr()->lte(
-                    $this->getAlias($qb, $fieldName),
-                    ':'.$fieldName.'_to'
-                ))
-                ->setParameter($fieldName.'_to', $dt);
+            if($dt) {
+                //set the hour to 23:59:59 so result that have an hour defined earlier than this hour aren't lost
+                if($includeEntireDay) {
+                    $dt->setTime(23,59,59);
+                }
+
+                $qb->andWhere(
+                    $qb->expr()->lte(
+                        $this->getAlias($qb, $fieldName),
+                        ':'.$fieldName.'_to'
+                    ))
+                    ->setParameter($fieldName.'_to', $dt);
+            }
         }
     }
 }
