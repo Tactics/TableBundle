@@ -323,7 +323,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                     default:
                         $value = $this->get($fieldName);
 
-                        if ($value !== null) {
+                        if ($value !== null && $value !== '') {
                             if (! isset($options['comparison'])) {
                                 $qb->andWhere(
                                     $qb->expr()->eq(
