@@ -27,7 +27,9 @@ jQuery(function($) {
     .on('reset', '.form-filter', function() {
         var form = $(this);
         form.find(':text, select, :radio').val('');
+        form.find('select').trigger('chosen:updated');
         form.submit();
+
         return false;
     })
 });
