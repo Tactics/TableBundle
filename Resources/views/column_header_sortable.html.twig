@@ -3,11 +3,11 @@
 {% block cell_content %}
   {% if header.options.sort is defined and header.options.sort == 'ascending'%}
       <a class="a-filter" href="{{ path(header.options.route, header.options.route_params|merge({'desc': header.column.name, 'sorter_namespace': header.options.sorter_namespace})) }}">
-          {{ header.value|trans }} &nbsp; <i class="icon-chevron-up"></i>
+          {{ header.value|trans }} &nbsp; <i class="fa fa-chevron-up"></i>
       </a>
   {% elseif header.options.sort is defined and header.options.sort == 'descending' %}
       <a class="a-filter" href="{{ path(header.options.route, header.options.route_params|merge({'unsort': header.column.name, 'sorter_namespace': header.options.sorter_namespace})) }}">
-          {{ header.value|trans }} &nbsp; <i class="icon-chevron-down"></i>
+          {{ header.value|trans }} &nbsp; <i class="fa fa-chevron-down"></i>
       </a>
   {% else %}
       <a class="a-filter" href="{{ path(header.options.route, header.options.route_params|merge({'asc': header.column.name, 'sorter_namespace': header.options.sorter_namespace})) }}">
