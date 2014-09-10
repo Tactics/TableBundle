@@ -249,7 +249,7 @@ class DoctrineTableBuilder extends TableBuilderNameSpaceToExtend
             // todo , this is temp fix for _internal problem when using table in render subrequests
             // @see https://github.com/Tactics/TableBundle/issues/10
             $router = $this->getTableFactory()->getContainer()->get("router");
-            $route = $router->match($this->getTableFactory()->getContainer()->get('request')->getPathInfo());
+            $route = $router->match($this->getTableFactory()->getContainer()->get('request_stack')->getMasterRequest()->getPathInfo());
 
             $routeParams = $route;
             unset($routeParams['_controller']);
