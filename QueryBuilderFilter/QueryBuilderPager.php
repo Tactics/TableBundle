@@ -65,7 +65,7 @@ class QueryBuilderPager implements QueryBuilderFilterInterface
             $session->set($key, $page);
         }
 
-        $pager = new Pagerfanta(new DoctrineORMAdapter($qb));
+        $pager = new Pagerfanta(new DoctrineORMAdapter($qb, false));
         $pager->setMaxPerPage($options['max_per_page']);
 
         // Deal with out of range pages. Typical scenario is when you surf to 
