@@ -3,7 +3,8 @@
 namespace Tactics\TableBundle\Twig;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Form\Util\PropertyPath;
+use Symfony\Component\PropertyAccess\PropertyPath;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 use Tactics\TableBundle\QueryBuilderFilter\QueryBuilderPager;
 
 class QueryBuilderPagerExtension extends \Twig_Extension
@@ -70,7 +71,8 @@ class QueryBuilderPagerExtension extends \Twig_Extension
         $routeParams = $options['routeParams'];
         $pagePropertyPath = new PropertyPath($options['pageParameter']);
         $routeGenerator = function($page) use($router, $routeName, $routeParams, $pagePropertyPath, $pagerNamespace) {
-            $pagePropertyPath->setValue($routeParams, $page);
+            $propertyAccessor = PropertyAccess::createPropertyAccessor();
+            $propertyAccessor->setValue($routeParams, $pagePropertyPath, $page);
             if ($pagerNamespace) {
                 $routeParams['pager_namespace'] = $pagerNamespace;
             }
