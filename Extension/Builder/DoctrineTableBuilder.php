@@ -255,8 +255,13 @@ class DoctrineTableBuilder extends TableBuilderNameSpaceToExtend
             unset($routeParams['_controller']);
             unset($routeParams['_route']);
 
-            $options['header/route'] = $route['_route'];
-            $options['header/route_params'] = $routeParams;
+            if (! isset($options['header/route'])) {
+                $options['header/route'] = $route['_route'];
+            }
+
+            if (! isset($options['header/route_params'])) {
+                $options['header/route_params'] = $routeParams;
+            }
 
             // OLD WAY, does not work for sub requests: always returns '_internal'
             // $request = $this->getTableFactory()->getContainer()->get('request');
