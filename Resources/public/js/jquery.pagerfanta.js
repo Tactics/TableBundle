@@ -31,7 +31,11 @@ jQuery(function($) {
             dataType: 'html',
             success: function(html) {
                 var newElement = $(html).find('.pagination:eq(' + cnt + ')');
-                pagination.closest('article').replaceWith(newElement.closest('article'));
+                if (0 < pagination.closest('article').length) {
+                    pagination.closest('article').replaceWith(newElement.closest('article'));
+                } else {
+                    pagination.closest('.panel').replaceWith(newElement.closest('.panel'));
+                }
 
                 $('.chosen').chosen();
             }

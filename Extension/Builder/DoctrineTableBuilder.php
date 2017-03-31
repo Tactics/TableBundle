@@ -2,6 +2,7 @@
 
 namespace Tactics\TableBundle\Extension\Builder;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Tactics\TableBundle\TableBuilder as TableBuilderNameSpaceToExtend;
 use Tactics\TableBundle\TableFactoryInterface;
 use Tactics\TableBundle\Extension\Type\SortableColumnHeader;
@@ -249,7 +250,19 @@ class DoctrineTableBuilder extends TableBuilderNameSpaceToExtend
             // todo , this is temp fix for _internal problem when using table in render subrequests
             // @see https://github.com/Tactics/TableBundle/issues/10
             $router = $this->getTableFactory()->getContainer()->get("router");
-            $route = $router->match($this->getTableFactory()->getContainer()->get('request_stack')->getMasterRequest()->getPathInfo());
+
+            $requestStack = $this->getTableFactory()->getContainer()->get('request_stack', ContainerInterface::NULL_ON_INVALID_REFERENCE);
+            if ($requestStack) {
+                $pathInfo = $requestStack->getMasterRequest()->getPathInfo();
+            } else {
+                $request = $this->getTableFactory()->getContainer()->get('request');
+                $pathInfo = '/_fragment' !== $request->getPathInfo()
+                    ? $request->getPathInfo()
+                    : $request->attributes->get('request')->getPathInfo()
+                ;
+            }
+
+            $route = $router->match($pathInfo);
 
             $routeParams = $route;
             unset($routeParams['_controller']);
