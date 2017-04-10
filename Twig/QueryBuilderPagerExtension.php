@@ -27,7 +27,7 @@ class QueryBuilderPagerExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-           'pager_widget' => new \Twig_Function_Method($this, 'renderQueryBuilderPager', array('is_safe' => array('html'))),
+           new \Twig_SimpleFunction('pager_widget', [$this, 'renderQueryBuilderPager'], array('is_safe' => array('html'))),
         );
     }
 
@@ -63,7 +63,7 @@ class QueryBuilderPagerExtension extends \Twig_Extension
             if ('_internal' === $options['routeName']) {
                 throw new \Exception('PagerfantaBundle can not guess the route when used in a subrequest');
             }
-                        
+
             $options['routeParams'] = array_merge($request->query->all(), $request->attributes->get('_route_params'));
         }
 
