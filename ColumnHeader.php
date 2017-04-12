@@ -3,7 +3,7 @@
 namespace Tactics\TableBundle;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ColumnHeader implements ColumnHeaderInterface
 {
@@ -30,7 +30,7 @@ class ColumnHeader implements ColumnHeaderInterface
         $this->value      = $value;
 
         $resolver = new OptionsResolver(); 
-        $this->setDefaultOptions($resolver);
+        $this->configureOptions($resolver);
 
         $this->options = $options;
         $this->options = $resolver->resolve($options);
@@ -95,9 +95,9 @@ class ColumnHeader implements ColumnHeaderInterface
     /**
      * Sets the default options for this table.
      *
-     * @param OptionsResolverInterface $resolver The resolver for the options.
+     * @param OptionsResolver $resolver The resolver for the options.
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
           ->setOptional(array('route', 'type', 'value', 'sort', 'route_params', 'attributes'))

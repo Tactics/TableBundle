@@ -2,7 +2,7 @@
 
 namespace Tactics\TableBundle;
 
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Tactics\TableBundle\ColumnInterface;
 
 /**
@@ -18,9 +18,9 @@ interface ColumnTypeExtensionInterface
     /**
      * Overrides the default options from the extended type.
      *
-     * @param OptionsResolverInterface $resolver The resolver for the options.
+     * @param OptionsResolver $resolver The resolver for the options.
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver);
+    public function configureOptions(OptionsResolver $resolver);
 
     /**
      * Returns the name of the type being extended.

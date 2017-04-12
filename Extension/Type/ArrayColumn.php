@@ -9,7 +9,7 @@ namespace Tactics\TableBundle\Extension\Type;
 
 use Tactics\TableBundle\Column;
 
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Displays an array
@@ -21,11 +21,11 @@ class ArrayColumn extends Column
     /**
      * Sets the default options
      *
-     * @param OptionsResolverInterface $resolver The resolver for the options.
+     * @param OptionsResolver $resolver The resolver for the options.
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        parent::setDefaultOptions($resolver);
+        parent::configureOptions($resolver);
         
         $resolver->setRequired(array('separator'));
         $resolver->setDefaults(array('separator' => ', '));

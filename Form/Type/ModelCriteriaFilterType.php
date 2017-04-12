@@ -11,7 +11,7 @@ class ModelCriteriaFilterType extends AbstractType
     {
     }
 
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'filter_by';
     }

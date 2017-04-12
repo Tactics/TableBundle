@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use \ModelCriteria;
 use \Criteria;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Tactics\TableBundle\Form\Type\ModelCriteriaFilterType;
 use Tactics\myDate\myDate;
 
@@ -136,7 +136,7 @@ class ModelCriteriaFilter implements ModelCriteriaFilterInterface
     public function add($name, array $options = array()) 
     {
         $resolver = new OptionsResolver();
-        $this->setDefaultOptions($resolver);
+        $this->configureOptions($resolver);
         $options = $resolver->resolve($options);
 
         if (! isset($options['form_field_name']))
@@ -224,9 +224,9 @@ class ModelCriteriaFilter implements ModelCriteriaFilterInterface
     /**
      * Sets the default options for this type.
      *
-     * @param OptionsResolverInterface $resolver The resolver for the options.
+     * @param OptionsResolver $resolver The resolver for the options.
      */
-    private function setDefaultOptions(OptionsResolverInterface $resolver)
+    private function configureOptions(OptionsResolver $resolver)
     {
         $resolver
             ->setDefaults(array(

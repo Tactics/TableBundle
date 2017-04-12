@@ -23,7 +23,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers \Tactics\TableBundle\Table::__construct
-     * @covers \Tactics\TableBundle\Table::setDefaultOptions
+     * @covers \Tactics\TableBundle\Table::configureOptions
      * @covers \Tactics\TableBundle\Table::getOptions
      * @covers \Tactics\TableBundle\Table::getOption
      */

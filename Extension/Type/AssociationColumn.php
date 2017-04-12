@@ -6,7 +6,7 @@ use Tactics\TableBundle\Column;
 use Tactics\TableBundle\ColumnHeader;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Doctrine\Common\Collections\Collection;
 
@@ -48,11 +48,11 @@ class AssociationColumn extends Column
     /**
      * Sets the default options for this table.
      *
-     * @param OptionsResolverInterface $resolver The resolver for the options.
+     * @param OptionsResolver $resolver The resolver for the options.
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        parent::setDefaultOptions($resolver);
+        parent::configureOptions($resolver);
         
         $resolver->setOptional(array('target_method', 'entity_route_resolver'));
     }    

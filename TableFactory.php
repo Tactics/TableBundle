@@ -14,7 +14,7 @@ use Tactics\TableBundle\ColumnHeaderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Description of TableFactory
@@ -83,7 +83,7 @@ class TableFactory implements TableFactoryInterface, ContainerAwareInterface
     public function createBuilder($type = '', array $options = array())
     {
         $resolver = new OptionsResolver();
-        $this->setDefaultOptions($resolver);
+        $this->configureOptions($resolver);
 
         $options = $resolver->resolve($options);
 
@@ -175,9 +175,9 @@ class TableFactory implements TableFactoryInterface, ContainerAwareInterface
     /**
      * Sets the default options for this type.
      *
-     * @param OptionsResolverInterface $resolver The resolver for the options.
+     * @param OptionsResolver $resolver The resolver for the options.
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setOptional(array('model_criteria', 'query', 'repository', 'table_class', 'filter', 'namespace', 'default_sort'));
 

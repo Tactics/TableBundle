@@ -9,7 +9,7 @@ use Tactics\TableBundle\TableFactoryInterface;
 use Tactics\TableBundle\Extension\Type\SortableColumnHeader;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Description of PropelTableBuilder
@@ -333,9 +333,9 @@ class PropelTableBuilder extends TableBuilder
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        parent::setDefaultOptions($resolver);
+        parent::configureOptions($resolver);
 
         $resolver->setRequired(array('model_criteria'));
     }

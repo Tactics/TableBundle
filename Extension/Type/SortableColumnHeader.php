@@ -3,7 +3,7 @@
 namespace Tactics\TableBundle\Extension\Type;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Tactics\TableBundle\ColumnHeader;
 
 /**

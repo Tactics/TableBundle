@@ -5,7 +5,7 @@ namespace Tactics\TableBundle;
 use Tactics\TableBundle\TableInterface;
 use Tactics\TableBundle\DataTransformerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Table implements \IteratorAggregate, TableInterface
 {
@@ -40,7 +40,7 @@ class Table implements \IteratorAggregate, TableInterface
         $this->name = $name;
         
         $resolver = new OptionsResolver();
-        $this->setDefaultOptions($resolver);
+        $this->configureOptions($resolver);
         
         $this->options = $resolver->resolve($options);
     }
@@ -76,9 +76,9 @@ class Table implements \IteratorAggregate, TableInterface
     /**
      * Sets the default options for this table.
      *
-     * @param OptionsResolverInterface $resolver The resolver for the options.
+     * @param OptionsResolver $resolver The resolver for the options.
      */
-    protected function setDefaultOptions(OptionsResolverInterface $resolver)
+    protected function configureOptions(OptionsResolver $resolver)
     {
       $resolver->setOptional(array('attributes'));
     }

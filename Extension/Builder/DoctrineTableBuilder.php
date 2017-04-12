@@ -8,7 +8,6 @@ use Tactics\TableBundle\TableFactoryInterface;
 use Tactics\TableBundle\Extension\Type\SortableColumnHeader;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Doctrine\Common\Util\Inflector;
 
@@ -17,12 +16,12 @@ class DoctrineTableBuilder extends TableBuilderNameSpaceToExtend
     protected $columns = array();
 
     /**
-     * @var $query Doctrine\ORM\Query A Query instance.
+     * @var \Doctrine\ORM\Query $query
      */
     protected $query = null;
 
     /**
-     * @var $repository Doctrine\ORM\EntityRepository An EntityRepository
+     * @var \Doctrine\ORM\EntityRepository $repository
      * instance.
      */
     protected $repository = null;
@@ -442,9 +441,9 @@ class DoctrineTableBuilder extends TableBuilderNameSpaceToExtend
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        parent::setDefaultOptions($resolver);
+        parent::configureOptions($resolver);
 
         $resolver->setRequired(array('repository', 'query'));
     }

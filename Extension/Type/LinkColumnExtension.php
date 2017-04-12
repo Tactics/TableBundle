@@ -7,7 +7,7 @@ use Tactics\TableBundle\AbstractColumnTypeExtension;
 use Tactics\TableBundle\ColumnInterface;
 use Tactics\TableBundle\Exception\InvalidOptionException;
 
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Description of LinkColumnExtension
@@ -72,11 +72,11 @@ class LinkColumnExtension extends AbstractColumnTypeExtension {
     /**
      * Overrides the default options from the extended type.
      *
-     * @param OptionsResolverInterface $resolver The resolver for the options.
+     * @param OptionsResolver $resolver The resolver for the options.
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setOptional(array('route'));
+        $resolver->setDefined('route');
     }
 
 }

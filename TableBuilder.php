@@ -11,9 +11,7 @@
 namespace Tactics\TableBundle;
 
 use Tactics\TableBundle\Table;
-
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 
 /**
@@ -72,7 +70,7 @@ class TableBuilder implements \IteratorAggregate, TableBuilderInterface
         $this->name = $name;
         
         $resolver = new OptionsResolver();
-        $this->setDefaultOptions($resolver);
+        $this->configureOptions($resolver);
         
         $this->options = $resolver->resolve($options);
     }
@@ -255,13 +253,11 @@ class TableBuilder implements \IteratorAggregate, TableBuilderInterface
         
         return $table;
     }
-    
+
     /**
-     * Sets the default options for this type.
-     *
-     * @param OptionsResolverInterface $resolver The resolver for the options.
+     * @param OptionsResolver $resolver
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
             ->setDefaults(array(

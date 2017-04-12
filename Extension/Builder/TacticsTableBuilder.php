@@ -7,7 +7,7 @@ use Tactics\TableBundle\TableFactoryInterface;
 use Tactics\TableBundle\QueryBuilderFilter\QueryBuilderSorter;
 use Tactics\TableBundle\QueryBuilderFilter\QueryBuilderPager;
 
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**

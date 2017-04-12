@@ -9,7 +9,7 @@ namespace Tactics\TableBundle\Extension\Type;
 
 use Tactics\TableBundle\Column;
 
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Displays a hexadecimal value as a color 

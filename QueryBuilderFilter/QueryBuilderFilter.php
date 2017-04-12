@@ -6,7 +6,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Tactics\TableBundle\Form\Type\QueryBuilderFilterType;
 use Tactics\myDate\myDate;
@@ -112,7 +111,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
     public function add($name, array $options = array())
     {
         $resolver = new OptionsResolver();
-        $this->setDefaultOptions($resolver);
+        $this->configureOptions($resolver);
         $options = $resolver->resolve($options);
 
         if (! isset($options['form_field_name']))
@@ -236,9 +235,9 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
     /**
      * Sets the default options for this type.
      *
-     * @param OptionsResolverInterface $resolver The resolver for the options.
+     * @param OptionsResolver $resolver The resolver for the options.
      */
-    private function setDefaultOptions(OptionsResolverInterface $resolver)
+    private function configureOptions(OptionsResolver $resolver)
     {
         $resolver
             ->setDefaults(array(
@@ -253,7 +252,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                 'attr' => array(),
         ));
 
-        $resolver->setOptional(array('label', 'form_field_name', 'filter', 'multiple'));
+        $resolver->setDefined(['label', 'form_field_name', 'filter', 'multiple']);
     }
 
     public function getValues()

@@ -7,7 +7,7 @@ use Tactics\TableBundle\AbstractColumnTypeExtension;
 use Tactics\TableBundle\ColumnInterface;
 use Tactics\TableBundle\Exception\InvalidOptionException;
 
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -54,11 +54,11 @@ class FunctionColumnExtension extends AbstractColumnTypeExtension implements Con
     /**
      * Overrides the default options from the extended type.
      *
-     * @param OptionsResolverInterface $resolver The resolver for the options.
+     * @param OptionsResolver $resolver The resolver for the options.
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setOptional(array('function'));
+        $resolver->setDefined('function');
     }
 }
 

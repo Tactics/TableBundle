@@ -3,7 +3,7 @@
 namespace Tactics\TableBundle;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Column implements ColumnInterface
 {
@@ -37,11 +37,11 @@ class Column implements ColumnInterface
         $this->extensions = $extensions;
 
         $resolver = new OptionsResolver();
-        $this->setDefaultOptions($resolver);
+        $this->configureOptions($resolver);
 
         foreach($this->extensions as $extension)
         {
-            $extension->setDefaultOptions($resolver);
+            $extension->configureOptions($resolver);
         }
 
         $this->options = $resolver->resolve($options);
@@ -120,9 +120,9 @@ class Column implements ColumnInterface
     /**
      * Sets the default options for this table.
      *
-     * @param OptionsResolverInterface $resolver The resolver for the options.
+     * @param OptionsResolver $resolver The resolver for the options.
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         // todo: put this stuff somewhere propelTableBuilder related
         $resolver->setOptional(array('method', 'default_value', 'raw', 'hidden'));

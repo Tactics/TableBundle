@@ -3,7 +3,7 @@
 namespace Tactics\TableBundle\Extension\Type;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Tactics\TableBundle\Exception\TableException;
 use Tactics\TableBundle\Column;
@@ -177,11 +177,11 @@ class ActionsColumn extends Column
     /**
      * Sets the default options for this table.
      *
-     * @param OptionsResolverInterface $resolver The resolver for the options.
+     * @param OptionsResolver $resolver The resolver for the options.
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        parent::setDefaultOptions($resolver);
+        parent::configureOptions($resolver);
         $resolver->setRequired(array('actions'));
     }
 
@@ -190,9 +190,9 @@ class ActionsColumn extends Column
      *
      * todo nested resolvers?
      *
-     * @param OptionsResolverInterface $resolver The resolver for the options.
+     * @param OptionsResolver $resolver The resolver for the options.
      */
-    public function setDefaultActionsOptions(OptionsResolverInterface $resolver)
+    public function setDefaultActionsOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired(array('route'));
 
