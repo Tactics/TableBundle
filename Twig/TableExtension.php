@@ -16,7 +16,7 @@ class TableExtension extends \Twig_Extension
     * @var ContainerInterface A ContainerInterface instance.
     */
     protected $container;
-    
+
     /**
      * Constructor
      *
@@ -33,12 +33,12 @@ class TableExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'pager_totals' => new \Twig_Function_Method($this, 'renderPagerTotals', array('is_safe' => array('html'))),
-            'table_widget' => new \Twig_Function_Method($this, 'renderTable', array('is_safe' => array('html'))),
-            'render_cell' => new \Twig_Function_Method($this, 'renderCell', array('is_safe' => array('html'))),
-            'render_header' => new \Twig_Function_Method($this, 'renderHeader', array('is_safe' => array('html'))),
-            'render_attributes' => new \Twig_Function_Method($this, 'renderAttributes', array('is_safe' => array('html'))),
-            'table_actions' => new \Twig_Function_Method($this, 'renderActions', array('is_safe' => array('html')))
+            new \Twig_SimpleFunction('pager_totals', [$this, 'renderPagerTotals'], array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('table_widget', [$this, 'renderTable'], array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('render_cell', [$this, 'renderCell'], array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('render_header', [$this, 'renderHeader'], array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('render_attributes', [$this, 'renderAttributes'], array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('table_actions', [$this, 'renderActions'], array('is_safe' => array('html')))
         );
     }
 
@@ -48,10 +48,10 @@ class TableExtension extends \Twig_Extension
          * @todo
          * At time of writing, the Pagerfanta class on github contained
          * two public methods: getCurrentPageOffsetStart and getCurrentPageOffsetEnd.
-         * This version of pagerfanta was not yet in the PagerfantaBundle that 
+         * This version of pagerfanta was not yet in the PagerfantaBundle that
          * we use, so we do not have them yet.
          *
-         * I made a couple of private methods that are to be removed when 
+         * I made a couple of private methods that are to be removed when
          * PagerfantaBundle's pagerfanta.php is updated to the latest version.
          */
         return $this->container->get('templating')->render(
@@ -66,16 +66,16 @@ class TableExtension extends \Twig_Extension
 
     private function getCurrentPageOffsetStart($pagerfanta)
     {
-        return $pagerfanta->getNbResults() 
-            ?  $this->calculateOffsetForCurrentPageResults($pagerfanta) + 1 
+        return $pagerfanta->getNbResults()
+            ?  $this->calculateOffsetForCurrentPageResults($pagerfanta) + 1
             : 0
         ;
     }
 
     private function getCurrentPageOffsetEnd($pagerfanta)
     {
-        return $pagerfanta->hasNextPage() 
-            ?  $pagerfanta->getCurrentPage() * $pagerfanta->getMaxPerPage() 
+        return $pagerfanta->hasNextPage()
+            ?  $pagerfanta->getCurrentPage() * $pagerfanta->getMaxPerPage()
             : $pagerfanta->getNbResults()
         ;
     }
@@ -102,25 +102,25 @@ class TableExtension extends \Twig_Extension
 
     /**
      * Renders a ColumnCell.
-     * 
+     *
      * @param Column $column The Column instance to render.
      * @param array  $row  An array with the row.
      */
     public function renderCell(Column $column, array $row)
-    {  
+    {
         if ($column->getOption('hidden'))
         {
             return '';
         }
-        
+
         $cell = $column->getCell($row);
-        
+
         $column->executeExtensions($cell, $row);
-        
+
         return $this->container->get('templating')->render(
             'TacticsTableBundle::column_cell_'.$column->getType().'.html.twig',
             array(
-                'column'     => $column, 
+                'column'     => $column,
                 'cell'       => $cell
             )
           );
@@ -128,7 +128,7 @@ class TableExtension extends \Twig_Extension
 
     /**
      * Renders a ColumnHeader.
-     * 
+     *
      * @param ColumnHeader The ColumnHeader instance to render.
      */
     public function renderHeader(ColumnHeader $header)
@@ -137,11 +137,11 @@ class TableExtension extends \Twig_Extension
         {
             return '';
         }
-        
+
         $attributes = '';
 
         foreach ($header->getOption('attributes') as $attribute => $value) {
-            $attributes .= " $attribute=\"$value\"";    
+            $attributes .= " $attribute=\"$value\"";
         }
 
         return $this->container->get('templating')->render(
@@ -157,7 +157,7 @@ class TableExtension extends \Twig_Extension
         $attributeString = '';
 
         foreach ($attributes as $attribute => $value) {
-            $attributeString .= " $attribute=\"$value\"";    
+            $attributeString .= " $attribute=\"$value\"";
         }
 
         return $attributeString;

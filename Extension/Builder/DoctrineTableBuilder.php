@@ -255,10 +255,15 @@ class DoctrineTableBuilder extends TableBuilderNameSpaceToExtend
                 $pathInfo = $requestStack->getMasterRequest()->getPathInfo();
             } else {
                 $request = $this->getTableFactory()->getContainer()->get('request');
-                $pathInfo = '/_fragment' !== $request->getPathInfo()
-                    ? $request->getPathInfo()
-                    : $request->attributes->get('request')->getPathInfo()
-                ;
+                if ('/_fragment' !== $request->getPathInfo()) {
+                    $pathInfo = $request->getPathInfo();
+                } elseif ($request->attributes->get('request')) {
+                    $pathInfo = $request->attributes->get('request')->getPathInfo();
+                } else {
+                    $server = $request->server;
+
+                    $pathInfo = str_replace($server->get('SCRIPT_NAME'), '', $server->get('PHP_SELF'));
+                }
             }
 
             $route = $router->match($pathInfo);

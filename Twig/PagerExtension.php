@@ -24,8 +24,8 @@ class PagerExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'pagerfanta' => new \Twig_Function_Method($this, 'renderPagerfanta', array('is_safe' => array('html'))),
-            'generate_page_route' => new \Twig_Function_Method($this, 'generateRoute'),
+            new \Twig_SimpleFunction('pagerfanta', [$this, 'renderPagerfanta'], array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('generate_page_route', [$this, 'generateRoute']),
         );
     }
 
