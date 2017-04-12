@@ -14,7 +14,7 @@
   "require": {
     "symfony/options-resolver": "~3.0",
     "pagerfanta/pagerfanta": "1.0.*",
-    "tactics/entity-route-bundle": "2.0",
+    "tactics/entity-route-bundle": "3.0.*",
     "twig/twig": "^2.0"
   },
   "autoload": {
