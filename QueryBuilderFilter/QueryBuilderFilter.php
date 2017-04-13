@@ -155,7 +155,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
     public function getForm()
     {
         $builder = $this->container->get('form.factory')
-            ->createBuilder(new QueryBuilderFilterType());
+            ->createBuilder(QueryBuilderFilterType::class);
 
         //dont loop the field but loop the fields mixed with the sessien values
         foreach ($this->fields as $fieldName => $options)
