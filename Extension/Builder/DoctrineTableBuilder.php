@@ -2,14 +2,12 @@
 
 namespace Tactics\TableBundle\Extension\Builder;
 
+use Doctrine\Common\Util\Inflector;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Tactics\TableBundle\Extension\Type\SortableColumnHeader;
 use Tactics\TableBundle\TableBuilder as TableBuilderNameSpaceToExtend;
 use Tactics\TableBundle\TableFactoryInterface;
-use Tactics\TableBundle\Extension\Type\SortableColumnHeader;
-
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Doctrine\Common\Util\Inflector;
 
 class DoctrineTableBuilder extends TableBuilderNameSpaceToExtend
 {
@@ -254,11 +252,11 @@ class DoctrineTableBuilder extends TableBuilderNameSpaceToExtend
             if ($requestStack) {
                 $pathInfo = $requestStack->getMasterRequest()->getPathInfo();
             } else {
-                $request = $this->getTableFactory()->getContainer()->get('request');
+                $request = $this->getTableFactory()->getContainer()->get('request_stack')->getMasterRequest();
                 if ('/_fragment' !== $request->getPathInfo()) {
                     $pathInfo = $request->getPathInfo();
-                } elseif ($request->attributes->get('request')) {
-                    $pathInfo = $request->attributes->get('request')->getPathInfo();
+                } elseif ($request->attributes->get('request_stack')->getMasterRequest()) {
+                    $pathInfo = $request->attributes->get('request_stack')->getMasterRequest()->getPathInfo();
                 } else {
                     $server = $request->server;
 
@@ -349,7 +347,7 @@ class DoctrineTableBuilder extends TableBuilderNameSpaceToExtend
         // All of this is a bit weird since we don't really know we're dealing
         // with sortable columns, well, I know, but ..
         $factory = $this->getTableFactory();
-        $request = $factory->getContainer()->get('request');
+        $request = $factory->getContainer()->get('request_stack')->getMasterRequest();
         $orderBy = $request->get('order_by');
 
         // todo

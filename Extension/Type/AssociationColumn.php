@@ -2,13 +2,9 @@
 
 namespace Tactics\TableBundle\Extension\Type;
 
-use Tactics\TableBundle\Column;
-use Tactics\TableBundle\ColumnHeader;
-
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Tactics\TableBundle\Column;
 
 class AssociationColumn extends Column
 {
@@ -54,7 +50,7 @@ class AssociationColumn extends Column
     {
         parent::configureOptions($resolver);
         
-        $resolver->setOptional(array('target_method', 'entity_route_resolver'));
+        $resolver->setDefined(array('target_method', 'entity_route_resolver'));
     }    
 
     /**

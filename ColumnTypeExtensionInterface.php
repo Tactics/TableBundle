@@ -3,7 +3,6 @@
 namespace Tactics\TableBundle;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Tactics\TableBundle\ColumnInterface;
 
 /**
  * Description of TableTypeExtensionInterface

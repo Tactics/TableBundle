@@ -2,9 +2,8 @@
 
 namespace Tactics\TableBundle\QueryBuilderFilter;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 interface QueryBuilderFilterInterface extends ContainerAwareInterface
 {

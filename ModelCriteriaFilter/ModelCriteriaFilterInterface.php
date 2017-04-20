@@ -2,9 +2,8 @@
 
 namespace Tactics\TableBundle\ModelCriteriaFilter;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use ModelCriteria;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use \ModelCriteria;
 
 interface ModelCriteriaFilterInterface extends ContainerAwareInterface
 {

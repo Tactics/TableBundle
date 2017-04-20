@@ -2,16 +2,18 @@
 
 namespace Tactics\TableBundle\QueryBuilderFilter;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Tactics\TableBundle\Form\Type\QueryBuilderFilterType;
-use Tactics\myDate\myDate;
-
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\Query\Expr\Comparison;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Tactics\Bundle\FormBundle\Form\Type\DateTimeType;
+use Tactics\Bundle\FormBundle\Form\Type\DateType;
+use Tactics\Bundle\FormBundle\Form\Type\DatumType;
+use Tactics\myDate\myDate;
+use Tactics\TableBundle\Form\Type\QueryBuilderFilterType;
 
 class QueryBuilderFilter implements QueryBuilderFilterInterface
 {
@@ -175,9 +177,9 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
             // Prepare
             switch($options['type'])
             {
-                case 'tactics_date':
-                case 'date':
-                case 'datum':
+                case DateType::class:
+                case \Symfony\Component\Form\Extension\Core\Type\DateType::class:
+                case DatumType::class:
                     if ($options['datum_from_and_to']){
                         $fieldOptions['data'] = $value ? \DateTime::createFromFormat('d/m/Y', $value) : null;
                         $fieldOptions['label'] = $options['label'] . ' from';
@@ -191,15 +193,16 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                         $builder->add($formFieldName, $options['type']);
                         break;
                     }
-                case 'date_time':
+                case DateTimeType::class:
+                case \Symfony\Component\Form\Extension\Core\Type\DateTimeType::class:
                     $fieldOptions['data'] = $value ? \DateTime::createFromFormat('d/m/Y h:i', $value) : null;
                     $fieldOptions['label'] = $options['label'] . ' from';
-                    $builder->add($formFieldName . '_from', 'tactics_datetime');
+                    $builder->add($formFieldName . '_from', $options['type']);
                     $fieldOptions['label'] = $options['label'] . ' to';
-                    $builder->add($formFieldName . '_to', 'tactics_datetime');
+                    $builder->add($formFieldName . '_to', $options['type']);
                     break;
 
-                case 'choice':
+                case ChoiceType::class:
                     $fieldOptions['choices'] = $options['choices'];
                     if (isset($options['multiple'])) {
                         $fieldOptions['multiple'] = $options['multiple'];
@@ -207,21 +210,22 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
                     $builder->add($formFieldName, $options['type'], $fieldOptions);
                     break;
                 case 'boolean':
-                    $options['type'] = 'choice';
-                    $fieldOptions['choices'] = array(0 => 'No', 1 => 'Yes');
+                    $options['type'] = ChoiceType::class;
+                    $fieldOptions['choices'] = array('No' => 0, 'Yes' => 1);
                     $builder->add($formFieldName, $options['type'], $fieldOptions);
                     break;
-                case 'checkbox':
+                case CheckboxType::class:
                     $fieldOptions['data'] = (bool) $fieldOptions['data'];
                     $builder->add($formFieldName, $options['type'], $fieldOptions);
                     break;
-                case 'entity':
+                case EntityType::class:
                     if (isset($options['multiple'])) {
                         $fieldOptions['multiple'] = $options['multiple'];
                     }
                     $fieldOptions['class'] = $options['class'];
                     $fieldOptions['query_builder'] = $options['query_builder'];
                     $builder->add($formFieldName, $options['type'], $fieldOptions);
+                    break;
                 default:
                     $builder->add($formFieldName, $options['type'], $fieldOptions);
                     break;
@@ -242,7 +246,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
         $resolver
             ->setDefaults(array(
                 'comparison' => 'LIKE',
-                'type'     => 'text',
+                'type'     => TextType::class,
                 'value'    => null,
                 'choices'  => null,
                 'class' => null,
@@ -270,7 +274,7 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
      */
     private function retrieveFilterFromSession($key)
     {
-        $request = $this->container->get('request');
+        $request = $this->container->get('request_stack')->getMasterRequest();
         $session = $this->container->get('session');
 
         $key = null === $key ? 'filter/'.$request->attributes->get('_route') : $key;

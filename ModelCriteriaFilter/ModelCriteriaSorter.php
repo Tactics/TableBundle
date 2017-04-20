@@ -2,11 +2,9 @@
 
 namespace Tactics\TableBundle\ModelCriteriaFilter;
 
+use Criteria;
+use ModelCriteria;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\HttpFoundation\Request;
-use \ModelCriteria;
-use \Criteria;
 
 class ModelCriteriaSorter implements ModelCriteriaFilterInterface
 {

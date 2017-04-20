@@ -7,8 +7,6 @@
 
 namespace Tactics\TableBundle;
 
-use Tactics\TableBundle\DataTransformerInterface;
-
 class CsvDataTransformer implements DataTransformerInterface
 {
     /**

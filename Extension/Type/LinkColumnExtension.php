@@ -2,12 +2,10 @@
 
 namespace Tactics\TableBundle\Extension\Type;
 
-use Tactics\TableBundle\ColumnTypeExtensionInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Tactics\TableBundle\AbstractColumnTypeExtension;
 use Tactics\TableBundle\ColumnInterface;
 use Tactics\TableBundle\Exception\InvalidOptionException;
-
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Description of LinkColumnExtension

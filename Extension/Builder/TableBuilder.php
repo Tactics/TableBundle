@@ -2,9 +2,6 @@
 
 namespace Tactics\TableBundle\Extension\Builder;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 
 /**
  * Description of TableBuilder

@@ -3,8 +3,8 @@
 namespace Tactics\TableBundle\Twig;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyPath;
 use Tactics\TableBundle\QueryBuilderFilter\QueryBuilderPager;
 
 class QueryBuilderPagerExtension extends \Twig_Extension

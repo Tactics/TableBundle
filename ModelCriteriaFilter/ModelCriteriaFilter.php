@@ -2,15 +2,13 @@
 
 namespace Tactics\TableBundle\ModelCriteriaFilter;
 
+use Criteria;
+use ModelCriteria;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\HttpFoundation\Request;
-use \ModelCriteria;
-use \Criteria;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Tactics\TableBundle\Form\Type\ModelCriteriaFilterType;
 use Tactics\myDate\myDate;
+use Tactics\TableBundle\Form\Type\ModelCriteriaFilterType;
 
 /**
  * @author Aaron Muylaert <aaron.muylaert at tactics.be>

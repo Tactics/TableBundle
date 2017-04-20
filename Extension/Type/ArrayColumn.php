@@ -7,9 +7,8 @@
 
 namespace Tactics\TableBundle\Extension\Type;
 
-use Tactics\TableBundle\Column;
-
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Tactics\TableBundle\Column;
 
 /**
  * Displays an array

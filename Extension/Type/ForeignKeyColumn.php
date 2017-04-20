@@ -2,11 +2,9 @@
 
 namespace Tactics\TableBundle\Extension\Type;
 
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Tactics\TableBundle\Column;
-use Tactics\TableBundle\ColumnHeader;
-
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @author Gert Vrebos <gert.vrebos at tactics.be>

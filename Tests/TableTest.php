@@ -2,9 +2,9 @@
 
 namespace Tactics\TableBundle\Tests;
 
-use Tactics\TableBundle\Table;
-use Tactics\TableBundle\ColumnHeader;
 use Tactics\TableBundle\Column;
+use Tactics\TableBundle\ColumnHeader;
+use Tactics\TableBundle\Table;
 
 class TableTest extends \PHPUnit_Framework_TestCase
 {

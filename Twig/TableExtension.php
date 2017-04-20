@@ -2,12 +2,11 @@
 
 namespace Tactics\TableBundle\Twig;
 
-use Tactics\TableBundle\Table;
-use Tactics\TableBundle\Column;
-use Tactics\TableBundle\ColumnHeader;
-use Tactics\TableBundle\ColumnCell;
-
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Tactics\TableBundle\Column;
+use Tactics\TableBundle\ColumnCell;
+use Tactics\TableBundle\ColumnHeader;
+use Tactics\TableBundle\Table;
 
 class TableExtension extends \Twig_Extension
 {
@@ -92,7 +91,7 @@ class TableExtension extends \Twig_Extension
      */
     public function renderTable(Table $table)
     {
-        $request = $this->container->get('request');
+        $request = $this->container->get('request_stack')->getMasterRequest();
 
         return $this->container->get('templating')->render(
             'TacticsTableBundle::table_widget.html.twig',

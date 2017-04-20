@@ -2,14 +2,12 @@
 
 namespace Tactics\TableBundle\Extension\Builder;
 
-use \Criteria;
-
+use Criteria;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Tactics\TableBundle\Extension\Type\SortableColumnHeader;
 use Tactics\TableBundle\TableBuilder;
 use Tactics\TableBundle\TableFactoryInterface;
-use Tactics\TableBundle\Extension\Type\SortableColumnHeader;
-
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Description of PropelTableBuilder

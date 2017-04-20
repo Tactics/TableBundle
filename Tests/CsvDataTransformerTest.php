@@ -2,10 +2,10 @@
 
 namespace Tactics\TableBundle\Tests;
 
-use Tactics\TableBundle\Table;
-use Tactics\TableBundle\ColumnHeader;
 use Tactics\TableBundle\Column;
+use Tactics\TableBundle\ColumnHeader;
 use Tactics\TableBundle\CsvDataTransformer;
+use Tactics\TableBundle\Table;
 
 class CsvDataTransformerTest extends \PHPUnit_Framework_TestCase
 {

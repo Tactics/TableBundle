@@ -2,11 +2,8 @@
 
 namespace Tactics\TableBundle\QueryBuilderFilter;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\HttpFoundation\Request;
-
 use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class QueryBuilderSorter implements QueryBuilderFilterInterface
 {
@@ -36,7 +33,7 @@ class QueryBuilderSorter implements QueryBuilderFilterInterface
      */
     public function execute(QueryBuilder $qb, $key = null, $options = array())
     {
-        $request = $this->container->get('request');
+        $request = $this->container->get('request_stack')->getMasterRequest();
         $session = $this->container->get('session');
 
         // Retrieve sorts from session.

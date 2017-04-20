@@ -2,14 +2,11 @@
 
 namespace Tactics\TableBundle\Extension\Type;
 
-use Tactics\TableBundle\ColumnTypeExtensionInterface;
-use Tactics\TableBundle\AbstractColumnTypeExtension;
-use Tactics\TableBundle\ColumnInterface;
-use Tactics\TableBundle\Exception\InvalidOptionException;
-
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Tactics\TableBundle\AbstractColumnTypeExtension;
+use Tactics\TableBundle\ColumnInterface;
 
 /**
  * Description of FunctionColumnExtension

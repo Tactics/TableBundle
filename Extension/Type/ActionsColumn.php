@@ -3,12 +3,9 @@
 namespace Tactics\TableBundle\Extension\Type;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Tactics\TableBundle\Exception\TableException;
 use Tactics\TableBundle\Column;
 use Tactics\TableBundle\ColumnHeader;
-use Tactics\TableBundle\Extension\Type\LinkColumnExtension;
+use Tactics\TableBundle\Exception\TableException;
 
 /**
  * @author Aaron Muylaert <aaron.muylaert at tactics.be>
@@ -196,7 +193,7 @@ class ActionsColumn extends Column
     {
         $resolver->setRequired(array('route'));
 
-        $resolver->setOptional(array(
+        $resolver->setDefined(array(
             'route_param',
             'disabled',
             'enabled_if',
@@ -206,9 +203,9 @@ class ActionsColumn extends Column
             'required_roles'
         ));
 
-        $resolver->setAllowedTypes(array(
-            'required_roles' => 'array'
-        ));
+        $resolver->setAllowedTypes(
+            'required_roles' , 'array'
+        );
 
         $resolver->setDefaults(array(
             'attributes' => array('style' => 'text-align: center;', 'class' => ''),

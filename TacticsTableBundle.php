@@ -2,9 +2,9 @@
 
 namespace Tactics\TableBundle;
 
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Tactics\TableBundle\DependencyInjection\Compiler\TablePass;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class TacticsTableBundle extends Bundle
 {

@@ -2,9 +2,6 @@
 
 namespace Tactics\TableBundle;
 
-use Tactics\TableBundle\TableInterface;
-use Tactics\TableBundle\DataTransformerInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Table implements \IteratorAggregate, TableInterface
@@ -80,7 +77,7 @@ class Table implements \IteratorAggregate, TableInterface
      */
     protected function configureOptions(OptionsResolver $resolver)
     {
-      $resolver->setOptional(array('attributes'));
+      $resolver->setDefined('attributes');
     }
     
     public function getOptions()

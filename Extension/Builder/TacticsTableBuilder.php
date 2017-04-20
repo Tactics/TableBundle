@@ -2,13 +2,9 @@
 
 namespace Tactics\TableBundle\Extension\Builder;
 
-use Tactics\TableBundle\Exception\TableException;
-use Tactics\TableBundle\TableFactoryInterface;
-use Tactics\TableBundle\QueryBuilderFilter\QueryBuilderSorter;
 use Tactics\TableBundle\QueryBuilderFilter\QueryBuilderPager;
-
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Tactics\TableBundle\QueryBuilderFilter\QueryBuilderSorter;
+use Tactics\TableBundle\TableFactoryInterface;
 
 /**
  * Description of TacticsDoctrineTableBuilder

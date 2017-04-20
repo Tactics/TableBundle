@@ -3,7 +3,6 @@
 namespace Tactics\TableBundle;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ColumnHeader implements ColumnHeaderInterface
 {
@@ -100,7 +99,7 @@ class ColumnHeader implements ColumnHeaderInterface
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
-          ->setOptional(array('route', 'type', 'value', 'sort', 'route_params', 'attributes'))
+          ->setDefined(['route', 'type', 'value', 'sort', 'route_params', 'attributes'])
           ->setDefaults(array('attributes' => array(), 'sorter_namespace' => null));
     }
 }

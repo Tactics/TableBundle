@@ -2,14 +2,11 @@
 
 namespace Tactics\TableBundle\ModelCriteriaFilter;
 
+use Criteria;
+use ModelCriteria;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use \ModelCriteria;
-use \Criteria;
 
 /**
  * @author Aaron Muylaert <aaron.muylaert at tactics.be>

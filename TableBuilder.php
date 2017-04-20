@@ -10,7 +10,6 @@
 
 namespace Tactics\TableBundle;
 
-use Tactics\TableBundle\Table;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 

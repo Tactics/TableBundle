@@ -3,7 +3,6 @@
 namespace Tactics\TableBundle\Twig;
 
 use Pagerfanta\PagerfantaInterface;
-
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -60,13 +59,13 @@ class PagerExtension extends \Twig_Extension
 
         return $resolver
             ->setDefaults(array(
-                'routeName' => $this->container->get('request')->attributes->get('_route'),
-                'routeParams' => array_merge($this->container->get('request')->query->all(), $this->container->get('request')->attributes->get('_route_params', array()))
+                'routeName' => $this->container->get('request_stack')->getMasterRequest()->attributes->get('_route'),
+                'routeParams' => array_merge($this->container->get('request_stack')->getMasterRequest()->query->all(), $this->container->get('request_stack')->getMasterRequest()->attributes->get('_route_params', array()))
             ))
-            ->setOptional(array(
-                'containerCssClass',
-            ))
-        ;
+            ->setDefined(
+                'containerCssClass'
+            )
+            ;
     }
 
     private function guardAgainstInternalRoute($routeName)

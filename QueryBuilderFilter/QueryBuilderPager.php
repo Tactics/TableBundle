@@ -2,16 +2,11 @@
 
 namespace Tactics\TableBundle\QueryBuilderFilter;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Doctrine\ORM\QueryBuilder;
-
-use Pagerfanta\Pagerfanta;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
+use Pagerfanta\Pagerfanta;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class QueryBuilderPager implements QueryBuilderFilterInterface
 {
@@ -41,7 +36,7 @@ class QueryBuilderPager implements QueryBuilderFilterInterface
      */
     public function execute(QueryBuilder $qb, $key = null, $options = array())
     {
-        $request = $this->container->get('request'); 
+        $request = $this->container->get('request_stack')->getMasterRequest();
         $session = $this->container->get('session');
 
         $resolver = new OptionsResolver();
