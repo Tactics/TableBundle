@@ -393,7 +393,16 @@ class DoctrineTableBuilder extends TableBuilderNameSpaceToExtend
 
                 // get value from object if method defined
                 if (! isset($options['method'])) {
-                    $rowArr[$column->getName()] = array('value' => null);
+                    try {
+                        $method = $this->translateFieldNameToMethod($column->getName());
+                    } catch(\Exception $e) {
+                        $method = null;
+                    }
+                    if($method && method_exists($object, $method)) {
+                        $rowArr[$column->getName()] = array('value' => $object->$method());
+                    } else {
+                        $rowArr[$column->getName()] = array('value' => null);
+                    }
                 }
                 else {
                     $method  = $options['method'];
@@ -434,7 +443,10 @@ class DoctrineTableBuilder extends TableBuilderNameSpaceToExtend
      */
     private function translateFieldNameToMethod($fieldName)
     {
-        if (array_search(Inflector::tableize($fieldName), $this->getAllFieldNames()) === false) {
+        if (
+            array_search(Inflector::tableize($fieldName), $this->getAllFieldNames()) === false
+            && array_search($fieldName, $this->getAllFieldNames()) === false
+        ) {
             throw new \Exception('Unknown field name '.$fieldName);
         }
 
