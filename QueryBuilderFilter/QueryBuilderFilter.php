@@ -301,15 +301,15 @@ class QueryBuilderFilter implements QueryBuilderFilterInterface
         foreach ($this->fields as $fieldName => $options) {
             if (/*$this->get($fieldName) &&*/ ! $this->applyFilter($qb, $fieldName, $options)) {
                 switch ($options['type']) {
-                    case 'tactics_date':
-                    case 'date':
-                    case 'datum':
+                    case DateType::class:
+                    case \Symfony\Component\Form\Extension\Core\Type\DateType::class:
+                    case DatumType::class:
                         $this->addDateTimeToQueryBuilder($qb, 'd/m/Y' , $fieldName, $options['entire_day']);
                     break;
-                    case 'date_time':
+                    case DateTimeType::class:
                         $this->addDateTimeToQueryBuilder($qb, 'd/m/Y H:i' , $fieldName, $options['entire_day']);
                     break;
-                    case 'entity':
+                    case EntityType::class:
                         $value = $this->get($fieldName);
                         if ($value) {
                             $qb->andWhere(
