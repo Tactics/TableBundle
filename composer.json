@@ -11,6 +11,9 @@
     "name": "Gert Vrebos",
     "email": "gert@tactics.be"
   }],
+  "repositories": [
+    { "type": "vcs", "url": "https://github.com/Tactics/EntityRouteBundle" }
+  ],
   "require": {
     "symfony/options-resolver": "~4.0",
     "pagerfanta/pagerfanta": "1.0.*",
