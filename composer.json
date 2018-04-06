@@ -12,7 +12,7 @@
     "email": "gert@tactics.be"
   }],
   "require": {
-    "symfony/options-resolver": "~3.0",
+    "symfony/options-resolver": "~4.0",
     "pagerfanta/pagerfanta": "1.0.*",
     "tactics/entity-route-bundle": "dev-symfony-upgrade",
     "twig/twig": "^2.0"
