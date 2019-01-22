@@ -32,6 +32,13 @@ class DoctrineTableBuilder extends TableBuilderNameSpaceToExtend
     protected $sorterNamespace = null;
 
     /**
+     * Namespace used by \Tactics\Bundle\TableBundle\ModelCriteriaFilter\QueryBuilderFilter
+     *
+     * @var $filterNamespace string The filter namespace.
+     */
+    protected $filterNamespace = null;
+
+    /**
      * Namespace used by \Tactics\Bundle\TableBundle\ModelCriteriaFilter\QueryBuilderPager
      *
      * @var $sorterNamespace string The sorter namespace.
@@ -80,6 +87,28 @@ class DoctrineTableBuilder extends TableBuilderNameSpaceToExtend
     public function getSorterNamespace()
     {
         return $this->sorterNamespace;
+    }
+
+    /**
+     * Sets namespace used by \Tactics\Bundle\TableBundle\QueryBuilderFilter\QueryBuilderFilter
+     *
+     * @param $v string The filter namespace.
+     */
+    public function setFilterNamespace($v)
+    {
+        $this->filterNamespace = $v;
+
+        return $this;
+    }
+
+    /**
+     * Retrieves namespace used by \Tactics\Bundle\TableBundle\QueryBuilderFilter\QueryBuilderFilter
+     *
+     * @return string The filter namespace.
+     */
+    public function getFilterNamespace()
+    {
+        return $this->filterNamespace;
     }
 
     /**

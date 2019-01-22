@@ -46,13 +46,16 @@ class TacticsTableBuilder extends DoctrineTableBuilder
         }
         
         $sorterNamespace = null;
+        $filterNamespace = null;
         $pagerNamespace = null;
 
         if (isset($options['namespace'])) {
             $sorterNamespace = 'sorter/'.$options['namespace'];
+            $filterNamespace = 'filter/'.$options['namespace'];
             $pagerNamespace = 'pager/'.$options['namespace'];
 
             $this->setSorterNamespace($sorterNamespace);
+            $this->setFilterNamespace($filterNamespace);
             $this->setPagerNamespace($pagerNamespace);
             // @todo fix uglyness using OptionsResolver.
             unset($options['namespace']);
@@ -66,16 +69,12 @@ class TacticsTableBuilder extends DoctrineTableBuilder
         }
 
         $this->sorterFilter = new QueryBuilderSorter($factory->getContainer());
-        $qb = $this->sorterFilter->execute(
-            $options['query'],
-            $sorterNamespace,
-            $sorterOptions
-        );
+        $qb = $this->sorterFilter->execute($options['query'], $sorterNamespace, $sorterOptions);
         
         if (isset($options['filter']))
         {
             $this->filterFilter = $options['filter'];
-            $qb = $this->filterFilter->execute($qb);
+            $qb = $this->filterFilter->execute($qb, $filterNamespace);
             unset($options['filter']);
         }
         
