@@ -41,9 +41,9 @@ class QueryBuilderSorter implements QueryBuilderFilterInterface
 
         $sorts = $session->has($key) ? $session->get($key) : array();
 
-        if ($request->get('sorter_namespace') && $request->get('sorter_namespace') !== $key) {
-            // Nothing.
-        } else {
+        $defaultAlias = (isset($options['default_sort']) && $options['default_sort']) ? $this->addAlias($qb, $options['default_sort']['name']) : null;
+
+        if (!$request->get('sorter_namespace') || $request->get('sorter_namespace') === $key) {
             // Retrieve sort from request.
             // Create, update or delete sort from current sorts.
             if ($request->get('asc')) {
@@ -51,16 +51,19 @@ class QueryBuilderSorter implements QueryBuilderFilterInterface
             } elseif ($request->get('desc')) {
                 $sorts = $this->sort($this->addAlias($qb, $request->get('desc')), 'DESC', $sorts);
             } elseif ($request->get('unsort')) {
-                $sorts = $this->unsort($this->addAlias($qb, $request->get('unsort')), $sorts);
-            } 
+                $unsort = $this->addAlias($qb, $request->get('unsort'));
+
+                // For default sorts we need to store the state in the session no matter what
+                // Otherwise unsorting the default will go back to the default state
+                $sorts = $unsort === $defaultAlias
+                    ? $this->sort($unsort, 'UNSORT', $sorts)
+                    : $this->unsort($unsort, $sorts);
+            }
         }
 
-        $defaultSortingApplied = false;
-        //When default exist -> apply it (if not in session and not applied by the request). But do not store it in the session
-        if (isset($options['default_sort']) && $options['default_sort'] && !$this->findKeyByName($options['default_sort']['name'], $sorts)) {
-            $defaultSortingApplied = true;
+        if ($defaultAlias && ($this->findKeyByName($defaultAlias, $sorts) === false)) {
             $sorts = $this->sort(
-                $this->addAlias($qb, $options['default_sort']['name']),
+                $defaultAlias,
                 $options['default_sort']['asc_or_desc'],
                 $sorts
             );
@@ -68,11 +71,12 @@ class QueryBuilderSorter implements QueryBuilderFilterInterface
 
         // Add sorts to QueryBuilder.
         foreach ($sorts as $sortskey => $sort) {
-            $qb->addOrderBy($sort['name'], $sort['asc_or_desc']);
-            //We applied the default sorting so it was not already in the session or applied by the user, unset it from sorts before saving sorts in session
-            if($defaultSortingApplied && $sort['name'] = $options['default_sort']['name']) {
-                unset($sorts[$sortskey]);
+            // Don't apply the UNSORT state
+            if ($sort['asc_or_desc'] === 'UNSORT') {
+                continue;
             }
+
+            $qb->addOrderBy($sort['name'], $sort['asc_or_desc']);
         }
 
         // Set updated sorts in session.
@@ -86,6 +90,11 @@ class QueryBuilderSorter implements QueryBuilderFilterInterface
         // @todo support multiply entities.
         $aliases = $qb->getRootAliases();
         $alias = $aliases[0];
+
+        // Prevent double alias
+        if (substr($fieldName, 0, 2) === $alias.'.') {
+            return $fieldName;
+        }
 
         return $alias.'.'.$fieldName;
     }
