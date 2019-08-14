@@ -11,15 +11,18 @@
     "name": "Gert Vrebos",
     "email": "gert@tactics.be"
   }],
+  "repositories": [
+    { "type": "vcs", "url": "https://github.com/Tactics/EntityRouteBundle" }
+  ],
   "require": {
-    "symfony/options-resolver": "~3.0",
+    "symfony/options-resolver": "^4.0",
     "pagerfanta/pagerfanta": "1.0.*",
-    "tactics/entity-route-bundle": "3.0.*",
+    "tactics/entity-route-bundle": "^4.0",
     "twig/twig": "^2.0"
   },
   "autoload": {
     "psr-0": { "Tactics\\TableBundle": "" }
   },
   "target-dir": "Tactics/TableBundle",
-  "minimum-stability": "dev"
+  "minimum-stability": "stable"
 }
